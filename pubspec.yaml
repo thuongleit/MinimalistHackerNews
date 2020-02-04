@@ -12,6 +12,7 @@ dependencies:
 
   cupertino_icons: ^0.1.2
   firebase: ^5.0.0
+  timeago: ^2.0.25
 
 dev_dependencies:
   flutter_test:
