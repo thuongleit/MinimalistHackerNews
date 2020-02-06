@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hacker_news/utils/url_util.dart';
 import '../../models/item.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -18,7 +19,7 @@ class ItemRow extends StatelessWidget {
             ],
           ),
           title: Text(item.title),
-          subtitle: Text('by ${item.by} (${item.url}'),
+          subtitle: Text('by ${item.by} (${getBaseDomain(item.url)})'),
           trailing: Text('${timeago.format(date)}'),
     );
   }
