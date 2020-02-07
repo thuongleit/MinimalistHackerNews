@@ -19,7 +19,7 @@ class ItemRow extends StatelessWidget {
             ],
           ),
           title: Text(item.title),
-          subtitle: Text('by ${item.by} (${getBaseDomain(item.url)})'),
+          subtitle: Text("by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''}"),
           trailing: Text('${timeago.format(date)}'),
     );
   }
