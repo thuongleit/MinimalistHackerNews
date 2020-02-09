@@ -55,6 +55,16 @@ class _MyHomePageState extends State<HomeScreen> {
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: _navigationBarItems,
+        elevation: 4.0,
+        selectedItemColor: Theme.of(context).accentColor,
+        unselectedItemColor: Colors.grey[700],
+        selectedFontSize: 10.0  ,
+        unselectedFontSize: 10.0,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        unselectedLabelStyle: TextStyle(
+          color: Colors.grey[700],
+        ),
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
