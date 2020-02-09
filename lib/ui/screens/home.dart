@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hacker_news/models/item.dart';
-import 'package:hacker_news/ui/widgets/item_list.dart';
+import '../../models/item.dart';
+import '../../ui/widgets/item_list.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
@@ -14,51 +14,54 @@ class HomeScreen extends StatefulWidget {
 class _MyHomePageState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final double _iconSize = 24.0;
+  final List<StoryType> _tabs = <StoryType>[
+    StoryType.NEW,
+    StoryType.TOP,
+    StoryType.ASK,
+    StoryType.SHOW,
+    StoryType.JOB
+  ];
 
-  final List<String> _tabTitles = <String>['New', 'Hot', 'Ask', 'Show', 'Jobs'];
+  final List<String> _tabTitles = <String>['new', 'top', 'ask', 'show', 'jobs'];
+
   final List<IconData> _tabIcons = <IconData>[
     Icons.new_releases,
     Icons.whatshot,
     Icons.question_answer,
     Icons.slideshow,
-    Icons.work,
-  ];
-
-  final List<Widget> _screens = <Widget>[
-    ItemList(type: StoryType.NEW),
-    ItemList(type: StoryType.TOP),
-    ItemList(type: StoryType.ASK),
-    ItemList(type: StoryType.SHOW),
-    ItemList(type: StoryType.JOB),
+    Icons.work
   ];
 
   @override
   Widget build(BuildContext context) {
     final List<BottomNavigationBarItem> _navigationBarItems =
         <BottomNavigationBarItem>[];
-    for (var i = 0; i < _screens.length; i++) {
+    for (var i = 0; i < _tabs.length; i++) {
       _navigationBarItems.add(
         BottomNavigationBarItem(
           icon: Icon(
             _tabIcons[i],
-            size: _iconSize,
+            size: 24.0,
           ),
           title: Text(_tabTitles[i]),
         ),
       );
     }
+    var tab = _tabs[_selectedIndex];
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: _screens[_selectedIndex],
+      body: ItemList(
+        key: ValueKey(tab.hashCode),
+        type: tab,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: _navigationBarItems,
         elevation: 4.0,
         selectedItemColor: Theme.of(context).accentColor,
         unselectedItemColor: Colors.grey[700],
-        selectedFontSize: 10.0  ,
+        selectedFontSize: 10.0,
         unselectedFontSize: 10.0,
         showSelectedLabels: true,
         showUnselectedLabels: true,

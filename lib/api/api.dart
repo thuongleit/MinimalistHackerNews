@@ -42,7 +42,9 @@ class HackerNewsApi {
         break;
     }
 
-    return await _client.get("$_API_ENDPOINT$path.json");
+    var url = "$_API_ENDPOINT$path.json";
+    print("request $url");
+    return await _client.get(url);
   }
 
   Future<Item> getItem(int id) async {

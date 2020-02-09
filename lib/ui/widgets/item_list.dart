@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hacker_news/api/api.dart';
-import 'package:hacker_news/models/item.dart';
-import 'package:hacker_news/ui/widgets/error.dart';
-import 'package:hacker_news/ui/widgets/item_row.dart';
-import 'package:hacker_news/ui/widgets/loading.dart';
+import '../../api/api.dart';
+import '../../models/item.dart';
+import '../../ui/widgets/error.dart';
+import '../../ui/widgets/item_row.dart';
+import '../../ui/widgets/loading.dart';
 
 class ItemList extends StatefulWidget {
   final StoryType type;
-
   const ItemList({Key key, this.type}) : super(key: key);
 
   @override
@@ -37,7 +36,6 @@ class _ItemListState extends State<ItemList> {
 
     try {
       var ids = await _api.fetchStories(widget.type);
-      print(ids);
       setState(() {
         this._isLoading = false;
         this._ids = ids.toList();
