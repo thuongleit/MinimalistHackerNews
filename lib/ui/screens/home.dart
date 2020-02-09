@@ -35,45 +35,26 @@ class _MyHomePageState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<BottomNavigationBarItem> _navigationBarItems =
+        <BottomNavigationBarItem>[];
+    for (var i = 0; i < _screens.length; i++) {
+      _navigationBarItems.add(
+        BottomNavigationBarItem(
+          icon: Icon(
+            _tabIcons[i],
+            size: _iconSize,
+          ),
+          title: Text(_tabTitles[i]),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(
-                _tabIcons[0],
-                size: _iconSize,
-              ),
-              title: Text(_tabTitles[0])),
-          BottomNavigationBarItem(
-              icon: Icon(
-                _tabIcons[1],
-                size: _iconSize,
-              ),
-              title: Text(_tabTitles[1])),
-          BottomNavigationBarItem(
-              icon: Icon(
-                _tabIcons[2],
-                size: _iconSize,
-              ),
-              title: Text(_tabTitles[2])),
-          BottomNavigationBarItem(
-              icon: Icon(
-                _tabIcons[3],
-                size: _iconSize,
-              ),
-              title: Text(_tabTitles[3])),
-          BottomNavigationBarItem(
-              icon: Icon(
-                _tabIcons[4],
-                size: _iconSize,
-              ),
-              title: Text(_tabTitles[4])),
-
-        ],
+        items: _navigationBarItems,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
