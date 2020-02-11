@@ -33,6 +33,14 @@ class ItemRow extends StatelessWidget {
     final TextStyle descriptionTextStyle =
         TextStyle(fontSize: 11.0, color: Colors.grey);
 
+    var commentDescription;
+
+    if (item.descendants > 1) {
+      commentDescription = '${item.descendants} comments';
+    } else if (item.descendants == 1) {
+      commentDescription = '${item.descendants} comment';
+    }
+
     return InkWell(
       child: Container(
         padding: EdgeInsets.all(4.0),
@@ -77,14 +85,39 @@ class ItemRow extends StatelessWidget {
                     Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 4)),
                     Row(
                       children: <Widget>[
+//                        item.descendants > 0
+//                            ? InkWell(
+//                                child: Row(
+//                                  children: <Widget>[
+//                                    Text(
+//                                      '${item.descendants}',
+//                                      style: descriptionTextStyle,
+//                                    ),
+//                                    Icon(
+//                                      Icons.chat,
+//                                      size: 16.0,
+//                                      color: Colors.grey,
+//                                    )
+//                                  ],
+//                                ),
+//                                onTap: () {
+//                                  _launchURL(context, item.getContentUrl());
+//                                },
+//                              )
+//                            : Container(),
                         Text(
-                          "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''}",
+                          "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''} ${item.descendants > 0 ? ' | ' + commentDescription : ''}",
                           style: descriptionTextStyle,
                         ),
                         Expanded(child: Container()),
-                        Text(
-                          '${timeago.format(date)}',
-                          style: descriptionTextStyle,
+                        InkWell(
+                          child: Text(
+                            '${timeago.format(date)}',
+                            style: descriptionTextStyle,
+                          ),
+                          onTap: () {
+                            _launchURL(context, item.getContentUrl());
+                          },
                         ),
                       ],
                     )
