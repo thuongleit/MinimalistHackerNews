@@ -54,34 +54,37 @@ class _ItemListState extends State<ItemList> {
   Widget build(BuildContext context) {
     return this._errorLoading != null
         ? ErrorHt(
-      error: "ssss",
-    )
+            error: "ssss",
+          )
         : this._isLoading
-        ? LoadingIndicator()
-        : ListView.builder(
-          controller: widget.scrollController,
-      itemCount: this._ids.length,
-      itemBuilder: (BuildContext context, int position) {
-        return FutureBuilder(
-          future: _api.getItem(this._ids[position]),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (items[position] != null) {
-              var item = items[position];
-              return ItemRow(item: item, key: Key(item.id.toString()),);
-            }
+            ? LoadingIndicator()
+            : ListView.builder(
+                controller: widget.scrollController,
+                itemCount: this._ids.length,
+                itemBuilder: (BuildContext context, int position) {
+                  return FutureBuilder(
+                      future: _api.getItem(this._ids[position]),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (items[position] != null) {
+                          var item = items[position];
+                          return ItemRow(
+                            item: item,
+                            key: Key(item.id.toString()),
+                          );
+                        }
 
-            if (snapshot.hasData && snapshot.data != null) {
-              var item = snapshot.data;
-              items[position] = item;
-              return ItemRow(item: item, key: Key(item.id.toString()),);
-        } else if (snapshot.hasError) {
-              return ErrorHt(error: "Error to load story",);
-            } else {
-              return LoadingIndicator();
-            }
-          },
-        );
-      },
-    );
+                        if (snapshot.hasData && snapshot.data != null) {
+                          var item = snapshot.data;
+                          items[position] = item;
+                          return ItemRow(
+                            item: item,
+                            key: Key(item.id.toString()),
+                          );
+                        }
+
+                        return Container(height: 0.0);
+                      });
+                },
+              );
   }
 }

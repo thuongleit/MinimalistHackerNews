@@ -24,36 +24,58 @@ class ItemRow extends StatelessWidget {
     //   );
     // }
 
+    final TextStyle descriptionTextStyle =
+        TextStyle(fontSize: 11.0, color: Colors.grey);
+
     return Container(
       padding: EdgeInsets.all(4.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Icon(Icons.arrow_drop_up, size: 24.0, color: Colors.grey),
-                Text('${item.score}',
-                    style: TextStyle(fontSize: 12.0, color: Colors.grey))
+                Text(
+                  String.fromCharCode(Icons.arrow_drop_up.codePoint),
+                  style: TextStyle(
+                      fontFamily: Icons.arrow_drop_up.fontFamily,
+                      package: Icons.arrow_drop_up.fontPackage,
+                      fontSize: 24.0,
+                      color: Colors.grey),
+                ),
+                Text('${item.score}', style: descriptionTextStyle),
               ],
             ),
           ),
+          Padding(padding: EdgeInsets.fromLTRB(4, 0, 0, 4)),
           Flexible(
             child: Container(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     item.title,
-                    style: TextStyle(fontSize: 12.0),
+                    style: TextStyle(fontSize: 13.0),
                     softWrap: true,
                     maxLines: 1,
                   ),
-                  Text(
-                    "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''}",
-                    style: TextStyle(fontSize: 10.0, color: Colors.grey),
-                    textAlign: TextAlign.start,
-                  ),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 4)),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''}",
+                        style: descriptionTextStyle,
+                      ),
+                      Expanded(child: Container()),
+                      Text(
+                        '${timeago.format(date)}',
+                        style: descriptionTextStyle,
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
