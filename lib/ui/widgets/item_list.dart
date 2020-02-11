@@ -53,9 +53,7 @@ class _ItemListState extends State<ItemList> {
   @override
   Widget build(BuildContext context) {
     return this._errorLoading != null
-        ? ErrorHt(
-            error: "ssss",
-          )
+        ? ErrorHt(error: _errorLoading)
         : this._isLoading
             ? LoadingIndicator()
             : ListView.builder(
@@ -63,27 +61,38 @@ class _ItemListState extends State<ItemList> {
                 itemCount: this._ids.length,
                 itemBuilder: (BuildContext context, int position) {
                   return FutureBuilder(
-                      future: _api.getItem(this._ids[position]),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (items[position] != null) {
-                          var item = items[position];
+                    future: _api.getItem(this._ids[position]),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (items[position] != null) {
+                        var item = items[position];
+                        if (item != null) {
                           return ItemRow(
                             item: item,
                             key: Key(item.id.toString()),
                           );
+                        } else {
+                          return LoadingIndicator();
                         }
+                      }
 
-                        if (snapshot.hasData && snapshot.data != null) {
-                          var item = snapshot.data;
-                          items[position] = item;
+                      if (snapshot.hasData && snapshot.data != null) {
+                        var item = snapshot.data;
+                        items[position] = item;
+                        if (item != null) {
                           return ItemRow(
                             item: item,
                             key: Key(item.id.toString()),
                           );
+                        } else {
+                          return Container();
                         }
-
-                        return Container(height: 0.0);
-                      });
+                      } else if (snapshot.hasError) {
+                        return Container();
+                      } else {
+                        return LoadingIndicator();
+                      }
+                    },
+                  );
                 },
               );
   }

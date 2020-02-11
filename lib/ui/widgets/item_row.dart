@@ -81,6 +81,7 @@ class ItemRow extends StatelessWidget {
                       style: TextStyle(fontSize: 13.0),
                       softWrap: true,
                       maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 4)),
                     Row(
