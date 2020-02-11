@@ -33,7 +33,7 @@ class ItemRow extends StatelessWidget {
     final TextStyle descriptionTextStyle =
         TextStyle(fontSize: 11.0, color: Colors.grey);
 
-    return GestureDetector(
+    return InkWell(
       child: Container(
         padding: EdgeInsets.all(4.0),
         child: Row(
