@@ -84,11 +84,13 @@ class _MyHomePageState extends State<HomeScreen> {
       );
     }
     var tab = _tabs[_selectedIndex];
+    var statusBarSize = MediaQuery.of(context).padding.top;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight + kBottomNavigationBarHeight),
+        preferredSize: Size.fromHeight(kToolbarHeight + statusBarSize),
         child: AnimatedContainer(
-          height: _showToolbar ? kToolbarHeight : 0.0,
+          height: _showToolbar ? kToolbarHeight + statusBarSize : 0.0,
           duration: Duration(milliseconds: 200),
           child: AppBar(
             title: Text(widget.title),
