@@ -1,4 +1,6 @@
 class Item {
+  static final String BROWSER_URL = 'https://news.ycombinator.com';
+
   final int id;
   final String title;
   final String by;
@@ -24,6 +26,10 @@ class Item {
       this.score,
       this.descendants,
       this.kids});
+
+  String getVoteUrl() => '$BROWSER_URL/vote?id=$id&how=up';
+
+  String getContentUrl() => '$BROWSER_URL/item?id=$id';
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(

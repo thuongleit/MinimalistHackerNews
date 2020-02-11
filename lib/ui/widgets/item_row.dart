@@ -42,19 +42,24 @@ class ItemRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    String.fromCharCode(Icons.arrow_drop_up.codePoint),
-                    style: TextStyle(
-                        fontFamily: Icons.arrow_drop_up.fontFamily,
-                        package: Icons.arrow_drop_up.fontPackage,
-                        fontSize: 24.0,
-                        color: Colors.grey),
-                  ),
-                  Text('${item.score}', style: descriptionTextStyle),
-                ],
+              child: InkWell(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      String.fromCharCode(Icons.arrow_drop_up.codePoint),
+                      style: TextStyle(
+                          fontFamily: Icons.arrow_drop_up.fontFamily,
+                          package: Icons.arrow_drop_up.fontPackage,
+                          fontSize: 24.0,
+                          color: Colors.grey),
+                    ),
+                    Text('${item.score}', style: descriptionTextStyle),
+                  ],
+                ),
+                onTap: () {
+                  _launchURL(context, item.getVoteUrl());
+                },
               ),
             ),
             Padding(padding: EdgeInsets.fromLTRB(4, 0, 0, 4)),
@@ -91,7 +96,11 @@ class ItemRow extends StatelessWidget {
         ),
       ),
       onTap: () {
-        _launchURL(context, item.url);
+        if (item.url == null || item.url.isEmpty) {
+          _launchURL(context, item.getContentUrl());
+        } else {
+          _launchURL(context, item.url);
+        }
       },
     );
   }

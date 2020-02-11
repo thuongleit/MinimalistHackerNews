@@ -3,7 +3,7 @@ import './../models/item.dart';
 import 'dart:async';
 
 class HackerNewsApi {
-  static final String _API_ENDPOINT = "https://hacker-news.firebaseio.com/v0/";
+  static final String _API_ENDPOINT = 'https://hacker-news.firebaseio.com/v0/';
 
   FirebaseClient _client = FirebaseClient.anonymous();
 
