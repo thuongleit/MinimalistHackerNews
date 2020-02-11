@@ -7,7 +7,9 @@ import '../../ui/widgets/loading.dart';
 
 class ItemList extends StatefulWidget {
   final StoryType type;
-  const ItemList({Key key, this.type}) : super(key: key);
+  final ScrollController scrollController;
+
+  const ItemList({Key key, this.type, this.scrollController}) : super(key: key);
 
   @override
   _ItemListState createState() => _ItemListState();
@@ -57,6 +59,7 @@ class _ItemListState extends State<ItemList> {
         : this._isLoading
         ? LoadingIndicator()
         : ListView.builder(
+          controller: widget.scrollController,
       itemCount: this._ids.length,
       itemBuilder: (BuildContext context, int position) {
         return FutureBuilder(
@@ -71,7 +74,7 @@ class _ItemListState extends State<ItemList> {
               var item = snapshot.data;
               items[position] = item;
               return ItemRow(item: item, key: Key(item.id.toString()),);
-            } else if (snapshot.hasError) {
+        } else if (snapshot.hasError) {
               return ErrorHt(error: "Error to load story",);
             } else {
               return LoadingIndicator();

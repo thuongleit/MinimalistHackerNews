@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../../models/item.dart';
 import '../../ui/widgets/item_list.dart';
 
@@ -12,7 +13,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<HomeScreen> {
+  ScrollController _scrollController;
+
   int _selectedIndex = 0;
+  var _showToolbar;
 
   final List<StoryType> _tabs = <StoryType>[
     StoryType.NEW,
@@ -33,6 +37,38 @@ class _MyHomePageState extends State<HomeScreen> {
   ];
 
   @override
+  void initState() {
+    _scrollController = ScrollController();
+    _showToolbar = true;
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_showToolbar) {
+          setState(() {
+            _showToolbar = false;
+          });
+        }
+      }
+
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!_showToolbar) {
+          setState(() {
+            _showToolbar = true;
+          });
+        }
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(() {});
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final List<BottomNavigationBarItem> _navigationBarItems =
         <BottomNavigationBarItem>[];
@@ -49,27 +85,39 @@ class _MyHomePageState extends State<HomeScreen> {
     }
     var tab = _tabs[_selectedIndex];
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight + kBottomNavigationBarHeight),
+        child: AnimatedContainer(
+          height: _showToolbar ? kToolbarHeight : 0.0,
+          duration: Duration(milliseconds: 200),
+          child: AppBar(
+            title: Text(widget.title),
+          ),
+        ),
       ),
       body: ItemList(
         key: ValueKey(tab.hashCode),
         type: tab,
+        scrollController: _scrollController,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: _navigationBarItems,
-        elevation: 4.0,
-        selectedItemColor: Theme.of(context).accentColor,
-        unselectedItemColor: Colors.grey[700],
-        selectedFontSize: 10.0,
-        unselectedFontSize: 10.0,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        unselectedLabelStyle: TextStyle(
-          color: Colors.grey[700],
+      bottomNavigationBar: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        height: _showToolbar ? kBottomNavigationBarHeight : 0.0,
+        child: BottomNavigationBar(
+          items: _navigationBarItems,
+          elevation: 4.0,
+          selectedItemColor: Theme.of(context).accentColor,
+          unselectedItemColor: Colors.grey[700],
+          selectedFontSize: 10.0,
+          unselectedFontSize: 10.0,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          unselectedLabelStyle: TextStyle(
+            color: Colors.grey[700],
+          ),
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
         ),
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
     );
   }
