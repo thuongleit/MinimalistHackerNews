@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hacker_news/ui/widgets/item_row.dart';
 import '../../api/api.dart';
 import '../../models/item.dart';
 import '../../ui/widgets/error.dart';
-import '../../ui/widgets/item_row.dart';
 import '../../ui/widgets/loading.dart';
+import '../../ui/widgets/fade_loading.dart';
 
 class ItemList extends StatefulWidget {
   final StoryType type;
   final ScrollController scrollController;
+  final AnimationController animationController;
 
-  const ItemList({Key key, this.type, this.scrollController}) : super(key: key);
+  const ItemList(
+      {Key key, this.type, this.scrollController, this.animationController})
+      : super(key: key);
 
   @override
   _ItemListState createState() => _ItemListState();
@@ -71,7 +75,7 @@ class _ItemListState extends State<ItemList> {
                             key: Key(item.id.toString()),
                           );
                         } else {
-                          return LoadingIndicator();
+                          return FadeLoading();
                         }
                       }
 
@@ -89,7 +93,7 @@ class _ItemListState extends State<ItemList> {
                       } else if (snapshot.hasError) {
                         return Container();
                       } else {
-                        return LoadingIndicator();
+                        return FadeLoading();
                       }
                     },
                   );
