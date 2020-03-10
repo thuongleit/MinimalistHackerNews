@@ -42,7 +42,7 @@ class Item {
       url: json['url'],
       text: json['text'],
       score: json['score'],
-      descendants: json['descendants'],
+      descendants: json['descendants'] ?? 0,
       kids: json['kids'],
     );
   }
