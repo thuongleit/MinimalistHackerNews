@@ -42,50 +42,55 @@ class ItemRow extends StatelessWidget {
     }
 
     return InkWell(
-      child: Container(
-        padding: EdgeInsets.all(4.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              child: InkWell(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      String.fromCharCode(Icons.arrow_drop_up.codePoint),
-                      style: TextStyle(
-                          fontFamily: Icons.arrow_drop_up.fontFamily,
-                          package: Icons.arrow_drop_up.fontPackage,
-                          fontSize: 24.0,
-                          color: Colors.grey),
-                    ),
-                    Text('${item.score}', style: descriptionTextStyle),
-                  ],
+      child: Dismissible(
+        key: Key(item.id.toString()),
+        background: slideRightToLeftBackground(),
+        secondaryBackground: slideLeftToRightBackground(),
+        onDismissed: (direction) => onDragDismissed(context, direction),
+        child: Container(
+          padding: EdgeInsets.all(4.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                child: InkWell(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        String.fromCharCode(Icons.arrow_drop_up.codePoint),
+                        style: TextStyle(
+                            fontFamily: Icons.arrow_drop_up.fontFamily,
+                            package: Icons.arrow_drop_up.fontPackage,
+                            fontSize: 24.0,
+                            color: Colors.grey),
+                      ),
+                      Text('${item.score}', style: descriptionTextStyle),
+                    ],
+                  ),
+                  onTap: () {
+                    _launchURL(context, item.getVoteUrl());
+                  },
                 ),
-                onTap: () {
-                  _launchURL(context, item.getVoteUrl());
-                },
               ),
-            ),
-            Padding(padding: EdgeInsets.fromLTRB(4, 0, 0, 4)),
-            Flexible(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      item.title,
-                      style: TextStyle(fontSize: 13.0),
-                      softWrap: true,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 4)),
-                    Row(
-                      children: <Widget>[
+              Padding(padding: EdgeInsets.fromLTRB(4, 0, 0, 4)),
+              Flexible(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        item.title,
+                        style: TextStyle(fontSize: 13.0),
+                        softWrap: true,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 4)),
+                      Row(
+                        children: <Widget>[
 //                        item.descendants > 0
 //                            ? InkWell(
 //                                child: Row(
@@ -106,27 +111,23 @@ class ItemRow extends StatelessWidget {
 //                                },
 //                              )
 //                            : Container(),
-                        Text(
-                          "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''} ${item.descendants > 0 ? ' | ' + commentDescription : ''}",
-                          style: descriptionTextStyle,
-                        ),
-                        Expanded(child: Container()),
-                        InkWell(
-                          child: Text(
+                          Text(
+                            "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''} ${item.descendants > 0 ? ' | ' + commentDescription : ''}",
+                            style: descriptionTextStyle,
+                          ),
+                          Expanded(child: Container()),
+                          Text(
                             '${timeago.format(date)}',
                             style: descriptionTextStyle,
                           ),
-                          onTap: () {
-                            _launchURL(context, item.getContentUrl());
-                          },
-                        ),
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       onTap: () {
@@ -137,5 +138,64 @@ class ItemRow extends StatelessWidget {
         }
       },
     );
+  }
+
+  Widget slideRightToLeftBackground() {
+    return Container(
+      color: Colors.blue,
+      child: Align(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(width: 20),
+            Icon(Icons.save, color: Colors.white),
+            Text(
+              " Read later",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ],
+        ),
+        alignment: Alignment.centerLeft,
+      ),
+    );
+  }
+
+  Widget slideLeftToRightBackground() {
+    return Container(
+      color: Colors.green,
+      child: Align(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Icon(Icons.comment, color: Colors.white),
+            Text(
+              " Go To Comment",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.right,
+            ),
+            SizedBox(
+              width: 20,
+            ),
+          ],
+        ),
+        alignment: Alignment.centerRight,
+      ),
+    );
+  }
+
+  onDragDismissed(BuildContext context, DismissDirection direction) {
+    if (direction == DismissDirection.endToStart) {
+      _launchURL(context, item.getContentUrl());
+      print('Go To Comment');
+    } else {
+      print('Read later');
+    }
   }
 }
