@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hacker_news/ui/widgets/item_row.dart';
 import '../../api/api.dart';
@@ -20,6 +21,9 @@ class ItemList extends StatefulWidget {
 }
 
 class _ItemListState extends State<ItemList> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+
   HackerNewsApi _api = HackerNewsApi();
   bool _isLoading = false;
   String _errorLoading;
@@ -41,7 +45,7 @@ class _ItemListState extends State<ItemList> {
     });
 
     try {
-      var ids = await _api.fetchStories(widget.type);
+      var ids = await _fetchStoriesFuture();
       setState(() {
         this._isLoading = false;
         this._ids = ids.toList();
@@ -56,48 +60,68 @@ class _ItemListState extends State<ItemList> {
 
   @override
   Widget build(BuildContext context) {
+    print('build ${_ids.length}');
     return this._errorLoading != null
         ? ErrorHt(error: _errorLoading)
         : this._isLoading
             ? LoadingIndicator()
-            : ListView.builder(
-                controller: widget.scrollController,
-                itemCount: this._ids.length,
-                itemBuilder: (BuildContext context, int position) {
-                  return FutureBuilder(
-                    future: _api.getItem(this._ids[position]),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (items[position] != null) {
-                        var item = items[position];
-                        if (item != null) {
+            : RefreshIndicator(
+                key: _refreshIndicatorKey,
+                child: ListView.builder(
+                  controller: widget.scrollController,
+                  itemCount: this._ids.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    return FutureBuilder(
+                      future: _api.getItem(_ids[position]),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        var itemId = _ids[position];
+                        if (items[itemId] != null) {
+                          var item = items[itemId];
                           return ItemRow(
                             item: item,
-                            key: Key(item.id.toString()),
+                            key: Key(itemId.toString()),
                           );
+                        }
+
+                        if (snapshot.hasData && snapshot.data != null) {
+                          if (snapshot.data != null) {
+                            items[(snapshot.data as Item).id] = snapshot.data;
+                            return ItemRow(
+                              item: snapshot.data,
+                              key: Key(itemId.toString()),
+                            );
+                          } else {
+                            print('item is null $position and id = ${itemId}');
+                            return Container();
+                          }
+                        } else if (snapshot.hasError) {
+                          print('error $position and id = ${itemId}');
+                          return Container();
                         } else {
                           return FadeLoading();
                         }
-                      }
-
-                      if (snapshot.hasData && snapshot.data != null) {
-                        var item = snapshot.data;
-                        items[position] = item;
-                        if (item != null) {
-                          return ItemRow(
-                            item: item,
-                            key: Key(item.id.toString()),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      } else if (snapshot.hasError) {
-                        return Container();
-                      } else {
-                        return FadeLoading();
-                      }
-                    },
-                  );
-                },
+                      },
+                    );
+                  },
+                ),
+                onRefresh: _handleRefresh,
               );
   }
+
+  Future<Null> _handleRefresh() async {
+    List fetchStories = await _fetchStoriesFuture();
+
+    if (!listEquals(_ids, fetchStories)) {
+      print('item is not equal');
+      final unduplicatedItems = Set.of(fetchStories + _ids);
+      setState(() {
+        this._ids = unduplicatedItems.toList();
+        print('final _ids = $_ids');
+      });
+    }
+
+    return null;
+  }
+
+  Future<List> _fetchStoriesFuture() => _api.fetchStories(widget.type);
 }
