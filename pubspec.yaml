@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^0.1.2
+#  cupertino_icons: ^0.1.2
   firebase: ^5.0.0
   timeago: ^2.0.25
   flutter_custom_tabs: ^0.6.0

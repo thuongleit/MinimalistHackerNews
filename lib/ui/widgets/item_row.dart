@@ -44,8 +44,8 @@ class ItemRow extends StatelessWidget {
     return InkWell(
       child: Dismissible(
         key: Key(item.id.toString()),
-        background: slideRightToLeftBackground(),
-        secondaryBackground: slideLeftToRightBackground(),
+//        background: slideRightToLeftBackground(),
+         background: slideLeftToRightBackground(),
         onDismissed: (direction) => onDragDismissed(context, direction),
         child: Container(
           padding: EdgeInsets.all(4.0),
