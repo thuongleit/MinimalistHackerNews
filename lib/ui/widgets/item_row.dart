@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:hacker_news/utils/url_util.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../models/item.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 class ItemRow extends StatelessWidget {
   final Item item;
 
   const ItemRow({Key key, this.item}) : super(key: key);
 
-  void _launchURL(BuildContext context, String url) async {
-    try {
+  Future<void> _launchInBrowser(String url) async {
+    if (await canLaunch(url)) {
       await launch(
         url,
-        option: new CustomTabsOption(
-          toolbarColor: Theme.of(context).primaryColor,
-          enableDefaultShare: true,
-          enableUrlBarHiding: true,
-          showPageTitle: true,
-          animation: new CustomTabsAnimation.slideIn(),
-        ),
+        forceSafariVC: false,
+        forceWebView: false,
+        headers: <String, String>{'my_header_key': 'my_header_value'},
       );
-    } catch (e) {
-      // An exception is thrown if browser app is not installed on Android device.
-      debugPrint(e.toString());
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -45,7 +40,7 @@ class ItemRow extends StatelessWidget {
       child: Dismissible(
         key: Key(item.id.toString()),
 //        background: slideRightToLeftBackground(),
-         background: slideLeftToRightBackground(),
+        background: slideLeftToRightBackground(),
         onDismissed: (direction) => onDragDismissed(context, direction),
         child: Container(
           padding: EdgeInsets.all(4.0),
@@ -71,7 +66,7 @@ class ItemRow extends StatelessWidget {
                     ],
                   ),
                   onTap: () {
-                    _launchURL(context, item.getVoteUrl());
+                    _launchInBrowser(item.getVoteUrl());
                   },
                 ),
               ),
@@ -132,9 +127,9 @@ class ItemRow extends StatelessWidget {
       ),
       onTap: () {
         if (item.url == null || item.url.isEmpty) {
-          _launchURL(context, item.getContentUrl());
+          _launchInBrowser(item.getContentUrl());
         } else {
-          _launchURL(context, item.url);
+          _launchInBrowser(item.url);
         }
       },
     );
@@ -192,7 +187,7 @@ class ItemRow extends StatelessWidget {
 
   onDragDismissed(BuildContext context, DismissDirection direction) {
     if (direction == DismissDirection.endToStart) {
-      _launchURL(context, item.getContentUrl());
+      _launchInBrowser(item.getContentUrl());
       print('Go To Comment');
     } else {
       print('Read later');
