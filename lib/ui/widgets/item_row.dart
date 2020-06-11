@@ -36,65 +36,75 @@ class ItemRow extends StatelessWidget {
       commentDescription = '${item.descendants} comment';
     }
 
-    return Container(
-      padding: const EdgeInsets.all(4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          InkWell(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  String.fromCharCode(Icons.arrow_drop_up.codePoint),
-                  style: TextStyle(
-                      fontFamily: Icons.arrow_drop_up.fontFamily,
-                      package: Icons.arrow_drop_up.fontPackage,
-                      fontSize: 24.0,
-                      color: Colors.grey),
-                ),
-                Text('${item.score}', style: descriptionTextStyle),
-              ],
-            ),
-            onTap: () {
-              _launchInBrowser(item.getVoteUrl());
-            },
-          ),
-          const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
-          Flexible(
-            child: Container(
+    return InkWell(
+      child: Container(
+        padding: const EdgeInsets.all(4.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            InkWell(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    item.title,
-                    style: TextStyle(fontSize: 13.0),
-                    softWrap: true,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    String.fromCharCode(Icons.arrow_drop_up.codePoint),
+                    style: TextStyle(
+                        fontFamily: Icons.arrow_drop_up.fontFamily,
+                        package: Icons.arrow_drop_up.fontPackage,
+                        fontSize: 24.0,
+                        color: Colors.grey),
                   ),
-                  const Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 4)),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''} ${item.descendants > 0 ? ' | ' + commentDescription : ''}",
-                        style: descriptionTextStyle,
-                      ),
-                      Expanded(child: Container()),
-                      Text(
-                        '${timeago.format(date)}',
-                        style: descriptionTextStyle,
-                      ),
-                    ],
-                  )
+                  Text('${item.score}', style: descriptionTextStyle),
                 ],
               ),
+              onTap: () {
+                _launchInBrowser(item.getVoteUrl());
+              },
             ),
-          ),
-        ],
+            const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
+            Flexible(
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      item.title,
+                      style: TextStyle(fontSize: 13.0),
+                      softWrap: true,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 4)),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''} ${item.descendants > 0 ? ' | ' + commentDescription : ''}",
+                          style: descriptionTextStyle,
+                        ),
+                        Expanded(child: Container()),
+                        Text(
+                          '${timeago.format(date)}',
+                          style: descriptionTextStyle,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
+      onTap: () {
+        if (item.url == null || item.url.isEmpty) {
+          _launchInBrowser(item.getContentUrl());
+        } else {
+          _launchInBrowser(item.url);
+        }
+      },
     );
   }
 }
