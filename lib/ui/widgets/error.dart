@@ -8,7 +8,7 @@ class ErrorHt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32.0),
       child: Center(
         child: Column(
           children: <Widget>[
@@ -21,7 +21,7 @@ class ErrorHt extends StatelessWidget {
               ),
             ),
             FlatButton(
-              child: Text("Retry"),
+              child: const Text("Retry"),
               onPressed: null,
             )
           ],
