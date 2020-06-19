@@ -1,4 +1,4 @@
-package vifi.oy.hacker_news
+package vifi.services.hknews
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
