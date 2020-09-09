@@ -1,6 +1,8 @@
-class Item {
-  static final String BROWSER_URL = 'https://news.ycombinator.com';
+import '../utils/url.dart';
 
+enum StoryType { NEW, TOP, BEST, ASK, SHOW, JOB }
+
+class Story {
   final int id;
   final String title;
   final String by;
@@ -12,27 +14,27 @@ class Item {
   final int score;
   final int descendants;
   final List<dynamic> kids;
-  List<Item> comments = List();
 
-  Item(
-      {this.id,
-      this.title,
-      this.by,
-      this.deleted,
-      this.time,
-      this.type,
-      this.url,
-      this.text,
-      this.score,
-      this.descendants,
-      this.kids});
+  String get contentUrl => getRightUrl(Url.itemContentUrl, '$id');
 
-  String getVoteUrl() => '$BROWSER_URL/vote?id=$id&how=up';
+  String get voteUrl => getRightUrl(Url.itemVoteUrl, '$id');
 
-  String getContentUrl() => '$BROWSER_URL/item?id=$id';
+  const Story({
+    this.id,
+    this.title,
+    this.by,
+    this.deleted,
+    this.time,
+    this.type,
+    this.url,
+    this.text,
+    this.score,
+    this.descendants,
+    this.kids,
+  });
 
-  factory Item.fromJson(Map<String, dynamic> json) {
-    return Item(
+  factory Story.fromJson(Map<String, dynamic> json) {
+    return Story(
       id: json['id'],
       title: json['title'],
       by: json['by'],
@@ -47,5 +49,3 @@ class Item {
     );
   }
 }
-
-enum StoryType { NEW, TOP, BEST, ASK, SHOW, JOB }

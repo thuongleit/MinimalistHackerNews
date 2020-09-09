@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import '../../models/item.dart';
-import '../../ui/widgets/item_list.dart';
+import 'package:hacker_news/repositories/stories.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/index.dart';
+import '../../ui/tabs/index.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.title}) : super(key: key);
@@ -84,23 +87,25 @@ class _MyHomePageState extends State<HomeScreen> {
       );
     }
     var tab = _tabs[_selectedIndex];
-    var statusBarSize = MediaQuery.of(context).padding.top;
+    // var statusBarSize = MediaQuery.of(context).padding.top;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight + statusBarSize),
-        child: AnimatedContainer(
-          height: _showToolbar ? kToolbarHeight + statusBarSize : 0.0,
-          duration: Duration(milliseconds: 200),
-          child: AppBar(
-            title: Text(widget.title),
-          ),
+      // appBar: PreferredSize(
+      //   preferredSize: Size.fromHeight(kToolbarHeight + statusBarSize),
+      //   child: AnimatedContainer(
+      //     height: _showToolbar ? kToolbarHeight + statusBarSize : 0.0,
+      //     duration: Duration(milliseconds: 200),
+      //     child: AppBar(
+      //       title: Text(widget.title),
+      //     ),
+      //   ),
+      // ),
+      body: ChangeNotifierProvider<StoriesRepository>(
+        create: (_) => StoriesRepository(tab),
+        builder: (context, child) => StoriesTab(
+          storyType: tab,
+          scrollController: _scrollController,
         ),
-      ),
-      body: ItemList(
-        key: ValueKey(tab.hashCode),
-        type: tab,
-        scrollController: _scrollController,
       ),
       bottomNavigationBar: AnimatedContainer(
         duration: Duration(milliseconds: 200),
