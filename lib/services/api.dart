@@ -17,17 +17,17 @@ class ApiService {
 
   static String _getStoryUrl(StoryType type) {
     switch (type) {
-      case StoryType.NEW:
+      case StoryType.New:
         return Url.newStories;
-      case StoryType.TOP:
+      case StoryType.Top:
         return Url.topStories;
-      case StoryType.BEST:
+      case StoryType.Best:
         return Url.bestStories;
-      case StoryType.JOB:
+      case StoryType.Jobs:
         return Url.jobStories;
-      case StoryType.SHOW:
+      case StoryType.Show:
         return Url.showStories;
-      case StoryType.ASK:
+      case StoryType.Ask:
         return Url.askStories;
       default:
         return '';

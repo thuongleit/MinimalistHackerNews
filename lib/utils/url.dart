@@ -9,7 +9,7 @@ class Url {
   //stories urls
   static const newStories = '$hackerNewsBaseUrl/newstories.json';
   static const topStories = '$hackerNewsBaseUrl/topstories.json';
-  static const bestStories = '$hackerNewsBaseUrl/besttories.json';
+  static const bestStories = '$hackerNewsBaseUrl/beststories.json';
   static const jobStories = '$hackerNewsBaseUrl/jobstories.json';
   static const showStories = '$hackerNewsBaseUrl/showstories.json';
   static const askStories = '$hackerNewsBaseUrl/askstories.json';

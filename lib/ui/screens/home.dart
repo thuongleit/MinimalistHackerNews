@@ -21,23 +21,7 @@ class _MyHomePageState extends State<HomeScreen> {
   int _selectedIndex = 0;
   var _showToolbar;
 
-  final List<StoryType> _tabs = <StoryType>[
-    StoryType.NEW,
-    StoryType.TOP,
-    StoryType.ASK,
-    StoryType.SHOW,
-    StoryType.JOB
-  ];
-
-  final List<String> _tabTitles = <String>['new', 'top', 'ask', 'show', 'jobs'];
-
-  final List<IconData> _tabIcons = <IconData>[
-    Icons.new_releases,
-    Icons.whatshot,
-    Icons.question_answer,
-    Icons.slideshow,
-    Icons.work
-  ];
+  List<StoryType> get _tabs => StoryType.values;
 
   @override
   void initState() {
@@ -75,14 +59,15 @@ class _MyHomePageState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final List<BottomNavigationBarItem> _navigationBarItems =
         <BottomNavigationBarItem>[];
-    for (var i = 0; i < _tabs.length; i++) {
+    for (var index = 0; index < _tabs.length; index++) {
+      var type = _tabs[index];
       _navigationBarItems.add(
         BottomNavigationBarItem(
           icon: Icon(
-            _tabIcons[i],
+            getStoryIcon(type),
             size: 24.0,
           ),
-          title: Text(_tabTitles[i]),
+          title: Text(getStoryTitle(type)),
         ),
       );
     }
@@ -95,7 +80,7 @@ class _MyHomePageState extends State<HomeScreen> {
         ChangeNotifierProvider(create: (_) => BestStoriesRepository()),
         ChangeNotifierProvider(create: (_) => AskStoriesRepository()),
         ChangeNotifierProvider(create: (_) => ShowStoriesRepository()),
-        ChangeNotifierProvider(create: (_) => JobStoriesRepository()),
+        ChangeNotifierProvider(create: (_) => JobsStoriesRepository()),
       ],
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -126,54 +111,51 @@ class _MyHomePageState extends State<HomeScreen> {
               color: Colors.grey[700],
             ),
             currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
           ),
         ),
       ),
     );
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   Widget _buildBody(StoryType tab, ScrollController scrollController) {
     switch (tab) {
-      //enum StoryType { NEW, TOP, BEST, ASK, SHOW, JOB }
-      case StoryType.NEW:
+      case StoryType.New:
         return StoriesTab<NewStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.TOP:
+      case StoryType.Top:
         return StoriesTab<TopStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.BEST:
+      case StoryType.Best:
         return StoriesTab<BestStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.ASK:
+      case StoryType.Ask:
         return StoriesTab<AskStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.SHOW:
+      case StoryType.Show:
         return StoriesTab<ShowStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.JOB:
-        return StoriesTab<JobStoriesRepository>(
+      case StoryType.Jobs:
+        return StoriesTab<JobsStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hacker_news/utils/url_util.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../models/item.dart';
+import '../../models/story.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class StoryRow extends StatelessWidget {
