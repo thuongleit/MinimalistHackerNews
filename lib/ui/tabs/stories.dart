@@ -9,20 +9,20 @@ import '../../repositories/index.dart';
 import '../../services/index.dart';
 import '../../utils/menu.dart';
 
-class StoriesTab extends StatelessWidget {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      new GlobalKey<RefreshIndicatorState>();
-
+class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   final StoryType storyType;
   final ScrollController scrollController;
 
-  StoriesTab({this.storyType, this.scrollController});
+  StoriesTab operator <(Type type) => this;
+
+  const StoriesTab({Key key, this.storyType, this.scrollController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StoriesRepository>(
+    return Consumer<T>(
       builder: (context, repository, child) => Scaffold(
-        body: SliverPage<StoriesRepository>.display(
+        body: SliverPage<T>.display(
           controller: scrollController,
           title: '',
           opacity: null,
@@ -148,7 +148,7 @@ class StoriesTab extends StatelessWidget {
 // }
 
   Widget _buildStoryRows(BuildContext context, int index) {
-    return Consumer<StoriesRepository>(builder: (context, repository, child) {
+    return Consumer<T>(builder: (context, repository, child) {
       final storyId = repository.storyIds[index];
 
       if (repository.stories[storyId] != null) {

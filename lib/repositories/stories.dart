@@ -30,3 +30,28 @@ class StoriesRepository extends BaseRepository {
     }
   }
 }
+
+//enum StoryType { NEW, TOP, BEST, ASK, SHOW, JOB }
+class NewStoriesRepository extends StoriesRepository {
+  NewStoriesRepository() : super(StoryType.NEW);
+}
+
+class TopStoriesRepository extends StoriesRepository {
+  TopStoriesRepository() : super(StoryType.TOP);
+}
+
+class BestStoriesRepository extends StoriesRepository {
+  BestStoriesRepository() : super(StoryType.BEST);
+}
+
+class AskStoriesRepository extends StoriesRepository {
+  AskStoriesRepository() : super(StoryType.ASK);
+}
+
+class ShowStoriesRepository extends StoriesRepository {
+  ShowStoriesRepository() : super(StoryType.SHOW);
+}
+
+class JobStoriesRepository extends StoriesRepository {
+  JobStoriesRepository() : super(StoryType.JOB);
+}
