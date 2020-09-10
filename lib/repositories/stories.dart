@@ -32,25 +32,25 @@ class StoriesRepository extends BaseRepository {
 }
 
 class NewStoriesRepository extends StoriesRepository {
-  NewStoriesRepository() : super(StoryType.New);
+  NewStoriesRepository() : super(StoryType.news);
 }
 
 class TopStoriesRepository extends StoriesRepository {
-  TopStoriesRepository() : super(StoryType.Top);
+  TopStoriesRepository() : super(StoryType.top);
 }
 
 class BestStoriesRepository extends StoriesRepository {
-  BestStoriesRepository() : super(StoryType.Best);
+  BestStoriesRepository() : super(StoryType.best);
 }
 
 class AskStoriesRepository extends StoriesRepository {
-  AskStoriesRepository() : super(StoryType.Ask);
+  AskStoriesRepository() : super(StoryType.ask);
 }
 
 class ShowStoriesRepository extends StoriesRepository {
-  ShowStoriesRepository() : super(StoryType.Show);
+  ShowStoriesRepository() : super(StoryType.show);
 }
 
 class JobsStoriesRepository extends StoriesRepository {
-  JobsStoriesRepository() : super(StoryType.Jobs);
+  JobsStoriesRepository() : super(StoryType.jobs);
 }

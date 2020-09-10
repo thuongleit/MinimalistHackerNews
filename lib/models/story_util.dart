@@ -5,17 +5,17 @@ import 'story.dart';
 //enum StoryType { New, Top, Best, Ask, Show, Jobs }
 String getStoryTitle(StoryType type) {
   switch (type) {
-    case StoryType.New:
+    case StoryType.news:
       return "New";
-    case StoryType.Best:
+    case StoryType.best:
       return "Best";
-    case StoryType.Top:
+    case StoryType.top:
       return "Top";
-    case StoryType.Ask:
+    case StoryType.ask:
       return "Ask";
-    case StoryType.Show:
+    case StoryType.show:
       return "Show";
-    case StoryType.Jobs:
+    case StoryType.jobs:
       return "Jobs";
     default:
       return "";
@@ -24,17 +24,17 @@ String getStoryTitle(StoryType type) {
 
 IconData getStoryIcon(StoryType type) {
   switch (type) {
-    case StoryType.New:
+    case StoryType.news:
       return Icons.new_releases;
-    case StoryType.Best:
+    case StoryType.best:
       return Icons.thumb_up;
-    case StoryType.Top:
+    case StoryType.top:
       return Icons.whatshot;
-    case StoryType.Ask:
+    case StoryType.ask:
       return Icons.question_answer;
-    case StoryType.Show:
+    case StoryType.show:
       return Icons.slideshow;
-    case StoryType.Jobs:
+    case StoryType.jobs:
       return Icons.work;
     default:
       return Icons.device_unknown;

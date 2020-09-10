@@ -1,6 +1,6 @@
 import '../utils/url.dart';
 
-enum StoryType { New, Top, Best, Ask, Show, Jobs }
+enum StoryType { news, top, best, ask, show, jobs }
 
 class Story {
   final int id;

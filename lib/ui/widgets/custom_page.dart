@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:row_collection/row_collection.dart';
 
 import '../../repositories/base.dart';
-import 'index.dart';
 
 /// Centered [CircularProgressIndicator] widget.
 Widget get _loadingIndicator =>

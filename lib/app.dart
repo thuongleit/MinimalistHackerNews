@@ -3,7 +3,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import './ui/screens/home.dart';
 import './providers/index.dart';
 import './utils/routes.dart';
 

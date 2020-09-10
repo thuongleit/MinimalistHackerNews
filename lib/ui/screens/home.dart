@@ -124,37 +124,37 @@ class _MyHomePageState extends State<HomeScreen> {
 
   Widget _buildBody(StoryType tab, ScrollController scrollController) {
     switch (tab) {
-      case StoryType.New:
+      case StoryType.news:
         return StoriesTab<NewStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.Top:
+      case StoryType.top:
         return StoriesTab<TopStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.Best:
+      case StoryType.best:
         return StoriesTab<BestStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.Ask:
+      case StoryType.ask:
         return StoriesTab<AskStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.Show:
+      case StoryType.show:
         return StoriesTab<ShowStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
           scrollController: scrollController,
         );
-      case StoryType.Jobs:
+      case StoryType.jobs:
         return StoriesTab<JobsStoriesRepository>(
           key: ValueKey(tab.hashCode),
           storyType: tab,
