@@ -2,10 +2,12 @@ import 'package:cherry_components/cherry_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
+import 'package:row_collection/row_collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../providers/index.dart';
 import '../widgets/index.dart';
+import '../../utils/const.dart';
 
 /// Here lays all available options for the user to be configurable.
 class SettingsScreen extends StatefulWidget {
@@ -17,11 +19,13 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   Themes _themeIndex;
+  Browser _browserIndex;
 
   @override
   void initState() {
-    // Get the app theme & image quality from the 'AppModel' model.
+    // Get the app theme & browser chooser from the 'AppModel' model.
     _themeIndex = context.read<ThemeProvider>().theme;
+    _browserIndex = context.read<BrowserProvider>().browser;
 
     super.initState();
   }
@@ -95,6 +99,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
+          Separator.divider(indent: 72),
+          ListCell.icon(
+            icon: Icons.open_in_browser,
+            title: FlutterI18n.translate(
+              context,
+              'screen.settings.browser.title',
+            ),
+            subtitle: FlutterI18n.translate(
+              context,
+              'screen.settings.browser.body',
+            ),
+            onTap: () => showBottomRoundDialog(
+              context: context,
+              title: FlutterI18n.translate(
+                context,
+                'screen.settings.browser.title',
+              ),
+              children: <Widget>[
+                RadioCell<Browser>(
+                  title: FlutterI18n.translate(
+                    context,
+                    'screen.settings.browser.browser.internal',
+                  ),
+                  groupValue: _browserIndex,
+                  value: Browser.internal,
+                  onChanged: (value) => _changeBrowser(value),
+                ),
+                RadioCell<Browser>(
+                  title: FlutterI18n.translate(
+                    context,
+                    'screen.settings.browser.browser.external',
+                  ),
+                  groupValue: _browserIndex,
+                  value: Browser.external,
+                  onChanged: (value) => _changeBrowser(value),
+                ),
+              ],
+            ),
+          ),
+          Separator.divider(indent: 72),
         ],
       ),
     );
@@ -106,10 +150,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     // Saves new settings
     context.read<ThemeProvider>().theme = theme;
-    prefs.setInt('theme', theme.index);
+    prefs.setInt(Const.prefThemeKey, theme.index);
 
     // Updates UI
     setState(() => _themeIndex = theme);
+
+    // Hides dialog
+    Navigator.of(context).pop();
+  }
+
+  // Updates app's chosen browser
+  Future<void> _changeBrowser(Browser browser) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Saves new settings
+    context.read<BrowserProvider>().browser = browser;
+    prefs.setInt(Const.prefBrowserKey, browser.index);
+
+    // Updates UI
+    setState(() => _browserIndex = browser);
 
     // Hides dialog
     Navigator.of(context).pop();

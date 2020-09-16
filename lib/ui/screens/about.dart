@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:hacker_news/utils/url_util.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
@@ -98,10 +99,7 @@ class _AboutScreenState extends State<AboutScreen> {
             context,
             'screen.about.free_software.body',
           ),
-          onTap: () => FlutterWebBrowser.openWebPage(
-            url: Const.appSource,
-            androidToolbarColor: Theme.of(context).primaryColor,
-          ),
+          onTap: () => openWebBrowser(context, Const.appSource),
         ),
         HeaderText(FlutterI18n.translate(
           context,
@@ -118,10 +116,7 @@ class _AboutScreenState extends State<AboutScreen> {
             context,
             'screen.about.author.body',
           ),
-          onTap: () => FlutterWebBrowser.openWebPage(
-            url: Const.authorProfile,
-            androidToolbarColor: Theme.of(context).primaryColor,
-          ),
+          onTap: () => openWebBrowser(context, Const.authorProfile),
         ),
         Separator.divider(indent: 72),
         ListCell.icon(
@@ -153,10 +148,7 @@ class _AboutScreenState extends State<AboutScreen> {
             context,
             'screen.about.flutter.body',
           ),
-          onTap: () => FlutterWebBrowser.openWebPage(
-            url: Const.flutterPage,
-            androidToolbarColor: Theme.of(context).primaryColor,
-          ),
+          onTap: () => openWebBrowser(context, Const.flutterPage),
         ),
         Separator.divider(indent: 72),
         ListCell.icon(
@@ -170,10 +162,7 @@ class _AboutScreenState extends State<AboutScreen> {
             'screen.about.credits.body',
             translationParams: {'api': Const.apiSourceName},
           ),
-          onTap: () => FlutterWebBrowser.openWebPage(
-            url: Const.apiSource,
-            androidToolbarColor: Theme.of(context).primaryColor,
-          ),
+          onTap: () => openWebBrowser(context, Const.apiSource),
         ),
         Separator.divider(indent: 72),
       ]),

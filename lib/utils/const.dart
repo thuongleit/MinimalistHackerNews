@@ -41,6 +41,9 @@ class Const {
   static const apiSource = 'https://github.com/HackerNews/API';
   static const flutterPage = 'https://flutter.dev';
   static const author = "Thuong Le";
+
+  static const prefThemeKey = "prefs.theme";
+  static const prefBrowserKey = "prefs.browser";
 }
 
 String getRightUrl(String tempUrl, String replace) => tempUrl.replaceAll(Const.placeholderStr, replace);

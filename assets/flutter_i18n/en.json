@@ -76,6 +76,14 @@
           "light": "Light theme",
           "system": "System theme"
         }
+      },
+      "browser": {
+        "title": "Browser",
+        "body": "Choose browser to open with",
+        "browser": {
+          "internal": "Internal browser",
+          "external": "External browser"
+        }
       }
     },
     "error": {

@@ -1,26 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:hacker_news/utils/url_util.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../models/story.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+import '../../models/index.dart';
+import '../../utils/url_util.dart';
 
 class StoryRow extends StatelessWidget {
   final Story story;
 
   const StoryRow({Key key, this.story}) : super(key: key);
-
-  Future<void> _launchInBrowser(String url) async {
-    if (await canLaunch(url)) {
-      await launch(
-        url,
-        forceSafariVC: false,
-        forceWebView: false,
-        headers: <String, String>{'my_header_key': 'my_header_value'},
-      );
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +47,7 @@ class StoryRow extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                _launchInBrowser(story.voteUrl);
+                openWebBrowser(context, story.voteUrl);
               },
             ),
             const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
@@ -100,9 +87,9 @@ class StoryRow extends StatelessWidget {
       ),
       onTap: () {
         if (story.url == null || story.url.isEmpty) {
-          _launchInBrowser(story.contentUrl);
+          openWebBrowser(context, story.contentUrl);
         } else {
-          _launchInBrowser(story.url);
+          openWebBrowser(context, story.url);
         }
       },
     );

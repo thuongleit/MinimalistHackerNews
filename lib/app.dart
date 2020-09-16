@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => BrowserProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, model, child) => MaterialApp(

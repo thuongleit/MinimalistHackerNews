@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/style.dart';
+import '../utils/const.dart';
 
 const Themes _defaultTheme = Themes.system;
 
@@ -54,9 +55,9 @@ class ThemeProvider with ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     try {
-      theme = Themes.values[prefs.getInt('theme')];
+      theme = Themes.values[prefs.getInt(Const.prefThemeKey)];
     } catch (e) {
-      prefs.setInt('theme', Themes.values.indexOf(_defaultTheme));
+      prefs.setInt(Const.prefThemeKey, Themes.values.indexOf(_defaultTheme));
     }
 
     notifyListeners();
