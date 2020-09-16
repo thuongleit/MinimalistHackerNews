@@ -24,12 +24,12 @@ Future<void> _onRefresh(BuildContext context, BaseRepository repository) {
           SnackBar(
             content: Text(FlutterI18n.translate(
               context,
-              'spacex.other.loading_error.message',
+              'app.messages.loading.connection_error.message',
             )),
             action: SnackBarAction(
               label: FlutterI18n.translate(
                 context,
-                'spacex.other.loading_error.reload',
+                'app.messages.loading.connection_error.reload',
               ),
               onPressed: () => _onRefresh(context, repository),
             ),
@@ -112,7 +112,7 @@ class ReloadablePage<T extends BaseRepository> extends StatelessWidget {
 }
 
 /// This widget is used for all tabs inside the app.
-/// Its main features are connection error handeling,
+/// Its main features are connection error handling,
 /// pull to refresh, as well as working as a sliver list.
 class SliverPage<T extends BaseRepository> extends StatelessWidget {
   final String title;
@@ -217,7 +217,7 @@ class ConnectionError<T extends BaseRepository> extends StatelessWidget {
         subtitle: Text(
           FlutterI18n.translate(
             context,
-            'spacex.other.loading_error.message',
+            'app.messages.loading.connection_error.message',
           ),
           style:
           GoogleFonts.rubikTextTheme(Theme.of(context).textTheme).subtitle1,
@@ -225,7 +225,7 @@ class ConnectionError<T extends BaseRepository> extends StatelessWidget {
         action: Text(
           FlutterI18n.translate(
             context,
-            'spacex.other.loading_error.reload',
+            'app.messages.loading.connection_error.reload',
           ),
           style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
               .subtitle1

@@ -35,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           HeaderText(
             FlutterI18n.translate(
               context,
-              'settings.headers.general',
+              'screen.settings.headers.general',
             ),
             head: true,
           ),
@@ -43,23 +43,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.palette,
             title: FlutterI18n.translate(
               context,
-              'settings.theme.title',
+              'screen.settings.theme.title',
             ),
             subtitle: FlutterI18n.translate(
               context,
-              'settings.theme.body',
+              'screen.settings.theme.body',
             ),
             onTap: () => showBottomRoundDialog(
               context: context,
               title: FlutterI18n.translate(
                 context,
-                'settings.theme.title',
+                'screen.settings.theme.title',
               ),
               children: <Widget>[
                 RadioCell<Themes>(
                   title: FlutterI18n.translate(
                     context,
-                    'settings.theme.theme.dark',
+                    'screen.settings.theme.theme.dark',
                   ),
                   groupValue: _themeIndex,
                   value: Themes.dark,
@@ -68,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 RadioCell<Themes>(
                   title: FlutterI18n.translate(
                     context,
-                    'settings.theme.theme.black',
+                    'screen.settings.theme.theme.black',
                   ),
                   groupValue: _themeIndex,
                   value: Themes.black,
@@ -77,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 RadioCell<Themes>(
                   title: FlutterI18n.translate(
                     context,
-                    'settings.theme.theme.light',
+                    'screen.settings.theme.theme.light',
                   ),
                   groupValue: _themeIndex,
                   value: Themes.light,
@@ -86,7 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 RadioCell<Themes>(
                   title: FlutterI18n.translate(
                     context,
-                    'settings.theme.theme.system',
+                    'screen.settings.theme.theme.system',
                   ),
                   groupValue: _themeIndex,
                   value: Themes.system,

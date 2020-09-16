@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/index.dart';
@@ -24,7 +25,7 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
       builder: (context, repository, child) => Scaffold(
         body: SliverPage<T>.display(
           controller: scrollController,
-          title: getStoryTitle(storyType),
+          title: FlutterI18n.translate(context, getStoryTitleKey(storyType)),
           opacity: null,
           counter: null,
           slides: null,

@@ -15,7 +15,7 @@ class ChangelogScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ChangelogRepository>(
       builder: (context, model, child) => ReloadablePage<ChangelogRepository>(
-        title: FlutterI18n.translate(context, 'about.version.changelog'),
+        title: FlutterI18n.translate(context, 'screen.about.version.changelog'),
         body: Markdown(
           data: model.changelog ?? '',
           onTapLink: (url) => FlutterWebBrowser.openWebPage(

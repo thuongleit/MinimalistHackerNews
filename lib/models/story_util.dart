@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 import 'story.dart';
 
 //enum StoryType { New, Top, Best, Ask, Show, Jobs }
-String getStoryTitle(StoryType type) {
+String getStoryTitleKey(StoryType type) {
   switch (type) {
     case StoryType.news:
-      return "New";
+      return 'screen.home.tab.new';
     case StoryType.best:
-      return "Best";
+      return 'screen.home.tab.best';
     case StoryType.top:
-      return "Top";
+      return 'screen.home.tab.top';
     case StoryType.ask:
-      return "Ask";
+      return 'screen.home.tab.ask';
     case StoryType.show:
-      return "Show";
+      return 'screen.home.tab.show';
     case StoryType.jobs:
-      return "Jobs";
+      return 'screen.home.tab.jobs';
     default:
-      return "";
+      return 'screen.home.tab.default';
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hacker_news/repositories/stories.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +68,7 @@ class _MyHomePageState extends State<HomeScreen> {
             getStoryIcon(type),
             size: 24.0,
           ),
-          title: Text(getStoryTitle(type)),
+          title: Text(FlutterI18n.translate(context, getStoryTitleKey(type))),
         ),
       );
     }

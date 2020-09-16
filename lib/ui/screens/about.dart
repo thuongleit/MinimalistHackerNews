@@ -11,20 +11,7 @@ import 'package:row_collection/row_collection.dart';
 import '../../repositories/changelog.dart';
 import '../../utils/url.dart';
 import '../widgets/index.dart';
-import '../../ui/widgets/dialog_patreon.dart';
 import 'index.dart';
-
-/// Constant list of all translators
-const List<Map<String, String>> _translators = [
-  {'name': 'Jesús Rodríguez', 'language': 'English'},
-  {'name': 'Jesús Rodríguez', 'language': 'Español'},
-  {'name': '/u/OuterSpaceCitizen', 'language': 'Portugues'},
-  {'name': 'loopsun', 'language': '简体中文'},
-  {'name': 'Charlie Merland', 'language': 'Français'},
-  {'name': 'Tommi Avery', 'language': 'Italiano'},
-  {'name': 'Fatur Rahman S', 'language': 'Bahasa Indonesia'},
-  {'name': 'Patrick Kilter', 'language': 'Deutsch'},
-];
 
 /// This view contains a list with useful
 /// information about the app & its developer.
@@ -61,7 +48,7 @@ class _AboutScreenState extends State<AboutScreen> {
         HeaderText(
           FlutterI18n.translate(
             context,
-            'about.headers.about',
+            'screen.about.headers.about',
           ),
           head: true,
         ),
@@ -69,12 +56,12 @@ class _AboutScreenState extends State<AboutScreen> {
           icon: Icons.info_outline,
           title: FlutterI18n.translate(
             context,
-            'about.version.title',
+            'screen.about.version.title',
             translationParams: {'version': _packageInfo.version},
           ),
           subtitle: FlutterI18n.translate(
             context,
-            'about.version.body',
+            'screen.about.version.body',
           ),
           onTap: () => Navigator.push(
             context,
@@ -92,11 +79,11 @@ class _AboutScreenState extends State<AboutScreen> {
           icon: Icons.star_border,
           title: FlutterI18n.translate(
             context,
-            'about.review.title',
+            'screen.about.review.title',
           ),
           subtitle: FlutterI18n.translate(
             context,
-            'about.review.body',
+            'screen.about.review.body',
           ),
           onTap: () => LaunchReview.launch(),
         ),
@@ -105,11 +92,11 @@ class _AboutScreenState extends State<AboutScreen> {
           icon: Icons.public,
           title: FlutterI18n.translate(
             context,
-            'about.free_software.title',
+            'screen.about.free_software.title',
           ),
           subtitle: FlutterI18n.translate(
             context,
-            'about.free_software.body',
+            'screen.about.free_software.body',
           ),
           onTap: () => FlutterWebBrowser.openWebPage(
             url: Url.appSource,
@@ -118,17 +105,17 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         HeaderText(FlutterI18n.translate(
           context,
-          'about.headers.author',
+          'screen.about.headers.author',
         )),
         ListCell.icon(
           icon: Icons.person_outline,
           title: FlutterI18n.translate(
             context,
-            'about.author.title',
+            'screen.about.author.title',
           ),
           subtitle: FlutterI18n.translate(
             context,
-            'about.author.body',
+            'screen.about.author.body',
           ),
           onTap: () => FlutterWebBrowser.openWebPage(
             url: Url.authorProfile,
@@ -136,30 +123,15 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
         ),
         Separator.divider(indent: 72),
-        Builder(
-          builder: (context) => ListCell.icon(
-            icon: Icons.cake,
-            title: FlutterI18n.translate(
-              context,
-              'about.patreon.title',
-            ),
-            subtitle: FlutterI18n.translate(
-              context,
-              'about.patreon.body',
-            ),
-            onTap: () => showPatreonDialog(context),
-          ),
-        ),
-        Separator.divider(indent: 72),
         ListCell.icon(
           icon: Icons.mail_outline,
           title: FlutterI18n.translate(
             context,
-            'about.email.title',
+            'screen.about.email.title',
           ),
           subtitle: FlutterI18n.translate(
             context,
-            'about.email.body',
+            'screen.about.email.body',
           ),
           onTap: () => FlutterEmailSender.send(Email(
             subject: Url.emailSubject,
@@ -168,47 +140,17 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         HeaderText(FlutterI18n.translate(
           context,
-          'about.headers.credits',
+          'screen.about.headers.credits',
         )),
-        ListCell.icon(
-          icon: Icons.translate,
-          title: FlutterI18n.translate(
-            context,
-            'about.translations.title',
-          ),
-          subtitle: FlutterI18n.translate(
-            context,
-            'about.translations.body',
-          ),
-          onTap: () => showBottomRoundDialog(
-            context: context,
-            title: FlutterI18n.translate(
-              context,
-              'about.translations.title',
-            ),
-            children: [
-              for (final translation in _translators)
-                ListCell(
-                  title: translation['name'],
-                  subtitle: translation['language'],
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
-                  dense: true,
-                )
-            ],
-          ),
-        ),
-        Separator.divider(indent: 72),
         ListCell.icon(
           icon: Icons.code,
           title: FlutterI18n.translate(
             context,
-            'about.flutter.title',
+            'screen.about.flutter.title',
           ),
           subtitle: FlutterI18n.translate(
             context,
-            'about.flutter.body',
+            'screen.about.flutter.body',
           ),
           onTap: () => FlutterWebBrowser.openWebPage(
             url: Url.flutterPage,
@@ -220,11 +162,11 @@ class _AboutScreenState extends State<AboutScreen> {
           icon: Icons.folder_open,
           title: FlutterI18n.translate(
             context,
-            'about.credits.title',
+            'screen.about.credits.title',
           ),
           subtitle: FlutterI18n.translate(
             context,
-            'about.credits.body',
+            'screen.about.credits.body',
           ),
           onTap: () => FlutterWebBrowser.openWebPage(
             url: Url.apiSource,
