@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hacker_news/repositories/stories.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _MyHomePageState extends State<HomeScreen> {
   ScrollController _scrollController;
 
-  int _selectedIndex = 0;
+  int _currentIndex = 0;
   var _showToolbar;
 
   List<StoryType> get _tabs => StoryType.values;
@@ -70,7 +71,7 @@ class _MyHomePageState extends State<HomeScreen> {
         ),
       );
     }
-    var tab = _tabs[_selectedIndex];
+    var tab = _tabs[_currentIndex];
     // var statusBarSize = MediaQuery.of(context).padding.top;
     return MultiProvider(
       providers: [
@@ -99,22 +100,17 @@ class _MyHomePageState extends State<HomeScreen> {
           height: _showToolbar ? kBottomNavigationBarHeight : 0.0,
           child: BottomNavigationBar(
             items: _navigationBarItems,
+            selectedLabelStyle: GoogleFonts.rubik(),
+            unselectedLabelStyle: GoogleFonts.rubik(),
             elevation: 4.0,
             selectedItemColor: Theme.of(context).accentColor,
-            unselectedItemColor: Colors.grey[700],
-            selectedFontSize: 10.0,
-            unselectedFontSize: 10.0,
+            unselectedItemColor: Theme.of(context).unselectedWidgetColor,
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            unselectedLabelStyle: TextStyle(
-              color: Colors.grey[700],
-            ),
-            currentIndex: _selectedIndex,
-            onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
+            currentIndex: _currentIndex,
+            onTap: (index) => _currentIndex != index
+                ? setState(() => _currentIndex = index)
+                : null,
           ),
         ),
       ),

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 /// Contains app colors to used them all around the app
 
 // Light theme
-const lightPrimaryColor = Color(0xFF1E1E1E);
-const lightAccentColor = Color(0xFF1E5185);
+const lightPrimarySwatch = Colors.deepOrange;
 
 // Dark theme
 const darkPrimaryColor = Color(0xFF121212);

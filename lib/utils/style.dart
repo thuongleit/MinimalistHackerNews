@@ -16,8 +16,9 @@ class Style {
   /// Light style
   static final ThemeData light = ThemeData(
     brightness: Brightness.light,
-    primaryColor: lightPrimaryColor,
-    accentColor: lightAccentColor,
+    primarySwatch: Colors.deepOrange,
+    // primaryColor: lightPrimaryColor,
+    // accentColor: lightAccentColor,
     pageTransitionsTheme: _pageTransitionsTheme,
     textTheme: GoogleFonts.rubikTextTheme(ThemeData.light().textTheme),
     popupMenuTheme: PopupMenuThemeData(

@@ -9,7 +9,7 @@ class _FadeLoadingState extends State<FadeLoading> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[200],
+      color: Theme.of(context).bottomAppBarColor,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -32,7 +32,13 @@ class _FadeLoadingState extends State<FadeLoading> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text('', style: TextStyle(fontSize: 13.0)),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 4)),
+                  Center(
+                    child: SizedBox(
+                      child: const CircularProgressIndicator(strokeWidth: 1.0,),
+                      height: 10,
+                      width: 10,
+                    ),
+                  ),
                   Text(''),
                 ],
               ),
