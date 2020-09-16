@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:row_collection/row_collection.dart';
 
 import '../../repositories/changelog.dart';
-import '../../utils/url.dart';
+import '../../utils/const.dart';
 import '../widgets/index.dart';
 import 'index.dart';
 
@@ -99,7 +99,7 @@ class _AboutScreenState extends State<AboutScreen> {
             'screen.about.free_software.body',
           ),
           onTap: () => FlutterWebBrowser.openWebPage(
-            url: Url.appSource,
+            url: Const.appSource,
             androidToolbarColor: Theme.of(context).primaryColor,
           ),
         ),
@@ -112,13 +112,14 @@ class _AboutScreenState extends State<AboutScreen> {
           title: FlutterI18n.translate(
             context,
             'screen.about.author.title',
+            translationParams: {'author': Const.author},
           ),
           subtitle: FlutterI18n.translate(
             context,
             'screen.about.author.body',
           ),
           onTap: () => FlutterWebBrowser.openWebPage(
-            url: Url.authorProfile,
+            url: Const.authorProfile,
             androidToolbarColor: Theme.of(context).primaryColor,
           ),
         ),
@@ -134,8 +135,8 @@ class _AboutScreenState extends State<AboutScreen> {
             'screen.about.email.body',
           ),
           onTap: () => FlutterEmailSender.send(Email(
-            subject: Url.emailSubject,
-            recipients: [Url.emailAddress],
+            subject: Const.emailSubject,
+            recipients: [Const.emailAddress],
           )),
         ),
         HeaderText(FlutterI18n.translate(
@@ -153,7 +154,7 @@ class _AboutScreenState extends State<AboutScreen> {
             'screen.about.flutter.body',
           ),
           onTap: () => FlutterWebBrowser.openWebPage(
-            url: Url.flutterPage,
+            url: Const.flutterPage,
             androidToolbarColor: Theme.of(context).primaryColor,
           ),
         ),
@@ -167,9 +168,10 @@ class _AboutScreenState extends State<AboutScreen> {
           subtitle: FlutterI18n.translate(
             context,
             'screen.about.credits.body',
+            translationParams: {'api': Const.apiSourceName},
           ),
           onTap: () => FlutterWebBrowser.openWebPage(
-            url: Url.apiSource,
+            url: Const.apiSource,
             androidToolbarColor: Theme.of(context).primaryColor,
           ),
         ),

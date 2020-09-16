@@ -60,7 +60,7 @@
       },
       "credits": {
         "title": "App credits",
-        "body": "Using the open-source r/SpaceX API"
+        "body": "Using the open-source r/{api}"
       }
     },
     "settings": {

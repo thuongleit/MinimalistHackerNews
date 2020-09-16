@@ -1,4 +1,4 @@
-import '../utils/url.dart';
+import '../utils/const.dart';
 
 enum StoryType { news, top, best, ask, show, jobs }
 
@@ -15,9 +15,9 @@ class Story {
   final int descendants;
   final List<dynamic> kids;
 
-  String get contentUrl => getRightUrl(Url.itemContentUrl, '$id');
+  String get contentUrl => getRightUrl(Const.itemContentUrl, '$id');
 
-  String get voteUrl => getRightUrl(Url.itemVoteUrl, '$id');
+  String get voteUrl => getRightUrl(Const.itemVoteUrl, '$id');
 
   const Story({
     this.id,

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 
-import '../utils/url.dart';
+import '../utils/const.dart';
 import '../models/index.dart';
 
 /// Serves data to several data repositories.
@@ -18,30 +18,30 @@ class ApiService {
   static String _getStoryUrl(StoryType type) {
     switch (type) {
       case StoryType.news:
-        return Url.newStories;
+        return Const.newStories;
       case StoryType.top:
-        return Url.topStories;
+        return Const.topStories;
       case StoryType.best:
-        return Url.bestStories;
+        return Const.bestStories;
       case StoryType.jobs:
-        return Url.jobStories;
+        return Const.jobStories;
       case StoryType.show:
-        return Url.showStories;
+        return Const.showStories;
       case StoryType.ask:
-        return Url.askStories;
+        return Const.askStories;
       default:
         return '';
     }
   }
 
   static Future<Response> getStory(int id) async {
-    var url = getRightUrl(Url.itemUrl, '$id');
+    var url = getRightUrl(Const.itemUrl, '$id');
     print('request $url');
     return Dio().get(url);
   }
 
   /// Retrieves cherry's changelog file from GitHub.
   static Future<Response> getChangelog() async {
-    return Dio().get(Url.changelog);
+    return Dio().get(Const.changelog);
   }
 }
