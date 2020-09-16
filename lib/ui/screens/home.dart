@@ -7,9 +7,8 @@ import '../../models/index.dart';
 import '../../ui/tabs/index.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key, this.title}) : super(key: key);
 
-  final String title;
+  HomeScreen({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();

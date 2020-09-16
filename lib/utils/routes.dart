@@ -8,23 +8,28 @@ class Routes {
   // Static route names
   static const home = '/';
   static const about = '/about';
+  static const settings = '/settings';
 
   /// Methods that generate all routes
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
     try {
-      final Map<String, dynamic> args = routeSettings.arguments;
-
       switch (routeSettings.name) {
         case home:
           return MaterialPageRoute(
             settings: routeSettings,
-            builder: (_) => HomeScreen(title: "abc",),
+            builder: (_) => HomeScreen(),
           );
 
         case about:
           return MaterialPageRoute(
             settings: routeSettings,
             builder: (_) => AboutScreen(),
+          );
+
+        case settings:
+          return MaterialPageRoute(
+            settings: routeSettings,
+            builder: (_) => SettingsScreen(),
           );
         default:
           return errorRoute(routeSettings);
@@ -34,7 +39,7 @@ class Routes {
     }
   }
 
-  /// Method that calles the error screen when necessary
+  /// Method that calls the error screen when necessary
   static Route<dynamic> errorRoute(RouteSettings routeSettings) {
     return MaterialPageRoute(
       settings: routeSettings,
