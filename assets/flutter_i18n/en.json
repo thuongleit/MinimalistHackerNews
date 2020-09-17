@@ -1,0 +1,95 @@
+{
+  "app": {
+    "title": "Simple Hacker News",
+    "menu": {
+      "settings": "Settings",
+      "about": "About"
+    },
+    "messages": {
+      "unknown": "Unknown",
+      "loading": {
+        "connection_error": {
+          "message": "No internet connection. Try reloading.",
+          "reload": "RELOAD"
+        }
+      }
+    }
+  },
+  "screen": {
+    "home": {
+      "tab": {
+        "new": "New",
+        "best": "Best",
+        "top": "Top",
+        "ask": "Ask",
+        "show": "Show",
+        "jobs": "Jobs",
+        "default": ""
+      }
+    },
+    "about": {
+      "headers": {
+        "about": "About app",
+        "author": "Author",
+        "credits": "Credits"
+      },
+      "version": {
+        "title": "Version {version}",
+        "body": "Take a look at the new changes",
+        "changelog": "Changelog"
+      },
+      "author": {
+        "title": "Created by {author}",
+        "body": "Well designed, open-source apps"
+      },
+      "review": {
+        "title": "Enjoying the app?",
+        "body": "Leave your experience in the store"
+      },
+      "email": {
+        "title": "Send me an email",
+        "body": "Report bugs or request new features"
+      },
+      "free_software": {
+        "title": "This is free software",
+        "body": "Source code is available for everyone"
+      },
+      "flutter": {
+        "title": "Built with Flutter",
+        "body": "Beautiful native apps in record time"
+      },
+      "credits": {
+        "title": "App credits",
+        "body": "Using the open-source r/{api}"
+      }
+    },
+    "settings": {
+      "headers": {
+        "general": "General"
+      },
+      "theme": {
+        "title": "Appearance",
+        "body": "Choose between light or dark",
+        "theme": {
+          "dark": "Dark theme",
+          "black": "Black theme",
+          "light": "Light theme",
+          "system": "System theme"
+        }
+      },
+      "browser": {
+        "title": "Browser",
+        "body": "Choose browser to open with",
+        "browser": {
+          "internal": "Internal browser",
+          "external": "External browser"
+        }
+      }
+    },
+    "error": {
+      "title": "An error occurred",
+      "subtitle": "This page is not available",
+      "action": "GO BACK"
+    }
+  }
+}

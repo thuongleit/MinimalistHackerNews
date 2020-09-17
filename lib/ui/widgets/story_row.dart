@@ -1,39 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:hacker_news/utils/url_util.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../models/item.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class ItemRow extends StatelessWidget {
-  final Item item;
+import '../../models/index.dart';
+import '../../utils/url_util.dart';
 
-  const ItemRow({Key key, this.item}) : super(key: key);
+class StoryRow extends StatelessWidget {
+  final Story story;
 
-  Future<void> _launchInBrowser(String url) async {
-    if (await canLaunch(url)) {
-      await launch(
-        url,
-        forceSafariVC: false,
-        forceWebView: false,
-        headers: <String, String>{'my_header_key': 'my_header_value'},
-      );
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  const StoryRow({Key key, this.story}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(item.time * 1000);
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(story.time * 1000);
     final TextStyle descriptionTextStyle =
         TextStyle(fontSize: 11.0, color: Colors.grey);
 
     var commentDescription;
 
-    if (item.descendants > 1) {
-      commentDescription = '${item.descendants} comments';
-    } else if (item.descendants == 1) {
-      commentDescription = '${item.descendants} comment';
+    if (story.descendants > 1) {
+      commentDescription = '${story.descendants}✍︎';
+    } else if (story.descendants == 1) {
+      commentDescription = '${story.descendants}✍︎';
     }
 
     return InkWell(
@@ -56,11 +43,11 @@ class ItemRow extends StatelessWidget {
                         fontSize: 24.0,
                         color: Colors.grey),
                   ),
-                  Text('${item.score}', style: descriptionTextStyle),
+                  Text('${story.score}', style: descriptionTextStyle),
                 ],
               ),
               onTap: () {
-                _launchInBrowser(item.getVoteUrl());
+                openWebBrowser(context, story.voteUrl);
               },
             ),
             const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
@@ -70,7 +57,7 @@ class ItemRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      item.title,
+                      story.title,
                       style: TextStyle(fontSize: 13.0),
                       softWrap: true,
                       maxLines: 1,
@@ -81,7 +68,7 @@ class ItemRow extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Text(
-                          "by ${item.by} ${item.url != null ? '(' + getBaseDomain(item.url) + ')' : ''} ${item.descendants > 0 ? ' | ' + commentDescription : ''}",
+                          "by ${story.by} ${story.url != null ? '(' + getBaseDomain(story.url) + ')' : ''} ${story.descendants > 0 ? ' | ' + commentDescription : ''}",
                           style: descriptionTextStyle,
                         ),
                         Expanded(child: Container()),
@@ -99,10 +86,10 @@ class ItemRow extends StatelessWidget {
         ),
       ),
       onTap: () {
-        if (item.url == null || item.url.isEmpty) {
-          _launchInBrowser(item.getContentUrl());
+        if (story.url == null || story.url.isEmpty) {
+          openWebBrowser(context, story.contentUrl);
         } else {
-          _launchInBrowser(item.url);
+          openWebBrowser(context, story.url);
         }
       },
     );
