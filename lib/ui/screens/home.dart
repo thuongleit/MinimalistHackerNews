@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hacker_news/database/index.dart';
 import 'package:hacker_news/repositories/stories.dart';
+import 'package:hacker_news/services/api.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/index.dart';
@@ -76,12 +78,12 @@ class _MyHomePageState extends State<HomeScreen> {
     // var statusBarSize = MediaQuery.of(context).padding.top;
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => NewStoriesRepository()),
-        ChangeNotifierProvider(create: (_) => TopStoriesRepository()),
-        ChangeNotifierProvider(create: (_) => BestStoriesRepository()),
-        ChangeNotifierProvider(create: (_) => AskStoriesRepository()),
-        ChangeNotifierProvider(create: (_) => ShowStoriesRepository()),
-        ChangeNotifierProvider(create: (_) => JobsStoriesRepository()),
+        ChangeNotifierProvider(create: (_) => NewStoriesRepository(StoryDao.get(), ApiService.get())),
+        ChangeNotifierProvider(create: (_) => TopStoriesRepository(StoryDao.get(), ApiService.get())),
+        ChangeNotifierProvider(create: (_) => BestStoriesRepository(StoryDao.get(), ApiService.get())),
+        ChangeNotifierProvider(create: (_) => AskStoriesRepository(StoryDao.get(), ApiService.get())),
+        ChangeNotifierProvider(create: (_) => ShowStoriesRepository(StoryDao.get(), ApiService.get())),
+        ChangeNotifierProvider(create: (_) => JobsStoriesRepository(StoryDao.get(), ApiService.get())),
       ],
       child: Scaffold(
         resizeToAvoidBottomInset: false,

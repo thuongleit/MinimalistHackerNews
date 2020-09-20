@@ -9,13 +9,22 @@ import '../models/index.dart';
 /// Makes http calls to several services, including
 /// the open source r/HackerNews REST API.
 class ApiService {
-  static Future<Response<List>> getStories(StoryType type) async {
+  static final ApiService _api = ApiService._internal();
+
+  //private internal constructor to make it singleton
+  ApiService._internal();
+
+  static ApiService get() {
+    return _api;
+  }
+
+  Future<Response<List>> getStories(StoryType type) async {
     var url = _getStoryUrl(type);
     print('request $url');
     return Dio().get(url);
   }
 
-  static String _getStoryUrl(StoryType type) {
+  String _getStoryUrl(StoryType type) {
     switch (type) {
       case StoryType.news:
         return Const.newStories;
@@ -34,14 +43,14 @@ class ApiService {
     }
   }
 
-  static Future<Response> getStory(int id) async {
+  Future<Response> getStory(int id) async {
     var url = getRightUrl(Const.itemUrl, '$id');
     print('request $url');
     return Dio().get(url);
   }
 
   /// Retrieves cherry's changelog file from GitHub.
-  static Future<Response> getChangelog() async {
+  Future<Response> getChangelog() async {
     return Dio().get(Const.changelog);
   }
 }

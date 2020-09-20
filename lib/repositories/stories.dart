@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:hacker_news/database/index.dart';
 
 import '../models/index.dart';
 import '../services/index.dart';
@@ -6,9 +7,11 @@ import './index.dart';
 
 /// Repository that holds stories information of Hacker News
 class StoriesRepository extends BaseRepository {
-  StoryType type;
+  final StoryDao localSource;
+  final ApiService remoteSource;
+  final StoryType type;
 
-  StoriesRepository(this.type);
+  StoriesRepository(this.localSource, this.remoteSource, this.type);
 
   List<int> storyIds = [];
   Map<int, Story> stories = Map();
@@ -19,11 +22,26 @@ class StoriesRepository extends BaseRepository {
     try {
       if (type != null) {
         // Receives the data and parse it
-        final Response<List> storyIds = await ApiService.getStories(type);
-        this.storyIds = storyIds.data.map((e) => e as int).toList();
-      }
+        final Response<List> remoteDataResponse =
+            await localSource.getStories(type).then((localData) {
+          this.storyIds = localData.map((story) => story.id).toList();
+          localData.forEach((story) {
+            this.stories[story.id] = story;
+          });
 
-      finishLoading();
+
+
+          return remoteSource.getStories(type);
+        });
+
+        //final Response<List> storyIds = await ApiService.getStories(type);
+        //remove possible duplicated stories
+        var remoteData = remoteDataResponse.data.map((e) => e as int).toList();
+        remoteData.removeWhere((e) => this.storyIds.contains(e));
+
+        this.storyIds.addAll(remoteData);
+        finishLoading();
+      }
     } on Exception catch (e) {
       print(e);
       receivedError();
@@ -32,25 +50,31 @@ class StoriesRepository extends BaseRepository {
 }
 
 class NewStoriesRepository extends StoriesRepository {
-  NewStoriesRepository() : super(StoryType.news);
+  NewStoriesRepository(StoryDao local, ApiService remote)
+      : super(local, remote, StoryType.news);
 }
 
 class TopStoriesRepository extends StoriesRepository {
-  TopStoriesRepository() : super(StoryType.top);
+  TopStoriesRepository(StoryDao local, ApiService remote)
+      : super(local, remote, StoryType.top);
 }
 
 class BestStoriesRepository extends StoriesRepository {
-  BestStoriesRepository() : super(StoryType.best);
+  BestStoriesRepository(StoryDao local, ApiService remote)
+      : super(local, remote, StoryType.best);
 }
 
 class AskStoriesRepository extends StoriesRepository {
-  AskStoriesRepository() : super(StoryType.ask);
+  AskStoriesRepository(StoryDao local, ApiService remote)
+      : super(local, remote, StoryType.ask);
 }
 
 class ShowStoriesRepository extends StoriesRepository {
-  ShowStoriesRepository() : super(StoryType.show);
+  ShowStoriesRepository(StoryDao local, ApiService remote)
+      : super(local, remote, StoryType.show);
 }
 
 class JobsStoriesRepository extends StoriesRepository {
-  JobsStoriesRepository() : super(StoryType.jobs);
+  JobsStoriesRepository(StoryDao local, ApiService remote)
+      : super(local, remote, StoryType.jobs);
 }

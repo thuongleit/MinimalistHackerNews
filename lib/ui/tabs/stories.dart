@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:hacker_news/database/index.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/index.dart';
@@ -55,12 +56,13 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
       } else {
         return Container(
           child: FutureBuilder(
-              future: ApiService.getStory(storyId),
+              future: ApiService.get().getStory(storyId),
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
                   if (snapshot.data != null) {
                     var responseData = snapshot.data as Response;
-                    var story = Story.fromJson(responseData.data);
+                    var story = Story.fromJson(responseData.data, type: storyType);
+                    StoryDao.get().insertOrReplace(story);
                     repository.stories[storyId] = story;
                     return StoryRow(
                       key: Key(storyId.toString()),

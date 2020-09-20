@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:hacker_news/services/api.dart';
 import 'package:hacker_news/utils/url_util.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:package_info/package_info.dart';
@@ -68,7 +69,7 @@ class _AboutScreenState extends State<AboutScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => ChangeNotifierProvider<ChangelogRepository>(
-                create: (context) => ChangelogRepository(),
+                create: (context) => ChangelogRepository(ApiService.get()),
                 child: ChangelogScreen(),
               ),
               fullscreenDialog: true,
