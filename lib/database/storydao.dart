@@ -27,7 +27,6 @@ class StoryDao {
   }
 
   Future insertOrReplace(Story story) async {
-    print('insertOrReplace $story');
     var db = await _appDatabase.getDb();
 
     await db.transaction((Transaction trn) async {

@@ -2,13 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:hacker_news/database/index.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/index.dart';
 import '../../models/index.dart';
 import '../../repositories/index.dart';
-import '../../services/index.dart';
 import '../../utils/menu.dart';
 
 class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
@@ -47,40 +45,7 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   Widget _buildStoryRows(BuildContext context, int index) {
     return Consumer<T>(builder: (context, repository, child) {
       final storyId = repository.storyIds[index];
-
-      if (repository.stories[storyId] != null) {
-        return StoryRow(
-          key: Key(storyId.toString()),
-          story: repository.stories[storyId],
-        );
-      } else {
-        return Container(
-          child: FutureBuilder(
-              future: ApiService.get().getStory(storyId),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  if (snapshot.data != null) {
-                    var responseData = snapshot.data as Response;
-                    var story = Story.fromJson(responseData.data, type: storyType);
-                    StoryDao.get().insertOrReplace(story);
-                    repository.stories[storyId] = story;
-                    return StoryRow(
-                      key: Key(storyId.toString()),
-                      story: story,
-                    );
-                  } else {
-                    print('item is null $index and id = $storyId');
-                    return Container();
-                  }
-                } else if (snapshot.hasError) {
-                  print('error $index and id = $storyId');
-                  return Container();
-                } else {
-                  return FadeLoading();
-                }
-              }),
-        );
-      }
+      return Container(child: repository.buildStoryWidget(storyType, storyId));
     });
   }
 }

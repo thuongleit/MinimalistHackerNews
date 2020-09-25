@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:hacker_news/database/index.dart';
+import 'package:flutter/widgets.dart';
 
 import '../models/index.dart';
 import '../services/index.dart';
 import './index.dart';
+import '../database/index.dart';
+import '../ui/widgets/index.dart';
 
 /// Repository that holds stories information of Hacker News
 class StoriesRepository extends BaseRepository {
@@ -21,15 +23,14 @@ class StoriesRepository extends BaseRepository {
     // Try to load the data using [ApiService]
     try {
       if (type != null) {
-        // Receives the data and parse it
+        // Receives the data from local database
         final Response<List> remoteDataResponse =
             await localSource.getStories(type).then((localData) {
           this.storyIds = localData.map((story) => story.id).toList();
+          print('from database $storyIds');
           localData.forEach((story) {
             this.stories[story.id] = story;
           });
-
-
 
           return remoteSource.getStories(type);
         });
@@ -45,6 +46,37 @@ class StoriesRepository extends BaseRepository {
     } on Exception catch (e) {
       print(e);
       receivedError();
+    }
+  }
+
+  Widget buildStoryWidget(StoryType storyType, int storyId) {
+    if (this.stories[storyId] != null) {
+      return StoryRow(
+        key: Key(storyId.toString()),
+        story: this.stories[storyId],
+      );
+    } else {
+      return FutureBuilder(
+          future: remoteSource.getStory(storyId),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              var responseData = snapshot.data as Response;
+              var story = Story.fromJson(responseData.data, type: storyType);
+
+              localSource.insertOrReplace(story);
+
+              this.stories[story.id] = story;
+              return StoryRow(
+                key: Key(storyId.toString()),
+                story: story,
+              );
+            } else if (snapshot.hasError) {
+              print('error id = $storyId');
+              return Container();
+            } else {
+              return FadeLoading();
+            }
+          });
     }
   }
 }
