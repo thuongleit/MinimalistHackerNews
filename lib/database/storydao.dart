@@ -19,9 +19,7 @@ class StoryDao {
     print('get $type');
     var db = await _appDatabase.getDb();
 
-    var whereClause = 'WHERE ${Story.dbKeyStoryType} = ${type.index}';
-    var result =
-        await db.rawQuery('SELECT * FROM ${Story.dbTableName} $whereClause;');
+    var result = await db.rawQuery('SELECT * FROM ${Story.dbSavedStoriesTableName};');
 
     return result.map((item) => Story.fromDb(item)).toList(growable: false);
   }
@@ -47,8 +45,8 @@ class StoryDao {
   Future _insertOrReplace(Transaction trn, Story story) async {
     await trn.rawInsert(
       'INSERT OR REPLACE INTO '
-      '${Story.dbTableName}(${Story.dbKeyId},${Story.dbKeyTitle},${Story.dbKeyBy},${Story.dbKeyDeleted},${Story.dbKeyTime},${Story.dbKeyType},${Story.dbKeyUrl},${Story.dbKeyText},${Story.dbKeyScore},${Story.dbKeyDescendants},${Story.dbKeyStoryType})'
-      ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      '${Story.dbSavedStoriesTableName}(${Story.dbKeyId},${Story.dbKeyTitle},${Story.dbKeyBy},${Story.dbKeyDeleted},${Story.dbKeyTime},${Story.dbKeyType},${Story.dbKeyUrl},${Story.dbKeyText},${Story.dbKeyScore},${Story.dbKeyDescendants})'
+      ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         story.id,
         story.title,
@@ -60,7 +58,6 @@ class StoryDao {
         story.text,
         story.score,
         story.descendants,
-        story.storyType.index
       ],
     );
   }
@@ -70,7 +67,7 @@ class StoryDao {
 
     await db.transaction((Transaction trn) async {
       await trn.rawDelete(
-          'DELETE FROM ${Story.dbTableName} WHERE ${Story.dbKeyId} = $storyId;');
+          'DELETE FROM ${Story.dbSavedStoriesTableName} WHERE ${Story.dbKeyId} = $storyId;');
     });
   }
 }

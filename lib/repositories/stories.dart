@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 
 import '../models/index.dart';
 import '../services/index.dart';
 import './index.dart';
 import '../database/index.dart';
-import '../ui/widgets/index.dart';
 
 /// Repository that holds stories information of Hacker News
 class StoriesRepository extends BaseRepository {
@@ -19,6 +17,8 @@ class StoriesRepository extends BaseRepository {
   Map<int, Story> _stories = Map();
 
   List<int> get storyIds => _storyIds;
+
+  Map<int, Story> get stories => _stories;
 
   @override
   Future<void> loadData() async {
@@ -65,36 +65,17 @@ class StoriesRepository extends BaseRepository {
     // }
   }
 
-  Widget buildStoryWidget(StoryType storyType, int storyId) {
-    if (_stories[storyId] != null) {
-      return _buildStoryRow(_stories[storyId]);
-    } else {
-      return FutureBuilder(
-          future: remoteSource.getStory(storyId),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              var responseData = snapshot.data as Response;
-              print('get story id for - $storyId');
-              var story = Story.fromJson(responseData.data, type: storyType);
+  Future<Story> getStory(int storyId) {
+    return remoteSource.getStory(storyId).then((response) {
+      print('get story id for - $storyId');
+      var story = Story.fromJson(response.data);
 
-              _stories[story.id] = story;
-              return _buildStoryRow(story);
-            } else if (snapshot.hasError) {
-              print('error id = $storyId');
-              return Container();
-            } else {
-              return FadeLoading();
-            }
-          });
-    }
+      _stories[story.id] = story;
+      return story;
+    });
   }
 
-  Widget _buildStoryRow(Story story) {
-    return StoryRow(
-      key: Key(story.toString()),
-      story: story,
-    );
-  }
+  Future saveStory(Story story) => localSource.insertOrReplace(story);
 }
 
 class NewStoriesRepository extends StoriesRepository {

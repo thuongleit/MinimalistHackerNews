@@ -3,7 +3,7 @@ import '../utils/const.dart';
 enum StoryType { news, top, best, ask, show, jobs }
 
 class Story {
-  static final dbTableName = 'stories';
+  static final dbSavedStoriesTableName = 'saved_stories';
   static final dbKeyId = 'id';
   static final dbKeyTitle = 'title';
   static final dbKeyBy = 'by';
@@ -14,7 +14,6 @@ class Story {
   static final dbKeyText = 'text';
   static final dbKeyScore = 'score';
   static final dbKeyDescendants = 'descendants';
-  static final dbKeyStoryType = 'story_type';
 
   final int id;
   final String title;
@@ -26,7 +25,6 @@ class Story {
   final String text;
   final int score;
   final int descendants;
-  final StoryType storyType;
 
   String get contentUrl => getRightUrl(Const.itemContentUrl, '$id');
 
@@ -43,10 +41,9 @@ class Story {
     this.text,
     this.score,
     this.descendants,
-    this.storyType,
   });
 
-  factory Story.fromJson(Map<String, dynamic> json, {StoryType type}) {
+  factory Story.fromJson(Map<String, dynamic> json) {
     return Story(
       id: json['id'],
       title: json['title'],
@@ -58,7 +55,6 @@ class Story {
       text: json['text'],
       score: json['score'],
       descendants: json['descendants'] ?? 0,
-      storyType: type,
     );
   }
 
@@ -74,7 +70,6 @@ class Story {
       text: result[dbKeyText],
       score: result[dbKeyScore],
       descendants: result[dbKeyDescendants],
-      storyType: StoryType.values[result[dbKeyStoryType]],
     );
   }
 }

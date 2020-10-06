@@ -47,7 +47,7 @@ class AppDatabase {
       // When creating the db, create the table
       await _createStoriesTable(db);
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
-      await db.execute("DROP TABLE ${Story.dbTableName}");
+      await db.execute("DROP TABLE ${Story.dbSavedStoriesTableName}");
       await _createStoriesTable(db);
     });
     didInit = true;
@@ -55,7 +55,7 @@ class AppDatabase {
 
   Future _createStoriesTable(Database db) {
     return db.transaction((Transaction txn) async {
-      txn.execute("CREATE TABLE ${Story.dbTableName} ("
+      txn.execute("CREATE TABLE ${Story.dbSavedStoriesTableName} ("
           "${Story.dbKeyId} INTEGER PRIMARY KEY,"
           "${Story.dbKeyTitle} TEXT,"
           "${Story.dbKeyBy} TEXT,"
@@ -65,8 +65,7 @@ class AppDatabase {
           "${Story.dbKeyUrl} TEXT,"
           "${Story.dbKeyText} TEXT,"
           "${Story.dbKeyScore} INTEGER,"
-          "${Story.dbKeyDescendants} INTEGER,"
-          "${Story.dbKeyStoryType} INTEGER);");
+          "${Story.dbKeyDescendants} INTEGER);");
     });
   }
 

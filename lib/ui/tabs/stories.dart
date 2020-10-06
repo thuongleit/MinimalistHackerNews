@@ -53,7 +53,57 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   Widget _buildStoryRows(BuildContext context, int index) {
     return Consumer<T>(builder: (context, repository, child) {
       final storyId = repository.storyIds[index];
-      return Container(child: repository.buildStoryWidget(storyType, storyId));
+
+      return Container(
+          child: (repository.stories[storyId] != null)
+              ? _buildStoryRow(context, repository, repository.stories[storyId])
+              : FutureBuilder(
+                  future: repository.getStory(storyId),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data != null) {
+                      var story = snapshot.data as Story;
+
+                      return _buildStoryRow(context, repository, story);
+                    } else if (snapshot.hasError) {
+                      print('error id = $storyId: ${snapshot.error}');
+                      return Container();
+                    } else {
+                      return FadeLoading();
+                    }
+                  }));
     });
+  }
+
+  Widget _buildStoryRow(
+      BuildContext context, StoriesRepository repository, Story story) {
+    return Dismissible(
+      key: Key(story.toString()),
+      background: Container(
+        color: Colors.green,
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          children: [
+            Center(
+                child: Text(
+              'Read it later',
+              style:
+                  TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
+            )),
+            Flexible(
+              child: Container(),
+            ),
+          ],
+        ),
+      ),
+      onDismissed: (direction) {
+        repository.saveStory(story);
+        Scaffold.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text('Story is saved')));
+      },
+      child: StoryRow(
+        story: story,
+      ),
+    );
   }
 }
