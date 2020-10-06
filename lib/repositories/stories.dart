@@ -67,10 +67,7 @@ class StoriesRepository extends BaseRepository {
 
   Widget buildStoryWidget(StoryType storyType, int storyId) {
     if (_stories[storyId] != null) {
-      return StoryRow(
-        key: Key(storyId.toString()),
-        story: _stories[storyId],
-      );
+      return _buildStoryRow(_stories[storyId]);
     } else {
       return FutureBuilder(
           future: remoteSource.getStory(storyId),
@@ -80,13 +77,8 @@ class StoriesRepository extends BaseRepository {
               print('get story id for - $storyId');
               var story = Story.fromJson(responseData.data, type: storyType);
 
-              localSource.insertOrReplace(story);
-
               _stories[story.id] = story;
-              return StoryRow(
-                key: Key(storyId.toString()),
-                story: story,
-              );
+              return _buildStoryRow(story);
             } else if (snapshot.hasError) {
               print('error id = $storyId');
               return Container();
@@ -95,6 +87,13 @@ class StoriesRepository extends BaseRepository {
             }
           });
     }
+  }
+
+  Widget _buildStoryRow(Story story) {
+    return StoryRow(
+      key: Key(story.toString()),
+      story: story,
+    );
   }
 }
 
