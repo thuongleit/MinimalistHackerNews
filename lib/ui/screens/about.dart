@@ -2,9 +2,6 @@ import 'package:cherry_components/cherry_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_web_browser/flutter_web_browser.dart';
-import 'package:hacker_news/services/api.dart';
-import 'package:hacker_news/utils/url_util.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +10,8 @@ import 'package:row_collection/row_collection.dart';
 import '../../repositories/changelog.dart';
 import '../../utils/const.dart';
 import '../widgets/index.dart';
+import '../../services/api.dart';
+import '../../utils/url_util.dart';
 import 'index.dart';
 
 /// This view contains a list with useful

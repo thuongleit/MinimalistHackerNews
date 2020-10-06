@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hacker_news/database/index.dart';
-import 'package:hacker_news/repositories/stories.dart';
-import 'package:hacker_news/services/api.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/index.dart';
 import '../../ui/tabs/index.dart';
+import '../../database/index.dart';
+import '../../repositories/stories.dart';
+import '../../services/api.dart';
 
 class HomeScreen extends StatefulWidget {
 

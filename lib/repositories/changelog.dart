@@ -20,6 +20,7 @@ class ChangelogRepository extends BaseRepository {
       changelog = response.data;
 
       finishLoading();
+
     } catch (_) {
       receivedError();
     }

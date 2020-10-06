@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -12,8 +11,6 @@ import '../../utils/menu.dart';
 class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   final StoryType storyType;
   final ScrollController scrollController;
-
-  StoriesTab operator <(Type type) => this;
 
   const StoriesTab({Key key, this.storyType, this.scrollController})
       : super(key: key);

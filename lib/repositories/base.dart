@@ -13,6 +13,9 @@ abstract class BaseRepository with ChangeNotifier {
   /// Status regarding data loading capabilities
   Status _status;
 
+  /// Error message
+  Exception _error;
+
   BaseRepository([this.context]) {
     startLoading();
     loadData();
@@ -28,6 +31,8 @@ abstract class BaseRepository with ChangeNotifier {
   bool get loadingFailed => _status == Status.error;
   bool get isLoaded => _status == Status.loaded;
 
+  Exception get error => _error;
+
   /// Signals that information is being downloaded.
   void startLoading() {
     _status = Status.loading;
@@ -40,8 +45,9 @@ abstract class BaseRepository with ChangeNotifier {
   }
 
   /// Signals that there has been an error downloading data.
-  void receivedError() {
+  void receivedError({Exception error}) {
     _status = Status.error;
+    _error = error;
     notifyListeners();
   }
 }

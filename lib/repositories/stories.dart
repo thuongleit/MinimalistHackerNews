@@ -15,45 +15,48 @@ class StoriesRepository extends BaseRepository {
 
   StoriesRepository(this.localSource, this.remoteSource, this.type);
 
-  List<int> storyIds = [];
-  Map<int, Story> stories = Map();
+  List<int> _storyIds = [];
+  Map<int, Story> _stories = Map();
+
+  List<int> get storyIds => _storyIds;
 
   @override
   Future<void> loadData() async {
     // Try to load the data using [ApiService]
     try {
       if (type != null) {
-        // Receives the data from local database
+        // Receives the data from local source (database)
         final Response<List> remoteDataResponse =
             await localSource.getStories(type).then((localData) {
-          this.storyIds = localData.map((story) => story.id).toList();
-          print('from database $storyIds');
+          _storyIds = localData.map((story) => story.id).toList();
           localData.forEach((story) {
-            this.stories[story.id] = story;
+            _stories[story.id] = story;
           });
 
+          finishLoading();
+          //then load data from remote source
           return remoteSource.getStories(type);
         });
 
-        //final Response<List> storyIds = await ApiService.getStories(type);
         //remove possible duplicated stories
         var remoteData = remoteDataResponse.data.map((e) => e as int).toList();
-        remoteData.removeWhere((e) => this.storyIds.contains(e));
+        remoteData.removeWhere((e) => _storyIds.contains(e));
 
-        this.storyIds.addAll(remoteData);
-        finishLoading();
+        print('get new remote $remoteData');
+        _storyIds.addAll(remoteData);
+        notifyListeners();
       }
     } on Exception catch (e) {
       print(e);
-      receivedError();
+      receivedError(error: e);
     }
   }
 
   Widget buildStoryWidget(StoryType storyType, int storyId) {
-    if (this.stories[storyId] != null) {
+    if (_stories[storyId] != null) {
       return StoryRow(
         key: Key(storyId.toString()),
-        story: this.stories[storyId],
+        story: _stories[storyId],
       );
     } else {
       return FutureBuilder(
@@ -61,11 +64,12 @@ class StoriesRepository extends BaseRepository {
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
               var responseData = snapshot.data as Response;
+              print('get story id for - $storyId');
               var story = Story.fromJson(responseData.data, type: storyType);
 
               localSource.insertOrReplace(story);
 
-              this.stories[story.id] = story;
+              _stories[story.id] = story;
               return StoryRow(
                 key: Key(storyId.toString()),
                 story: story,
