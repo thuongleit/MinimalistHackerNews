@@ -174,6 +174,7 @@ class SliverPage<T extends BaseRepository> extends StatelessWidget {
             SliverAppBar(
               title: Text(title),
               actions: <Widget>[
+                if (actions != null) ...actions,
                 if (popupMenu != null)
                   PopupMenuButton<String>(
                     itemBuilder: (context) => [
@@ -186,7 +187,6 @@ class SliverPage<T extends BaseRepository> extends StatelessWidget {
                     onSelected: (text) =>
                         Navigator.pushNamed(context, popupMenu[text]),
                   ),
-                if (actions != null) ...actions,
               ],
             ),
             if (model.isLoading)

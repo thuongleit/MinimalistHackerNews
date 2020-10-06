@@ -26,6 +26,9 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
           counter: null,
           slides: null,
           popupMenu: Menu.home,
+          actions: Menu.home_actions
+              .map((action) => _buildMenuAction(context, action))
+              .toList(),
           body: <Widget>[
             SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -36,6 +39,14 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildMenuAction(BuildContext context, Map<String, Object> action) {
+    return IconButton(
+      tooltip: action['title'],
+      onPressed: () => Navigator.pushNamed(context, action['route']),
+      icon: Icon(action['icon']),
     );
   }
 

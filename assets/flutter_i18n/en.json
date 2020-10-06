@@ -3,7 +3,8 @@
     "title": "Simple Hacker News",
     "menu": {
       "settings": "Settings",
-      "about": "About"
+      "about": "About",
+      "read_it_later": "Read it later"
     },
     "messages": {
       "unknown": "Unknown",
