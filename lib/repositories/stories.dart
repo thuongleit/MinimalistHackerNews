@@ -25,31 +25,44 @@ class StoriesRepository extends BaseRepository {
     // Try to load the data using [ApiService]
     try {
       if (type != null) {
-        // Receives the data from local source (database)
-        final Response<List> remoteDataResponse =
-            await localSource.getStories(type).then((localData) {
-          _storyIds = localData.map((story) => story.id).toList();
-          localData.forEach((story) {
-            _stories[story.id] = story;
-          });
-
-          finishLoading();
-          //then load data from remote source
-          return remoteSource.getStories(type);
-        });
-
-        //remove possible duplicated stories
-        var remoteData = remoteDataResponse.data.map((e) => e as int).toList();
-        remoteData.removeWhere((e) => _storyIds.contains(e));
-
-        print('get new remote $remoteData');
-        _storyIds.addAll(remoteData);
-        notifyListeners();
+        // Receives the data and parse it
+        final Response<List> storyIds = await remoteSource.getStories(type);
+        _storyIds = storyIds.data.map((e) => e as int).toList();
       }
+
+      finishLoading();
     } on Exception catch (e) {
       print(e);
-      receivedError(error: e);
+      receivedError();
     }
+    // // Try to load the data using [ApiService]
+    // try {
+    //   if (type != null) {
+    //     // Receives the data from local source (database)
+    //     final Response<List> remoteDataResponse =
+    //         await localSource.getStories(type).then((localData) {
+    //       _storyIds = localData.map((story) => story.id).toList();
+    //       localData.forEach((story) {
+    //         _stories[story.id] = story;
+    //       });
+    //
+    //       finishLoading();
+    //       //then load data from remote source
+    //       return remoteSource.getStories(type);
+    //     });
+    //
+    //     //remove possible duplicated stories
+    //     var remoteData = remoteDataResponse.data.map((e) => e as int).toList();
+    //     remoteData.removeWhere((e) => _storyIds.contains(e));
+    //
+    //     print('get new remote $remoteData');
+    //     _storyIds.addAll(remoteData);
+    //     notifyListeners();
+    //   }
+    // } on Exception catch (e) {
+    //   print(e);
+    //   receivedError(error: e);
+    // }
   }
 
   Widget buildStoryWidget(StoryType storyType, int storyId) {
