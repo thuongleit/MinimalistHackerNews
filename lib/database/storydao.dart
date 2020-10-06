@@ -15,8 +15,8 @@ class StoryDao {
     return _dao;
   }
 
-  Future<List<Story>> getStories(StoryType type) async {
-    print('get $type');
+  Future<List<Story>> getStories() async {
+    print('get stories');
     var db = await _appDatabase.getDb();
 
     var result = await db.rawQuery('SELECT * FROM ${Story.dbSavedStoriesTableName};');

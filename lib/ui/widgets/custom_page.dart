@@ -98,13 +98,13 @@ class ReloadablePage<T extends BaseRepository> extends StatelessWidget {
           child: model.isLoading
               ? _loadingIndicator
               : model.loadingFailed
-              ? SliverFillRemaining(
-            child: ChangeNotifierProvider.value(
-              value: model,
-              child: ConnectionError<T>(),
-            ),
-          )
-              : SafeArea(bottom: false, child: body),
+                  ? SliverFillRemaining(
+                      child: ChangeNotifierProvider.value(
+                        value: model,
+                        child: ConnectionError<T>(),
+                      ),
+                    )
+                  : SafeArea(bottom: false, child: body),
         ),
       ),
     );
@@ -119,6 +119,7 @@ class SliverPage<T extends BaseRepository> extends StatelessWidget {
   final ScrollController controller;
   final List<Widget> body, actions;
   final Map<String, String> popupMenu;
+  final bool enablePullToRefresh;
 
   const SliverPage({
     @required this.title,
@@ -126,6 +127,7 @@ class SliverPage<T extends BaseRepository> extends StatelessWidget {
     this.controller,
     this.actions,
     this.popupMenu,
+    this.enablePullToRefresh,
   });
 
   factory SliverPage.slide({
@@ -134,12 +136,14 @@ class SliverPage<T extends BaseRepository> extends StatelessWidget {
     @required List<Widget> body,
     List<Widget> actions,
     Map<String, String> popupMenu,
+    bool enablePullToRefresh = true,
   }) {
     return SliverPage(
       title: title,
       body: body,
       actions: actions,
       popupMenu: popupMenu,
+      enablePullToRefresh: enablePullToRefresh,
     );
   }
 
@@ -152,6 +156,7 @@ class SliverPage<T extends BaseRepository> extends StatelessWidget {
     @required List<Widget> body,
     List<Widget> actions,
     Map<String, String> popupMenu,
+    bool enablePullToRefresh = true,
   }) {
     return SliverPage(
       controller: controller,
@@ -159,50 +164,57 @@ class SliverPage<T extends BaseRepository> extends StatelessWidget {
       body: body,
       actions: actions,
       popupMenu: popupMenu,
+      enablePullToRefresh: enablePullToRefresh,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<T>(
-      builder: (context, model, child) => RefreshIndicator(
-        onRefresh: () => _onRefresh(context, model),
-        child: CustomScrollView(
-          key: PageStorageKey(title),
-          controller: controller,
-          slivers: <Widget>[
-            SliverAppBar(
-              title: Text(title),
-              actions: <Widget>[
-                if (actions != null) ...actions,
-                if (popupMenu != null)
-                  PopupMenuButton<String>(
-                    itemBuilder: (context) => [
-                      for (final item in popupMenu.keys)
-                        PopupMenuItem(
-                          value: item,
-                          child: Text(FlutterI18n.translate(context, item)),
-                        )
-                    ],
-                    onSelected: (text) =>
-                        Navigator.pushNamed(context, popupMenu[text]),
-                  ),
-              ],
-            ),
-            if (model.isLoading)
-              SliverFillRemaining(child: _loadingIndicator)
-            else if (model.loadingFailed)
-              SliverFillRemaining(
-                child: ChangeNotifierProvider.value(
-                  value: model,
-                  child: ConnectionError<T>(),
-                ),
-              )
-            else
-              ...body,
+      builder: (context, model, child) => enablePullToRefresh
+          ? RefreshIndicator(
+              onRefresh: () => _onRefresh(context, model),
+              child: _buildBody(context, model),
+            )
+          : _buildBody(context, model),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, T model) {
+    return CustomScrollView(
+      key: PageStorageKey(title),
+      controller: controller,
+      slivers: <Widget>[
+        SliverAppBar(
+          title: Text(title),
+          actions: <Widget>[
+            if (actions != null) ...actions,
+            if (popupMenu != null)
+              PopupMenuButton<String>(
+                itemBuilder: (context) => [
+                  for (final item in popupMenu.keys)
+                    PopupMenuItem(
+                      value: item,
+                      child: Text(FlutterI18n.translate(context, item)),
+                    )
+                ],
+                onSelected: (text) =>
+                    Navigator.pushNamed(context, popupMenu[text]),
+              ),
           ],
         ),
-      ),
+        if (model.isLoading)
+          SliverFillRemaining(child: _loadingIndicator)
+        else if (model.loadingFailed)
+          SliverFillRemaining(
+            child: ChangeNotifierProvider.value(
+              value: model,
+              child: ConnectionError<T>(),
+            ),
+          )
+        else
+          ...body,
+      ],
     );
   }
 }
@@ -220,7 +232,7 @@ class ConnectionError<T extends BaseRepository> extends StatelessWidget {
             'app.messages.loading.connection_error.message',
           ),
           style:
-          GoogleFonts.rubikTextTheme(Theme.of(context).textTheme).subtitle1,
+              GoogleFonts.rubikTextTheme(Theme.of(context).textTheme).subtitle1,
         ),
         action: Text(
           FlutterI18n.translate(
@@ -230,9 +242,9 @@ class ConnectionError<T extends BaseRepository> extends StatelessWidget {
           style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
               .subtitle1
               .copyWith(
-            color: Theme.of(context).accentColor,
-            fontWeight: FontWeight.bold,
-          ),
+                color: Theme.of(context).accentColor,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         actionCallback: () async => _onRefresh(context, model),
         child: Icon(Icons.cloud_off),
