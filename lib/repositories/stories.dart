@@ -14,7 +14,7 @@ class StoriesRepository extends BaseRepository {
   StoriesRepository(this.localSource, this.remoteSource, this.type);
 
   List<int> _storyIds = [];
-  Map<int, Story> _stories = Map();
+  Map<int, Story> _stories = Map(); //Map<story_id, Story>
 
   List<int> get storyIds => _storyIds;
 
@@ -65,7 +65,7 @@ class StoriesRepository extends BaseRepository {
     // }
   }
 
-  Future<Story> getStory(int storyId) {
+  Future<Story> getStory(int storyId) async {
     return remoteSource.getStory(storyId).then((response) {
       print('get story id for - $storyId');
       var story = Story.fromJson(response.data);
@@ -75,7 +75,7 @@ class StoriesRepository extends BaseRepository {
     });
   }
 
-  Future saveStory(Story story) => localSource.insertOrReplace(story);
+  Future saveStory(Story story) async => localSource.insertOrReplace(story);
 }
 
 class NewStoriesRepository extends StoriesRepository {

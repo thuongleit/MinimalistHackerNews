@@ -48,7 +48,7 @@ class ReadItLaterScreen extends StatelessWidget {
 
       return Container(
           child: (repository.stories[storyId] != null)
-              ? _buildStoryRow(context, repository, repository.stories[storyId])
+              ? _buildStoryRow(context, repository, repository.stories[storyId].right)
               : FutureBuilder(
                   future: repository.getStory(storyId),
                   builder: (context, snapshot) {

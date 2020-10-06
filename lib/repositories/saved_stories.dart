@@ -1,9 +1,8 @@
-import 'package:dio/dio.dart';
-
 import '../models/index.dart';
 import '../services/index.dart';
 import './index.dart';
 import '../database/index.dart';
+import '../utils/pair.dart';
 
 /// Repository that holds saved stories of Hacker News
 class SavedStoriesRepository extends BaseRepository {
@@ -13,11 +12,12 @@ class SavedStoriesRepository extends BaseRepository {
   SavedStoriesRepository(this.localSource, this.remoteSource);
 
   List<int> _storyIds = [];
-  Map<int, Story> _stories = Map();
+  Map<int, Pair<bool, Story>> _stories =
+      Map(); //Map<story_id, Pair(is_updated, Story)>
 
   List<int> get storyIds => _storyIds;
 
-  Map<int, Story> get stories => _stories;
+  Map<int, Pair<bool, Story>> get stories => _stories;
 
   @override
   Future<void> loadData() async {
@@ -26,7 +26,7 @@ class SavedStoriesRepository extends BaseRepository {
       var stories = await localSource.getStories();
       stories.forEach((story) {
         _storyIds.add(story.id);
-        _stories[story.id] = story;
+        _stories[story.id] = Pair(false, story);
       });
 
       finishLoading();
@@ -36,15 +36,23 @@ class SavedStoriesRepository extends BaseRepository {
     }
   }
 
-  Future<Story> getStory(int storyId) {
-    return remoteSource.getStory(storyId).then((response) {
-      print('get story id for - $storyId');
-      var story = Story.fromJson(response.data);
+  Future<Story> getStory(int storyId) async {
+    var storiesMap = _stories[storyId];
 
-      _stories[story.id] = story;
-      return story;
-    });
+    if (storiesMap.left) {
+      //story is updated from remote source, return itself
+      return storiesMap.right;
+    } else {
+      return remoteSource.getStory(storyId).then((response) {
+        print('get story id for - $storyId');
+        var story = Story.fromJson(response.data);
+
+        localSource.insertOrReplace(story);
+        _stories[story.id] = Pair(true, story);
+        return story;
+      });
+    }
   }
 
-  Future deleteStory(Story story) => localSource.deleteStory(story.id);
+  Future deleteStory(Story story) async => localSource.deleteStory(story.id);
 }
