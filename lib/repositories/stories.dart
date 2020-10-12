@@ -75,7 +75,11 @@ class StoriesRepository extends BaseRepository {
     });
   }
 
-  Future saveStory(Story story) async => localSource.insertOrReplace(story);
+  Future saveStory(Story story) async {
+    _storyIds.remove(story);
+    notifyListeners();
+    localSource.insertOrReplace(story);
+  }
 }
 
 class NewStoriesRepository extends StoriesRepository {
