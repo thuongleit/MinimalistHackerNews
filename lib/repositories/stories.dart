@@ -16,9 +16,9 @@ class StoriesRepository extends BaseRepository {
   List<int> _storyIds = [];
   Map<int, Story> _stories = Map(); //Map<story_id, Story>
 
-  List<int> get storyIds => _storyIds;
+  List<int> get storyIds => [..._storyIds];
 
-  Map<int, Story> get stories => _stories;
+  Map<int, Story> get stories => {..._stories};
 
   @override
   Future<void> loadData() async {
@@ -76,7 +76,7 @@ class StoriesRepository extends BaseRepository {
   }
 
   Future saveStory(Story story) async {
-    _storyIds.remove(story);
+    _storyIds.remove(story.id);
     notifyListeners();
     localSource.insertOrReplace(story);
   }

@@ -77,7 +77,7 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   Widget _buildStoryRow(
       BuildContext context, StoriesRepository repository, Story story) {
     return Dismissible(
-      key: ObjectKey(story),
+      key: ValueKey(story.id),
       background: Container(
         color: Colors.green[700],
         padding: EdgeInsets.all(12.0),
