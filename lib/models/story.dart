@@ -1,8 +1,10 @@
+import 'package:hacker_news/models/copyable.dart';
+
 import '../utils/const.dart';
 
 enum StoryType { news, top, best, ask, show, jobs }
 
-class Story {
+class Story with Copyable<Story> {
   static final dbSavedStoriesTableName = 'saved_stories';
   static final dbKeyId = 'id';
   static final dbKeyTitle = 'title';
@@ -14,6 +16,7 @@ class Story {
   static final dbKeyText = 'text';
   static final dbKeyScore = 'score';
   static final dbKeyDescendants = 'descendants';
+  static final dbKeyUpdatedAt = 'updated_at';
 
   final int id;
   final String title;
@@ -25,6 +28,7 @@ class Story {
   final String text;
   final int score;
   final int descendants;
+  final int updatedAt;
 
   String get contentUrl => getRightUrl(Const.itemContentUrl, '$id');
 
@@ -41,6 +45,7 @@ class Story {
     this.text,
     this.score,
     this.descendants,
+    this.updatedAt,
   });
 
   factory Story.fromJson(Map<String, dynamic> json) {
@@ -55,6 +60,7 @@ class Story {
       text: json['text'],
       score: json['score'],
       descendants: json['descendants'] ?? 0,
+      updatedAt: null,
     );
   }
 
@@ -70,6 +76,41 @@ class Story {
       text: result[dbKeyText],
       score: result[dbKeyScore],
       descendants: result[dbKeyDescendants],
+      updatedAt: result[dbKeyUpdatedAt],
+    );
+  }
+
+  @override
+  Story copy() {
+    return Story(
+      id: this.id,
+      title: this.title,
+      by: this.by,
+      deleted: this.deleted,
+      time: this.time,
+      type: this.type,
+      url: this.url,
+      text: this.text,
+      score: this.score,
+      descendants: this.descendants,
+      updatedAt: this.updatedAt,
+    );
+  }
+
+  @override
+  Story copyWith({int updatedAt}) {
+    return Story(
+      id: this.id,
+      title: this.title,
+      by: this.by,
+      deleted: this.deleted,
+      time: this.time,
+      type: this.type,
+      url: this.url,
+      text: this.text,
+      score: this.score,
+      descendants: this.descendants,
+      updatedAt: updatedAt,
     );
   }
 }

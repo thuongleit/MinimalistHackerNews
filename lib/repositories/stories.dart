@@ -77,8 +77,9 @@ class StoriesRepository extends BaseRepository {
 
   Future saveStory(Story story) async {
     _storyIds.remove(story.id);
+    final storyToSave = story.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+    localSource.insertOrReplace(storyToSave);
     notifyListeners();
-    localSource.insertOrReplace(story);
   }
 }
 

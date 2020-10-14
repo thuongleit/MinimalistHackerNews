@@ -65,7 +65,8 @@ class AppDatabase {
           "${Story.dbKeyUrl} TEXT,"
           "${Story.dbKeyText} TEXT,"
           "${Story.dbKeyScore} INTEGER,"
-          "${Story.dbKeyDescendants} INTEGER);");
+          "${Story.dbKeyDescendants} INTEGER,"
+          "${Story.dbKeyUpdatedAt} INTEGER);");
     });
   }
 

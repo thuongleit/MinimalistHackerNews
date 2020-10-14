@@ -19,7 +19,7 @@ class StoryDao {
     print('get stories');
     var db = await _appDatabase.getDb();
 
-    var result = await db.rawQuery('SELECT * FROM ${Story.dbSavedStoriesTableName};');
+    var result = await db.rawQuery('SELECT * FROM ${Story.dbSavedStoriesTableName} ORDER BY ${Story.dbKeyUpdatedAt} DESC;');
 
     return result.map((item) => Story.fromDb(item)).toList(growable: false);
   }
@@ -45,8 +45,8 @@ class StoryDao {
   Future _insertOrReplace(Transaction trn, Story story) async {
     await trn.rawInsert(
       'INSERT OR REPLACE INTO '
-      '${Story.dbSavedStoriesTableName}(${Story.dbKeyId},${Story.dbKeyTitle},${Story.dbKeyBy},${Story.dbKeyDeleted},${Story.dbKeyTime},${Story.dbKeyType},${Story.dbKeyUrl},${Story.dbKeyText},${Story.dbKeyScore},${Story.dbKeyDescendants})'
-      ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      '${Story.dbSavedStoriesTableName}(${Story.dbKeyId},${Story.dbKeyTitle},${Story.dbKeyBy},${Story.dbKeyDeleted},${Story.dbKeyTime},${Story.dbKeyType},${Story.dbKeyUrl},${Story.dbKeyText},${Story.dbKeyScore},${Story.dbKeyDescendants},${Story.dbKeyUpdatedAt})'
+      ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         story.id,
         story.title,
@@ -58,6 +58,7 @@ class StoryDao {
         story.text,
         story.score,
         story.descendants,
+        story.updatedAt,
       ],
     );
   }
