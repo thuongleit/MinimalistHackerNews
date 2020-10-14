@@ -15,9 +15,9 @@ class SavedStoriesRepository extends BaseRepository {
   Map<int, Pair<bool, Story>> _stories =
       Map(); //Map<story_id, Pair(is_updated, Story)>
 
-  List<int> get storyIds => _storyIds;
+  List<int> get storyIds => [..._storyIds];
 
-  Map<int, Pair<bool, Story>> get stories => _stories;
+  Map<int, Pair<bool, Story>> get stories => {...stories};
 
   @override
   Future<void> loadData() async {
