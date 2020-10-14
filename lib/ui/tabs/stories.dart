@@ -7,6 +7,7 @@ import '../widgets/index.dart';
 import '../../models/index.dart';
 import '../../repositories/index.dart';
 import '../../utils/menu.dart';
+import '../../utils/routes.dart';
 
 class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   final StoryType storyType;
@@ -99,7 +100,17 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
         repository.saveStory(story);
         Scaffold.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text('Story is saved')));
+          ..showSnackBar(
+            SnackBar(
+              content: Text('Story is saved'),
+              action: SnackBarAction(
+                label: "GO TO SAVED",
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.read_it_later);
+                },
+              ),
+            ),
+          );
       },
       child: StoryRow(
         story: story,

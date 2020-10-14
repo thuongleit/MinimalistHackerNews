@@ -48,14 +48,15 @@ class ReadItLaterScreen extends StatelessWidget {
 
       return Container(
           child: (repository.stories[storyId] != null)
-              ? _buildStoryRow(context, repository, repository.stories[storyId].right)
+              ? _buildStoryRow(
+                  context, repository, index, repository.stories[storyId].left)
               : FutureBuilder(
                   future: repository.getStory(storyId),
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data != null) {
                       var story = snapshot.data as Story;
 
-                      return _buildStoryRow(context, repository, story);
+                      return _buildStoryRow(context, repository, index,  story);
                     } else if (snapshot.hasError) {
                       print('error id = $storyId: ${snapshot.error}');
                       return Container();
@@ -67,9 +68,9 @@ class ReadItLaterScreen extends StatelessWidget {
   }
 
   Widget _buildStoryRow(
-      BuildContext context, SavedStoriesRepository repository, Story story) {
+      BuildContext context, SavedStoriesRepository repository, int index, Story story) {
     return Dismissible(
-      key: Key(story.toString()),
+      key: ValueKey(story.id),
       background: Container(
         color: Colors.red,
         padding: EdgeInsets.all(12.0),
@@ -91,7 +92,12 @@ class ReadItLaterScreen extends StatelessWidget {
         repository.deleteStory(story);
         Scaffold.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text('Story is deleted')));
+          ..showSnackBar(
+            SnackBar(
+              content: Text('Story is deleted'),
+              action: SnackBarAction(label: "UNDO", onPressed: () { repository.saveStory(index, story); }, ),
+            ),
+          );
       },
       child: StoryRow(
         story: story,

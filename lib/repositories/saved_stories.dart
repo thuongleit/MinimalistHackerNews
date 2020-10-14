@@ -12,12 +12,12 @@ class SavedStoriesRepository extends BaseRepository {
   SavedStoriesRepository(this.localSource, this.remoteSource);
 
   List<int> _storyIds = [];
-  Map<int, Pair<bool, Story>> _stories =
+  Map<int, Pair<Story, bool>> _stories =
       Map(); //Map<story_id, Pair(is_updated, Story)>
 
   List<int> get storyIds => [..._storyIds];
 
-  Map<int, Pair<bool, Story>> get stories => {...stories};
+  Map<int, Pair<Story, bool>> get stories => {..._stories};
 
   @override
   Future<void> loadData() async {
@@ -26,7 +26,7 @@ class SavedStoriesRepository extends BaseRepository {
       var stories = await localSource.getStories();
       stories.forEach((story) {
         _storyIds.add(story.id);
-        _stories[story.id] = Pair(false, story);
+        _stories[story.id] = Pair(story, false);
       });
 
       finishLoading();
@@ -39,20 +39,30 @@ class SavedStoriesRepository extends BaseRepository {
   Future<Story> getStory(int storyId) async {
     var storiesMap = _stories[storyId];
 
-    if (storiesMap.left) {
+    if (storiesMap.right) {
       //story is updated from remote source, return itself
-      return storiesMap.right;
+      return storiesMap.left;
     } else {
       return remoteSource.getStory(storyId).then((response) {
         print('get story id for - $storyId');
         var story = Story.fromJson(response.data);
 
         localSource.insertOrReplace(story);
-        _stories[story.id] = Pair(true, story);
+        _stories[story.id] = Pair(story, true);
         return story;
       });
     }
   }
 
-  Future deleteStory(Story story) async => localSource.deleteStory(story.id);
+  Future deleteStory(Story story) async {
+    _storyIds.remove(story.id);
+    localSource.deleteStory(story.id);
+    notifyListeners();
+  }
+
+  Future saveStory(int index, Story story) async {
+    _storyIds.insert(index, story.id);
+    localSource.insertOrReplace(story);
+    notifyListeners();
+  }
 }
