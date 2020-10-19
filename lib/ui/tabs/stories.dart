@@ -18,29 +18,30 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<T>(
-      builder: (context, repository, child) =>
-          Scaffold(
-            body: SliverPage<T>.display(
-              controller: scrollController,
-              title: FlutterI18n.translate(
-                  context, getStoryTitleKey(storyType)),
-              opacity: null,
-              counter: null,
-              slides: null,
-              popupMenu: Menu.home,
-              actions: Menu.home_actions
-                  .map((action) => _buildMenuAction(context, action))
-                  .toList(),
-              body: <Widget>[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    _buildStoryRows,
-                    childCount: repository.storyIds.length,
-                  ),
-                )
-              ],
-            ),
+      builder: (context, repository, child) => Scaffold(
+        body: SliverPage<T>.display(
+          controller: scrollController,
+          title: FlutterI18n.translate(
+            context,
+            getStoryTabTitleKey(storyType),
           ),
+          opacity: null,
+          counter: null,
+          slides: null,
+          popupMenu: Menu.home,
+          actions: Menu.home_actions
+              .map((action) => _buildMenuAction(context, action))
+              .toList(),
+          body: <Widget>[
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                _buildStoryRows,
+                childCount: repository.storyIds.length,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -58,21 +59,22 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
 
       return Container(
           child: (repository.stories[storyId] != null)
-              ? _buildStoryRow(context, repository, repository.stories[storyId], index)
+              ? _buildStoryRow(
+                  context, repository, repository.stories[storyId], index)
               : FutureBuilder(
-              future: repository.getStory(storyId),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  var story = snapshot.data as Story;
+                  future: repository.getStory(storyId),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data != null) {
+                      var story = snapshot.data as Story;
 
-                  return _buildStoryRow(context, repository, story, index);
-                } else if (snapshot.hasError) {
-                  print('error id = $storyId: ${snapshot.error}');
-                  return Container();
-                } else {
-                  return FadeLoading();
-                }
-              }));
+                      return _buildStoryRow(context, repository, story, index);
+                    } else if (snapshot.hasError) {
+                      print('error id = $storyId: ${snapshot.error}');
+                      return Container();
+                    } else {
+                      return FadeLoading();
+                    }
+                  }));
     });
   }
 

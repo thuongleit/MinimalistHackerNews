@@ -70,7 +70,7 @@ class _MyHomePageState extends State<HomeScreen> {
             getStoryIcon(type),
             size: 24.0,
           ),
-          title: Text(FlutterI18n.translate(context, getStoryTitleKey(type))),
+          title: Text(FlutterI18n.translate(context, getStoryTabKey(type))),
         ),
       );
     }

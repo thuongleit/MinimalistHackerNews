@@ -4,7 +4,7 @@
     "menu": {
       "settings": "Settings",
       "about": "About",
-      "saved_stories": "Saved stories"
+      "saved_stories": "Saved Stories"
     },
     "message": {
       "unknown": "Unknown",
@@ -27,6 +27,15 @@
   },
   "screen": {
     "home": {
+      "title": {
+        "new": "New Stories",
+        "best": "Best Stories",
+        "top": "Top Stories",
+        "ask": "Ask HN",
+        "show": "Show HN",
+        "jobs": "Jobs",
+        "default": ""
+      },
       "tab": {
         "new": "New",
         "best": "Best",
