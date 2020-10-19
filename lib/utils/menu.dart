@@ -11,8 +11,8 @@ class Menu {
 
   static const home_actions = [
     {
-      'title': 'app.menu.read_it_later',
-      'route': Routes.read_it_later,
+      'title': 'app.menu.saved_stories',
+      'route': Routes.saved_stories,
       'icon': Icons.save,
     },
   ];

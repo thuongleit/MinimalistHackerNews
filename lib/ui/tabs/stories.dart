@@ -85,11 +85,12 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
         child: Row(
           children: [
             Center(
-                child: Text(
-              'Read it later',
-              style:
-                  TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
-            )),
+              child: Text(
+                FlutterI18n.translate(context, 'app.action.read_later'),
+                style: TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.bold),
+              ),
+            ),
             Flexible(
               child: Container(),
             ),
@@ -102,12 +103,11 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
           ..hideCurrentSnackBar()
           ..showSnackBar(
             SnackBar(
-              content: Text('Story is saved'),
+              content: Text(
+                  FlutterI18n.translate(context, 'app.message.story_saved')),
               action: SnackBarAction(
-                label: "GO TO SAVED",
-                onPressed: () {
-                  Navigator.pushNamed(context, Routes.read_it_later);
-                },
+                label: FlutterI18n.translate(context, 'app.action.undo'),
+                onPressed: () => repository.runtimeType,
               ),
             ),
           );

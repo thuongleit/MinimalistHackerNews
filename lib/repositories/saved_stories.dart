@@ -46,7 +46,6 @@ class SavedStoriesRepository extends BaseRepository {
       return storiesMap.left;
     } else {
       return remoteSource.getStory(storyId).then((response) {
-        print('get story id for - $storyId');
         var story = Story.fromJson(response.data);
 
         localSource.insertOrReplace(story);
@@ -70,7 +69,6 @@ class SavedStoriesRepository extends BaseRepository {
 
   Future visitStory(Story story) async {
     var isUpdated = await localSource.updateVisitStory(story.id);
-    print('isUpdated:$isUpdated');
     if (isUpdated) {
       var copyStory = story.copyWith(visited: true);
       _stories[story.id] = Pair(copyStory, true);

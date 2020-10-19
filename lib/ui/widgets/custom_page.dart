@@ -24,12 +24,12 @@ Future<void> _onRefresh(BuildContext context, BaseRepository repository) {
           SnackBar(
             content: Text(FlutterI18n.translate(
               context,
-              'app.messages.loading.connection_error.message',
+              'app.message.loading.connection_error.message',
             )),
             action: SnackBarAction(
               label: FlutterI18n.translate(
                 context,
-                'app.messages.loading.connection_error.reload',
+                'app.message.loading.connection_error.reload',
               ),
               onPressed: () => _onRefresh(context, repository),
             ),
@@ -229,7 +229,7 @@ class ConnectionError<T extends BaseRepository> extends StatelessWidget {
         subtitle: Text(
           FlutterI18n.translate(
             context,
-            'app.messages.loading.connection_error.message',
+            'app.message.loading.connection_error.message',
           ),
           style:
               GoogleFonts.rubikTextTheme(Theme.of(context).textTheme).subtitle1,
@@ -237,7 +237,7 @@ class ConnectionError<T extends BaseRepository> extends StatelessWidget {
         action: Text(
           FlutterI18n.translate(
             context,
-            'app.messages.loading.connection_error.reload',
+            'app.message.loading.connection_error.reload',
           ),
           style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
               .subtitle1

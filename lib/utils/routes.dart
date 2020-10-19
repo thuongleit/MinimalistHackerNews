@@ -9,7 +9,7 @@ class Routes {
   static const home = '/';
   static const about = '/about';
   static const settings = '/settings';
-  static const read_it_later = '/later';
+  static const saved_stories = '/saved_stories';
 
   /// Methods that generate all routes
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
@@ -32,10 +32,10 @@ class Routes {
             settings: routeSettings,
             builder: (_) => SettingsScreen(),
           );
-        case read_it_later:
+        case saved_stories:
           return MaterialPageRoute(
             settings: routeSettings,
-            builder: (_) => ReadItLaterScreen(),
+            builder: (_) => SavedStoriesScreen(),
           );
         default:
           return errorRoute(routeSettings);

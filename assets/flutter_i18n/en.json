@@ -4,16 +4,24 @@
     "menu": {
       "settings": "Settings",
       "about": "About",
-      "read_it_later": "Read it later"
+      "saved_stories": "Saved stories"
     },
-    "messages": {
+    "message": {
       "unknown": "Unknown",
       "loading": {
         "connection_error": {
           "message": "No internet connection. Try reloading.",
           "reload": "RELOAD"
         }
-      }
+      },
+      "story_saved": "Story saved",
+      "story_unsaved": "Story unsaved"
+    },
+    "action": {
+      "delete": "Delete",
+      "undo": "Undo",
+      "read_later": "Read later",
+      "upvote": "Upvote"
     }
   },
   "screen": {
@@ -86,6 +94,9 @@
           "external": "External browser"
         }
       }
+    },
+    "saved_stories": {
+      "story_unsaved": "Story unsaved"
     },
     "error": {
       "title": "An error occurred",

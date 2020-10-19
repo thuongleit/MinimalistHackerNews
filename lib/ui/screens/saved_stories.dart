@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/index.dart';
@@ -8,7 +9,7 @@ import '../../services/api.dart';
 import '../../database/index.dart';
 import '../../models/index.dart';
 
-class ReadItLaterScreen extends StatelessWidget {
+class SavedStoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -21,7 +22,7 @@ class ReadItLaterScreen extends StatelessWidget {
         builder: (context, repository, child) => Scaffold(
           body: SliverPage<SavedStoriesRepository>.display(
             controller: null,
-            title: 'Read it later',
+            title: FlutterI18n.translate(context, 'app.menu.saved_stories'),
             opacity: null,
             counter: null,
             slides: null,
@@ -56,7 +57,7 @@ class ReadItLaterScreen extends StatelessWidget {
                     if (snapshot.hasData && snapshot.data != null) {
                       var story = snapshot.data as Story;
 
-                      return _buildStoryRow(context, repository, index,  story);
+                      return _buildStoryRow(context, repository, index, story);
                     } else if (snapshot.hasError) {
                       print('error id = $storyId: ${snapshot.error}');
                       return Container();
@@ -67,8 +68,8 @@ class ReadItLaterScreen extends StatelessWidget {
     });
   }
 
-  Widget _buildStoryRow(
-      BuildContext context, SavedStoriesRepository repository, int index, Story story) {
+  Widget _buildStoryRow(BuildContext context, SavedStoriesRepository repository,
+      int index, Story story) {
     return Dismissible(
       key: ValueKey(story.id),
       background: Container(
@@ -78,7 +79,7 @@ class ReadItLaterScreen extends StatelessWidget {
           children: [
             Center(
                 child: Text(
-              'Delete',
+              FlutterI18n.translate(context, 'app.action.delete'),
               style:
                   TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
             )),
@@ -94,8 +95,13 @@ class ReadItLaterScreen extends StatelessWidget {
           ..hideCurrentSnackBar()
           ..showSnackBar(
             SnackBar(
-              content: Text('Story is deleted'),
-              action: SnackBarAction(label: "UNDO", onPressed: () { repository.saveStory(index, story); }, ),
+              content: Text(FlutterI18n.translate(context, 'screen.saved_stories.story_unsaved')),
+              action: SnackBarAction(
+                label: FlutterI18n.translate(context, 'app.action.undo'),
+                onPressed: () {
+                  repository.saveStory(index, story);
+                },
+              ),
             ),
           );
       },
