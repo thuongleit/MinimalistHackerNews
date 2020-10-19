@@ -7,7 +7,6 @@ import '../widgets/index.dart';
 import '../../models/index.dart';
 import '../../repositories/index.dart';
 import '../../utils/menu.dart';
-import '../../utils/routes.dart';
 
 class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   final StoryType storyType;
@@ -19,27 +18,29 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<T>(
-      builder: (context, repository, child) => Scaffold(
-        body: SliverPage<T>.display(
-          controller: scrollController,
-          title: FlutterI18n.translate(context, getStoryTitleKey(storyType)),
-          opacity: null,
-          counter: null,
-          slides: null,
-          popupMenu: Menu.home,
-          actions: Menu.home_actions
-              .map((action) => _buildMenuAction(context, action))
-              .toList(),
-          body: <Widget>[
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                _buildStoryRows,
-                childCount: repository.storyIds.length,
-              ),
-            )
-          ],
-        ),
-      ),
+      builder: (context, repository, child) =>
+          Scaffold(
+            body: SliverPage<T>.display(
+              controller: scrollController,
+              title: FlutterI18n.translate(
+                  context, getStoryTitleKey(storyType)),
+              opacity: null,
+              counter: null,
+              slides: null,
+              popupMenu: Menu.home,
+              actions: Menu.home_actions
+                  .map((action) => _buildMenuAction(context, action))
+                  .toList(),
+              body: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    _buildStoryRows,
+                    childCount: repository.storyIds.length,
+                  ),
+                )
+              ],
+            ),
+          ),
     );
   }
 
@@ -57,26 +58,26 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
 
       return Container(
           child: (repository.stories[storyId] != null)
-              ? _buildStoryRow(context, repository, repository.stories[storyId])
+              ? _buildStoryRow(context, repository, repository.stories[storyId], index)
               : FutureBuilder(
-                  future: repository.getStory(storyId),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data != null) {
-                      var story = snapshot.data as Story;
+              future: repository.getStory(storyId),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  var story = snapshot.data as Story;
 
-                      return _buildStoryRow(context, repository, story);
-                    } else if (snapshot.hasError) {
-                      print('error id = $storyId: ${snapshot.error}');
-                      return Container();
-                    } else {
-                      return FadeLoading();
-                    }
-                  }));
+                  return _buildStoryRow(context, repository, story, index);
+                } else if (snapshot.hasError) {
+                  print('error id = $storyId: ${snapshot.error}');
+                  return Container();
+                } else {
+                  return FadeLoading();
+                }
+              }));
     });
   }
 
-  Widget _buildStoryRow(
-      BuildContext context, StoriesRepository repository, Story story) {
+  Widget _buildStoryRow(BuildContext context, StoriesRepository repository,
+      Story story, int index) {
     return Dismissible(
       key: ValueKey(story.id),
       background: Container(
@@ -104,10 +105,12 @@ class StoriesTab<T extends StoriesRepository> extends StatelessWidget {
           ..showSnackBar(
             SnackBar(
               content: Text(
-                  FlutterI18n.translate(context, 'app.message.story_saved')),
+                FlutterI18n.translate(context, 'app.message.story_saved'),
+              ),
               action: SnackBarAction(
-                label: FlutterI18n.translate(context, 'app.action.undo'),
-                onPressed: () => repository.runtimeType,
+                label: FlutterI18n.translate(context, 'app.action.undo')
+                    .toUpperCase(),
+                onPressed: () => repository.unsaveStory(index, story),
               ),
             ),
           );

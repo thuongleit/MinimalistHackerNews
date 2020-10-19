@@ -75,10 +75,16 @@ class StoriesRepository extends BaseRepository {
     });
   }
 
-  Future saveStory(Story story) async {
+  Future<bool> saveStory(Story story) async {
     _storyIds.remove(story.id);
     final storyToSave = story.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
     localSource.insertOrReplace(storyToSave);
+    notifyListeners();
+  }
+
+  Future unsaveStory(int index, Story story) async {
+    _storyIds.insert(index, story.id);
+    localSource.deleteStory(story.id);
     notifyListeners();
   }
 }

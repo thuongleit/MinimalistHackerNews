@@ -55,15 +55,15 @@ class SavedStoriesRepository extends BaseRepository {
     }
   }
 
-  Future deleteStory(Story story) async {
-    _storyIds.remove(story.id);
-    localSource.deleteStory(story.id);
-    notifyListeners();
-  }
-
   Future saveStory(int index, Story story) async {
     _storyIds.insert(index, story.id);
     localSource.insertOrReplace(story);
+    notifyListeners();
+  }
+
+  Future unsaveStory(Story story) async {
+    _storyIds.remove(story.id);
+    localSource.deleteStory(story.id);
     notifyListeners();
   }
 

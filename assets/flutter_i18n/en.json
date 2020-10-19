@@ -15,7 +15,8 @@
         }
       },
       "story_saved": "Story saved",
-      "story_unsaved": "Story unsaved"
+      "story_unsaved": "Story unsaved",
+      "action_failed": "Action failed"
     },
     "action": {
       "delete": "Delete",

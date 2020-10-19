@@ -90,7 +90,7 @@ class SavedStoriesScreen extends StatelessWidget {
         ),
       ),
       onDismissed: (direction) {
-        repository.deleteStory(story);
+        repository.unsaveStory(story);
         Scaffold.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
