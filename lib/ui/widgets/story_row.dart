@@ -6,8 +6,9 @@ import '../../utils/url_util.dart';
 
 class StoryRow extends StatelessWidget {
   final Story story;
+  final Function(Story story) onItemTap;
 
-  const StoryRow({Key key, this.story}) : super(key: key);
+  const StoryRow({Key key, this.story, this.onItemTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class StoryRow extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       story.title,
-                      style: TextStyle(fontSize: 13.0),
+                      style: TextStyle(fontSize: 13.0, color: story.visited ? Colors.grey[600] : Colors.black),
                       softWrap: true,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -86,6 +87,7 @@ class StoryRow extends StatelessWidget {
         ),
       ),
       onTap: () {
+        onItemTap(story);
         if (story.url == null || story.url.isEmpty) {
           openWebBrowser(context, story.contentUrl);
         } else {

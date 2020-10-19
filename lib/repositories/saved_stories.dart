@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../models/index.dart';
 import '../services/index.dart';
 import './index.dart';
@@ -13,7 +15,7 @@ class SavedStoriesRepository extends BaseRepository {
 
   List<int> _storyIds = [];
   Map<int, Pair<Story, bool>> _stories =
-      Map(); //Map<story_id, Pair(is_updated, Story)>
+      Map(); //Map<story_id, Pair(Story, is_updated)>
 
   List<int> get storyIds => [..._storyIds];
 
@@ -64,5 +66,15 @@ class SavedStoriesRepository extends BaseRepository {
     _storyIds.insert(index, story.id);
     localSource.insertOrReplace(story);
     notifyListeners();
+  }
+
+  Future visitStory(Story story) async {
+    var isUpdated = await localSource.updateVisitStory(story.id);
+    print('isUpdated:$isUpdated');
+    if (isUpdated) {
+      var copyStory = story.copyWith(visited: true);
+      _stories[story.id] = Pair(copyStory, true);
+      notifyListeners();
+    }
   }
 }

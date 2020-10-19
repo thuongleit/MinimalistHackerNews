@@ -45,8 +45,8 @@ class StoryDao {
   Future _insertOrReplace(Transaction trn, Story story) async {
     await trn.rawInsert(
       'INSERT OR REPLACE INTO '
-      '${Story.dbSavedStoriesTableName}(${Story.dbKeyId},${Story.dbKeyTitle},${Story.dbKeyBy},${Story.dbKeyDeleted},${Story.dbKeyTime},${Story.dbKeyType},${Story.dbKeyUrl},${Story.dbKeyText},${Story.dbKeyScore},${Story.dbKeyDescendants},${Story.dbKeyUpdatedAt})'
-      ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      '${Story.dbSavedStoriesTableName}(${Story.dbKeyId},${Story.dbKeyTitle},${Story.dbKeyBy},${Story.dbKeyDeleted},${Story.dbKeyTime},${Story.dbKeyType},${Story.dbKeyUrl},${Story.dbKeyText},${Story.dbKeyScore},${Story.dbKeyDescendants},${Story.dbKeyUpdatedAt},${Story.dbKeyVisited})'
+      ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         story.id,
         story.title,
@@ -69,6 +69,17 @@ class StoryDao {
     await db.transaction((Transaction trn) async {
       await trn.rawDelete(
           'DELETE FROM ${Story.dbSavedStoriesTableName} WHERE ${Story.dbKeyId} = $storyId;');
+    });
+  }
+  
+  Future<bool> updateVisitStory(int storyId) async {
+    var db = await _appDatabase.getDb();
+
+    return db.transaction((Transaction trn) async {
+      var changed = await trn.rawDelete(
+          'UPDATE ${Story.dbSavedStoriesTableName} SET ${Story.dbKeyVisited}=1 WHERE ${Story.dbKeyId} = $storyId;');
+
+      return changed == 1;
     });
   }
 }

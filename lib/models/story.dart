@@ -17,6 +17,7 @@ class Story with Copyable<Story> {
   static final dbKeyScore = 'score';
   static final dbKeyDescendants = 'descendants';
   static final dbKeyUpdatedAt = 'updated_at';
+  static final dbKeyVisited = 'visited';
 
   final int id;
   final String title;
@@ -29,6 +30,7 @@ class Story with Copyable<Story> {
   final int score;
   final int descendants;
   final int updatedAt;
+  final bool visited;
 
   String get contentUrl => getRightUrl(Const.itemContentUrl, '$id');
 
@@ -46,6 +48,7 @@ class Story with Copyable<Story> {
     this.score,
     this.descendants,
     this.updatedAt,
+    this.visited,
   });
 
   factory Story.fromJson(Map<String, dynamic> json) {
@@ -61,6 +64,7 @@ class Story with Copyable<Story> {
       score: json['score'],
       descendants: json['descendants'] ?? 0,
       updatedAt: null,
+      visited: false,
     );
   }
 
@@ -77,6 +81,7 @@ class Story with Copyable<Story> {
       score: result[dbKeyScore],
       descendants: result[dbKeyDescendants],
       updatedAt: result[dbKeyUpdatedAt],
+      visited: (result[dbKeyVisited] == 1),
     );
   }
 
@@ -94,11 +99,12 @@ class Story with Copyable<Story> {
       score: this.score,
       descendants: this.descendants,
       updatedAt: this.updatedAt,
+      visited: this.visited,
     );
   }
 
   @override
-  Story copyWith({int updatedAt}) {
+  Story copyWith({int updatedAt, bool visited}) {
     return Story(
       id: this.id,
       title: this.title,
@@ -111,6 +117,7 @@ class Story with Copyable<Story> {
       score: this.score,
       descendants: this.descendants,
       updatedAt: updatedAt,
+      visited: visited,
     );
   }
 }

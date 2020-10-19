@@ -101,6 +101,7 @@ class ReadItLaterScreen extends StatelessWidget {
       },
       child: StoryRow(
         story: story,
+        onItemTap: (story) => repository.visitStory(story),
       ),
     );
   }
