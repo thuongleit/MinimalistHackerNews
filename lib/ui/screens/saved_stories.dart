@@ -1,3 +1,4 @@
+import 'package:big_tip/big_tip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,8 @@ import '../../models/index.dart';
 class SavedStoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final screenTitle =
+        FlutterI18n.translate(context, 'app.menu.saved_stories');
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -19,35 +22,56 @@ class SavedStoriesScreen extends StatelessWidget {
                 SavedStoriesRepository(StoryDao.get(), ApiService.get()))
       ],
       child: Consumer<SavedStoriesRepository>(
-        builder: (context, repository, child) => Scaffold(
-          body: SliverPage<SavedStoriesRepository>.display(
-            controller: null,
-            title: FlutterI18n.translate(context, 'app.menu.saved_stories'),
-            opacity: null,
-            counter: null,
-            slides: null,
-            popupMenu: Menu.home,
-            enablePullToRefresh: false,
-            body: <Widget>[
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  _buildStoryRows,
-                  childCount: repository.storyIds.length,
+        builder: (context, repository, child) => (repository
+                .storyIds.isNotEmpty)
+            ? Scaffold(
+                body: SliverPage<SavedStoriesRepository>.display(
+                  controller: null,
+                  title: screenTitle,
+                  opacity: null,
+                  counter: null,
+                  slides: null,
+                  popupMenu: Menu.home,
+                  enablePullToRefresh: false,
+                  body: <Widget>[
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        _buildStoryRows,
+                        childCount: repository.storyIds.length,
+                      ),
+                    )
+                  ],
                 ),
               )
-            ],
-          ),
-        ),
+            : SimplePage(
+                title: screenTitle,
+                body: BigTip(
+                  title: Text(
+                    FlutterI18n.translate(context,
+                        'screen.saved_stories.hint_message.no_saved_stories_title'),
+                  ),
+                  subtitle: Text(
+                    FlutterI18n.translate(context,
+                        'screen.saved_stories.hint_message.swipe_to_save'),
+                  ),
+                  action: Text(
+                    FlutterI18n.translate(
+                        context, 'screen.saved_stories.hint_message.action'),
+                  ),
+                  actionCallback: () => Navigator.pop(context),
+                  child: Icon(Icons.swipe),
+                ),
+              ),
       ),
     );
   }
 
   Widget _buildStoryRows(BuildContext context, int index) {
     return Consumer<SavedStoriesRepository>(
-        builder: (context, repository, child) {
-      final storyId = repository.storyIds[index];
+      builder: (context, repository, child) {
+        final storyId = repository.storyIds[index];
 
-      return Container(
+        return Container(
           child: (repository.stories[storyId] != null)
               ? _buildStoryRow(
                   context, repository, index, repository.stories[storyId].left)
@@ -64,8 +88,11 @@ class SavedStoriesScreen extends StatelessWidget {
                     } else {
                       return FadeLoading();
                     }
-                  }));
-    });
+                  },
+                ),
+        );
+      },
+    );
   }
 
   Widget _buildStoryRow(BuildContext context, SavedStoriesRepository repository,
@@ -78,11 +105,12 @@ class SavedStoriesScreen extends StatelessWidget {
         child: Row(
           children: [
             Center(
-                child: Text(
-              FlutterI18n.translate(context, 'app.action.delete'),
-              style:
-                  TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
-            )),
+              child: Text(
+                FlutterI18n.translate(context, 'app.action.delete'),
+                style: TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.bold),
+              ),
+            ),
             Flexible(
               child: Container(),
             ),
@@ -95,7 +123,10 @@ class SavedStoriesScreen extends StatelessWidget {
           ..hideCurrentSnackBar()
           ..showSnackBar(
             SnackBar(
-              content: Text(FlutterI18n.translate(context, 'screen.saved_stories.story_unsaved')),
+              content: Text(
+                FlutterI18n.translate(
+                    context, 'screen.saved_stories.story_unsaved'),
+              ),
               action: SnackBarAction(
                 label: FlutterI18n.translate(context, 'app.action.undo'),
                 onPressed: () {
