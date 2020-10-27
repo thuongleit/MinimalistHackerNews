@@ -106,7 +106,12 @@
       }
     },
     "saved_stories": {
-      "story_unsaved": "Story unsaved"
+      "story_unsaved": "Story unsaved",
+      "hint_message": {
+        "no_saved_stories_title": "No saved stories",
+        "swipe_to_save": "Swipe on story to save for later",
+        "action": "Back"
+      }
     },
     "error": {
       "title": "An error occurred",

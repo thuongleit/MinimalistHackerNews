@@ -87,7 +87,9 @@ class StoryRow extends StatelessWidget {
         ),
       ),
       onTap: () {
-        onItemTap(story);
+        if (onItemTap != null) {
+          onItemTap(story);
+        }
         if (story.url == null || story.url.isEmpty) {
           openWebBrowser(context, story.contentUrl);
         } else {
