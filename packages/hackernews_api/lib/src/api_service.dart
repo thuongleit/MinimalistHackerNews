@@ -15,8 +15,6 @@ class HackerNewsApiClient {
   factory HackerNewsApiClient() => _api;
 
   Future<Response> perform(Request request) async {
-    print('request ${request.url}');
-
     return _client.get(request.url);
   }
 }

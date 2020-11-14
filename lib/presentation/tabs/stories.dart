@@ -9,7 +9,7 @@ import '../../utils/menu.dart';
 import '../../extensions/extensions.dart';
 import '../../blocs/blocs.dart';
 
-class StoriesTab extends StatelessWidget {
+class StoriesTab extends StatefulWidget {
   final StoryType storyType;
   final ScrollController scrollController;
 
@@ -18,36 +18,45 @@ class StoriesTab extends StatelessWidget {
         super(key: key);
 
   @override
+  _StoriesTabState createState() => _StoriesTabState();
+}
+
+class _StoriesTabState extends State<StoriesTab> {
+  @override
+  void initState() {
+    BlocProvider.of<StoriesBloc>(context).add(LoadStories(widget.storyType));
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<StoriesBloc, NetworkState>(
-      //FIXME: Remove extra Scaffold here
-      builder: (context, state) => Scaffold(
-        body: SliverPage<StoriesBloc>.display(
-          context: context,
-          controller: scrollController,
-          title: FlutterI18n.translate(
-            context,
-            storyType.tabTitle,
-          ),
-          opacity: null,
-          counter: null,
-          slides: null,
-          popupMenu: Menu.home,
-          actions: Menu.home_actions
-              .map((action) => _buildMenuAction(context, action))
-              .toList(),
-          body: <Widget>[
-            (state.isSuccess)
-                ? SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) =>
-                          _buildStoryRows(context, state.data, index),
-                      childCount: state.data.length,
-                    ),
-                  )
-                : Container(),
-          ],
+      key: ObjectKey(widget.storyType),
+      builder: (context, state) => SliverPage<StoriesBloc>.display(
+        context: context,
+        controller: widget.scrollController,
+        title: FlutterI18n.translate(
+          context,
+          widget.storyType.tabTitle,
         ),
+        opacity: null,
+        counter: null,
+        slides: null,
+        popupMenu: Menu.home,
+        actions: Menu.home_actions
+            .map((action) => _buildMenuAction(context, action))
+            .toList(),
+        body: <Widget>[
+          (state.isSuccess)
+              ? SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        _buildStoryRows(context, state.data, index),
+                    childCount: state.data.length,
+                  ),
+                )
+              : Container(),
+        ],
       ),
     );
   }
@@ -62,7 +71,8 @@ class StoriesTab extends StatelessWidget {
 
   Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
     return BlocProvider(
-      create: (_) => StoryCubit(storyIds[index], StoriesRepositoryImpl())..fetchData(),
+      create: (_) =>
+          StoryCubit(storyIds[index], StoriesRepositoryImpl())..fetchData(),
       child: Container(
         child: BlocBuilder<StoryCubit, NetworkState>(
           builder: (context, state) {

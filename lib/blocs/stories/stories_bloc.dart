@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:hacker_news/blocs/network/network_bloc.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../blocs.dart';
@@ -20,6 +21,7 @@ class StoriesBloc extends NetworkBloc<StoriesEvent> {
   }
 
   Stream<NetworkState> _mapLoadStoriesToState(LoadStories event) async* {
+    yield NetworkState.loading();
     try {
       final storyIds = await repository.getStoryIds(event.type);
       yield NetworkState.success(storyIds);

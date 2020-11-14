@@ -20,7 +20,7 @@ class _MyHomePageState extends State<HomeScreen> {
   ScrollController _scrollController;
 
   int _currentIndex = 0;
-  var _showToolbar;
+  bool _showToolbar;
 
   List<StoryType> get _tabs => StoryType.values;
 
@@ -72,13 +72,13 @@ class _MyHomePageState extends State<HomeScreen> {
         ),
       );
     }
-    var type = _tabs[_currentIndex];
+    final type = _tabs[_currentIndex];
     return BlocProvider<StoriesBloc>(
-      create: (_) => StoriesBloc(repository: StoriesRepositoryImpl())..add(LoadStories(type)),
+      create: (context) => StoriesBloc(repository: StoriesRepositoryImpl()),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: StoriesTab(
-          key: ValueKey(type.hashCode),
+          key: ValueKey(type.toString()),
           storyType: type,
           scrollController: _scrollController,
         ),

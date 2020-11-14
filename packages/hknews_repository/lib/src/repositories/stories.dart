@@ -92,6 +92,7 @@ class StoriesRepositoryImpl extends StoriesRepository {
 
       // Receives the data and parse it
       final Response response = await _remoteSource.perform(Request(type.url));
+      print('request ${type.url}');
       return (response.data as List<dynamic>).map((id) => id as int).toList();
     } on Exception catch (e) {
       throw e;
@@ -103,7 +104,6 @@ class StoriesRepositoryImpl extends StoriesRepository {
     try {
       // Receives the data and parse it
       final requestUrl = '${Const.hackerNewsBaseUrl}/item/$storyId.json';
-      print('request $requestUrl');
       final Response response =
           await _remoteSource.perform(Request(requestUrl));
       return Story.fromJson(response.data);
