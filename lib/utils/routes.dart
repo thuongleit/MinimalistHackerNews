@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../ui/screens/index.dart';
+import '../presentation/screens/screens.dart';
 
 /// Class that holds both route names & generate methods.
 /// Used by the Flutter routing system

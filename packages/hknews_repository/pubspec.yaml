@@ -1,0 +1,14 @@
+name: hknews_repository
+description: A Dart Repository which manages the hacknews domain.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  hackernews_api:
+    path: ../hackernews_api
+  hknews_database:
+    path: ../hknews_database
+
+dev_dependencies:

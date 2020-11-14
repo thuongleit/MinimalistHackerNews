@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:provider/provider.dart';
 
-import './providers/index.dart';
 import './utils/routes.dart';
+import 'blocs/browser_chooser/browser_cubit.dart';
+import 'blocs/theme/theme_cubit.dart';
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => BrowserProvider()),
+        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
+        BlocProvider<BrowserCubit>(create: (_) => BrowserCubit()),
       ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, model, child) => MaterialApp(
+      child: BlocBuilder<ThemeCubit, ThemeState>(
+        builder: (context, theme) => MaterialApp(
           title: 'Simple Hacker News',
-          theme: model.lightTheme,
-          darkTheme: model.darkTheme,
-          themeMode: model.themeMode,
+          theme: theme.themeData,
+          // darkTheme: model.darkTheme,
+          // themeMode: model.themeMode,
           debugShowCheckedModeBanner: false,
           onGenerateRoute: Routes.generateRoute,
           onUnknownRoute: Routes.errorRoute,

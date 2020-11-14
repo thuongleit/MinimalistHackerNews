@@ -1,0 +1,11 @@
+name: hackernews_api
+description: A Dart API Client for Hacknews API
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  dio: ^3.0.10
+
+dev_dependencies:

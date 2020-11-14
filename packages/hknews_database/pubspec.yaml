@@ -1,0 +1,12 @@
+name: hknews_database
+description: A Dart Database Source for hknews application
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  sqflite: ^1.3.2+1
+  path_provider: ^1.6.22
+
+dev_dependencies:

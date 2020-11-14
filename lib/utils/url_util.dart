@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
-import 'package:hacker_news/providers/browser_chooser.dart';
+import 'package:hacker_news/blocs/browser_chooser/browser_cubit.dart';
+import 'package:hacker_news/blocs/theme/theme_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:provider/provider.dart';
 
 /// Based on : http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/2.3.3_r1/android/webkit/CookieManager.java#CookieManager.getBaseDomain%28java.lang.String%29
 /// Get the base domain for a given host or url. E.g. mail.google.com will return google.com
@@ -26,7 +27,7 @@ String getBaseDomain(String url) {
 }
 
 // Will take a url such as http://www.stackoverflow.com and return www.stackoverflow.com
-String _getHost(String url){
+String _getHost(String url) {
   if (url == null || url.isEmpty) {
     return '';
   }
@@ -34,7 +35,7 @@ String _getHost(String url){
   var doubleslash = url.indexOf('//');
   if (doubleslash == -1) {
     doubleslash = 0;
-  }else {
+  } else {
     doubleslash += 2;
   }
 
@@ -52,7 +53,7 @@ String _getHost(String url){
 }
 
 Future<void> openWebBrowser(BuildContext context, String url) async {
-  var browser = context.read<BrowserProvider>().browser;
+  var browser = BlocProvider.of<BrowserCubit>(context).state;
   if (browser == Browser.internal) {
     await FlutterWebBrowser.openWebPage(
       url: url,

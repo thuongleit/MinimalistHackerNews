@@ -1,0 +1,1 @@
+export 'model/story_ext.dart';
