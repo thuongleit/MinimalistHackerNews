@@ -1,19 +1,5 @@
 /// Has all urls used in the app as static const strings.
 class Const {
-  //Base Hacker News URL
-  static const String hackerNewsBaseUrl =
-      'https://hacker-news.firebaseio.com/v0';
-
-  static const placeholderStr = '%%';
-
-  //stories urls
-  static const newStories = '$hackerNewsBaseUrl/newstories.json';
-  static const topStories = '$hackerNewsBaseUrl/topstories.json';
-  static const bestStories = '$hackerNewsBaseUrl/beststories.json';
-  static const jobStories = '$hackerNewsBaseUrl/jobstories.json';
-  static const showStories = '$hackerNewsBaseUrl/showstories.json';
-  static const askStories = '$hackerNewsBaseUrl/askstories.json';
-
   // Share details message
   static const shareDetails = '#simplehknews';
 

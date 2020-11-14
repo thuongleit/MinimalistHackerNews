@@ -16,7 +16,7 @@ class ChangelogCubit extends NetworkCubit<String> {
 
       emit(NetworkState.success(response.data));
     } on Exception catch (e) {
-      emit(NetworkState.failure(exception: e));
+      emit(NetworkState.failure(error: e));
     }
   }
 }

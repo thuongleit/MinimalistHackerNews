@@ -5,23 +5,23 @@ enum NetworkStatus { loading, success, failure }
 class NetworkState<T> extends Equatable {
   final NetworkStatus status;
   final Exception error;
-  final List<T> data;
+  final T data;
 
   const NetworkState._({
     this.status = NetworkStatus.loading,
-    this.data = const [],
+    this.data,
     this.error,
   });
 
   const NetworkState.loading() : this._();
 
-  const NetworkState.success(List<T> items)
-      : this._(status: NetworkStatus.success, data: items);
+  const NetworkState.success(T data)
+      : this._(status: NetworkStatus.success, data: data);
 
-  const NetworkState.failure({Exception exception})
+  const NetworkState.failure({Exception error})
       : this._(
           status: NetworkStatus.failure,
-          error: exception,
+          error: error,
         );
 
   @override

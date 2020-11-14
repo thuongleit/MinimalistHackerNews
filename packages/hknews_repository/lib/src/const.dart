@@ -34,6 +34,8 @@ extension StoryTypeUrl on StoryType {
         return Const.showStories;
       case StoryType.ask:
         return Const.askStories;
+      default:
+        return '';
     }
   }
 }

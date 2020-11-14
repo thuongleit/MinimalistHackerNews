@@ -20,6 +20,7 @@ class StoriesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<StoriesBloc, NetworkState>(
+      //FIXME: Remove extra Scaffold here
       builder: (context, state) => Scaffold(
         body: SliverPage<StoriesBloc>.display(
           context: context,
@@ -39,7 +40,8 @@ class StoriesTab extends StatelessWidget {
             (state.isSuccess)
                 ? SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      _buildStoryRows,
+                      (context, index) =>
+                          _buildStoryRows(context, state.data, index),
                       childCount: state.data.length,
                     ),
                   )
@@ -58,87 +60,68 @@ class StoriesTab extends StatelessWidget {
     );
   }
 
-  // Widget _buildStoryRows(BuildContext context, int index) {
-  //   return BlocListener < StoriesBloc
-  //   , NetworkState>(
-  //   listener: (context, state) {
-  //   if (state is StoryLoaded) {
-  //   if (state is StoryLoaded) {
-  //   if (state is StoryLoaded) {
-  //   return Container(
-  //   child: (repository.stories[storyId] != null)
-  //   ? _buildStoryRow(context, repository.stories[storyId], index)
-  //       : FutureBuilder(
-  //   future: repository.getStory(storyId),
-  //   builder: (context, snapshot) {
-  //   if (snapshot.hasData && snapshot.data != null) {
-  //   var story = snapshot.data as Story;
-  //
-  //   return _buildStoryRow(context, story, index);
-  //   } else if (snapshot.hasError) {
-  //   print('error id = $storyId: ${snapshot.error}');
-  //   return Container();
-  //   } else {
-  //   return FadeLoading();
-  //   }
-  //   },
-  //   ),
-  //   );
-  //   }
-  //   },
-  //   );
-  //   }
-  //
-  //   Widget _buildStoryRow(BuildContext context, Story story, int index) {
-  //   return Dismissible(
-  //   key: ValueKey(story.id),
-  //   background: Container(
-  //   color: Colors.green[700],
-  //   padding: EdgeInsets.all(12.0),
-  //   child: Row(
-  //   children: [
-  //   Center(
-  //   child: Text(
-  //   FlutterI18n.translate(context, 'app.action.read_later'),
-  //   style: TextStyle(
-  //   color: Colors.black54, fontWeight: FontWeight.bold),
-  //   ),
-  //   ),
-  //   Flexible(
-  //   child: Container(),
-  //   ),
-  //   ],
-  //   ),
-  //   ),
-  //   onDismissed: (direction) {
-  //   BlocProvider.of<StoriesBloc>(context).add(SaveStory(story, index));
-  //   // repository.saveStory(story);
-  //   Scaffold.of(context)
-  //   ..hideCurrentSnackBar()
-  //   ..showSnackBar(
-  //   SnackBar(
-  //   content: Text(
-  //   FlutterI18n.translate(context, 'app.message.story_saved'),
-  //   ),
-  //   action: SnackBarAction(
-  //   label: FlutterI18n.translate(context, 'app.action.undo')
-  //       .toUpperCase(),
-  //   onPressed: () => BlocProvider.of<StoriesBloc>(context)
-  //       .add(UnSaveStory(story, index)),
-  //   // repository.unsaveStory(index, story),
-  //   ),
-  //   ),
-  //   );
-  //   },
-  //   child: StoryRow(
-  //   story: story,
-  //   ),
-  //   );
-  //   }
-  //   }
-  Widget _buildStoryRows(BuildContext context, int index) {
-    return Center(
-      child: Text('$index'),
+  Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
+    return BlocProvider(
+      create: (_) => StoryCubit(storyIds[index], StoriesRepositoryImpl())..fetchData(),
+      child: Container(
+        child: BlocBuilder<StoryCubit, NetworkState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return FadeLoading();
+            } else if (state.isFailure) {
+              print('error = ${state.error}');
+              return Container();
+            } else {
+              return _buildStoryRow(context, state.data, index);
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStoryRow(BuildContext context, Story story, int index) {
+    return Dismissible(
+      key: ValueKey(story.id),
+      background: Container(
+        color: Colors.green[700],
+        padding: EdgeInsets.all(12.0),
+        child: Row(
+          children: [
+            Center(
+              child: Text(
+                FlutterI18n.translate(context, 'app.action.read_later'),
+                style: TextStyle(
+                    color: Colors.black54, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Flexible(
+              child: Container(),
+            ),
+          ],
+        ),
+      ),
+      onDismissed: (direction) {
+        BlocProvider.of<StoriesBloc>(context).add(SaveStory(story, index));
+        Scaffold.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                FlutterI18n.translate(context, 'app.message.story_saved'),
+              ),
+              action: SnackBarAction(
+                label: FlutterI18n.translate(context, 'app.action.undo')
+                    .toUpperCase(),
+                onPressed: () => BlocProvider.of<StoriesBloc>(context)
+                    .add(UnSaveStory(story, index)),
+              ),
+            ),
+          );
+      },
+      child: StoryRow(
+        story: story,
+      ),
     );
   }
 }

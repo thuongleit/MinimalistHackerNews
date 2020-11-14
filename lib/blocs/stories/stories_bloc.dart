@@ -21,10 +21,10 @@ class StoriesBloc extends NetworkBloc<StoriesEvent> {
 
   Stream<NetworkState> _mapLoadStoriesToState(LoadStories event) async* {
     try {
-      var storyIds = await repository.getStoryIds(event.type);
+      final storyIds = await repository.getStoryIds(event.type);
       yield NetworkState.success(storyIds);
     } on Exception catch (e) {
-      yield NetworkState.failure(exception: e);
+      yield NetworkState.failure(error: e);
     }
   }
 }

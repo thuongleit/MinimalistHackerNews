@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
 import 'package:dio/dio.dart';
@@ -98,7 +100,15 @@ class StoriesRepositoryImpl extends StoriesRepository {
 
   @override
   Future<Story> getStory(int storyId) async {
-    // TODO: implement getStory
-    throw UnimplementedError();
+    try {
+      // Receives the data and parse it
+      final requestUrl = '${Const.hackerNewsBaseUrl}/item/$storyId.json';
+      print('request $requestUrl');
+      final Response response =
+          await _remoteSource.perform(Request(requestUrl));
+      return Story.fromJson(response.data);
+    } on Exception catch (e) {
+      throw e;
+    }
   }
 }
