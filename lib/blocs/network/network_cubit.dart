@@ -1,7 +1,10 @@
-part of 'network_bloc.dart';
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+
+part 'network_state.dart';
 
 abstract class NetworkCubit<T> extends Cubit<NetworkState<T>> {
-  NetworkCubit() : super(const NetworkState.loading());
+  NetworkCubit() : super(const NetworkState());
 
-  Future<void> fetchData();
+  Future<void> refresh() async {}
 }

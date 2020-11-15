@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hacker_news/blocs/blocs.dart';
 
 import 'simple_page.dart';
+import '../../blocs/blocs.dart';
 
 /// Basic page which has reloading properties.
-class ReloadablePage<B extends NetworkBloc> extends StatelessWidget {
+class ReloadablePage<C extends NetworkCubit> extends StatelessWidget {
   final String title;
   final Widget body, fab;
   final List<Widget> actions;
@@ -27,7 +27,7 @@ class ReloadablePage<B extends NetworkBloc> extends StatelessWidget {
     return SimplePage(
       title: title,
       fab: fab,
-      body: BlocConsumer<B, NetworkState>(
+      body: BlocConsumer<C, NetworkState>(
         listener: (context, state) => Scaffold.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -41,12 +41,12 @@ class ReloadablePage<B extends NetworkBloc> extends StatelessWidget {
                   context,
                   'app.message.loading.connection_error.reload',
                 ),
-                onPressed: () => _onRefresh(context),
+                onPressed: () => context.read<C>().refresh(),
               ),
             ),
           ),
         builder: (context, state) => RefreshIndicator(
-          onRefresh: () => _onRefresh(context),
+          onRefresh: () => context.read<C>().refresh(),
           child: (state.isLoading)
               ? _loadingIndicator
               : (state.isFailure)
@@ -62,18 +62,12 @@ class ReloadablePage<B extends NetworkBloc> extends StatelessWidget {
       Center(child: const CircularProgressIndicator());
 }
 
-Future<void> _onRefresh<B extends NetworkBloc>(BuildContext context) {
-  BlocProvider.of<B>(context).add(RefreshData());
-}
-
-/// It uses the [BlankPage] widget inside it.
-
 /// Widget used to display a connection error message.
 /// It allows user to reload the page with a simple button.
-class ConnectionError<B extends NetworkBloc> extends StatelessWidget {
+class ConnectionError<C extends NetworkCubit> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<B, NetworkState>(
+    return BlocBuilder<C, NetworkState>(
       builder: (context, state) => BigTip(
         subtitle: Text(
           FlutterI18n.translate(
@@ -95,7 +89,7 @@ class ConnectionError<B extends NetworkBloc> extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
         ),
-        actionCallback: () async => _onRefresh(context),
+        actionCallback: () => context.read<C>().refresh(),
         child: Icon(Icons.cloud_off),
       ),
     );

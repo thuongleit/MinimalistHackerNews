@@ -24,15 +24,15 @@ class StoriesTab extends StatefulWidget {
 class _StoriesTabState extends State<StoriesTab> {
   @override
   void initState() {
-    BlocProvider.of<StoriesBloc>(context).add(LoadStories(widget.storyType));
+    context.read<StoriesCubit>().fetchStories(widget.storyType);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<StoriesBloc, NetworkState>(
+    return BlocBuilder<StoriesCubit, NetworkState>(
       key: ObjectKey(widget.storyType),
-      builder: (context, state) => SliverPage<StoriesBloc>.display(
+      builder: (context, state) => SliverPage<StoriesCubit>.display(
         context: context,
         controller: widget.scrollController,
         title: FlutterI18n.translate(
@@ -72,7 +72,7 @@ class _StoriesTabState extends State<StoriesTab> {
   Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
     return BlocProvider(
       create: (_) =>
-          StoryCubit(storyIds[index], StoriesRepositoryImpl())..fetchData(),
+          StoryCubit(StoriesRepositoryImpl())..getStory(storyIds[index]),
       child: Container(
         child: BlocBuilder<StoryCubit, NetworkState>(
           builder: (context, state) {
@@ -112,7 +112,7 @@ class _StoriesTabState extends State<StoriesTab> {
         ),
       ),
       onDismissed: (direction) {
-        BlocProvider.of<StoriesBloc>(context).add(SaveStory(story, index));
+        context.read<StoriesCubit>().saveStory(story, index);
         Scaffold.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -123,8 +123,8 @@ class _StoriesTabState extends State<StoriesTab> {
               action: SnackBarAction(
                 label: FlutterI18n.translate(context, 'app.action.undo')
                     .toUpperCase(),
-                onPressed: () => BlocProvider.of<StoriesBloc>(context)
-                    .add(UnSaveStory(story, index)),
+                onPressed: () =>
+                    context.read<StoriesCubit>().unSaveStory(story, index),
               ),
             ),
           );

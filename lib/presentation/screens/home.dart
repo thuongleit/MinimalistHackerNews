@@ -73,32 +73,32 @@ class _MyHomePageState extends State<HomeScreen> {
       );
     }
     final type = _tabs[_currentIndex];
-    return BlocProvider<StoriesBloc>(
-      create: (context) => StoriesBloc(repository: StoriesRepositoryImpl()),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: StoriesTab(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: BlocProvider<StoriesCubit>(
+        create: (context) => StoriesCubit(StoriesRepositoryImpl()),
+        child: StoriesTab(
           key: ValueKey(type.toString()),
           storyType: type,
           scrollController: _scrollController,
         ),
-        bottomNavigationBar: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          height: _showToolbar ? kBottomNavigationBarHeight : 0.0,
-          child: BottomNavigationBar(
-            items: _navigationBarItems,
-            selectedLabelStyle: GoogleFonts.rubik(),
-            unselectedLabelStyle: GoogleFonts.rubik(),
-            elevation: 4.0,
-            selectedItemColor: Theme.of(context).accentColor,
-            unselectedItemColor: Theme.of(context).unselectedWidgetColor,
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            currentIndex: _currentIndex,
-            onTap: (index) => _currentIndex != index
-                ? setState(() => _currentIndex = index)
-                : null,
-          ),
+      ),
+      bottomNavigationBar: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        height: _showToolbar ? kBottomNavigationBarHeight : 0.0,
+        child: BottomNavigationBar(
+          items: _navigationBarItems,
+          selectedLabelStyle: GoogleFonts.rubik(),
+          unselectedLabelStyle: GoogleFonts.rubik(),
+          elevation: 4.0,
+          selectedItemColor: Theme.of(context).accentColor,
+          unselectedItemColor: Theme.of(context).unselectedWidgetColor,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          currentIndex: _currentIndex,
+          onTap: (index) => _currentIndex != index
+              ? setState(() => _currentIndex = index)
+              : null,
         ),
       ),
     );

@@ -11,10 +11,11 @@ import '../widgets/widgets.dart';
 /// This screen loads the [CHANGELOG.md] file from GitHub,
 /// and displays its content, using the Markdown plugin.
 class ChangelogScreen extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChangelogCubit, NetworkState>(
-      builder: (context, state) => ReloadablePage(
+      builder: (context, state) => ReloadablePage<ChangelogCubit>(
         title: FlutterI18n.translate(context, 'screen.about.version.changelog'),
         body: Markdown(
           data: (state.data as String) ?? '',

@@ -1,18 +1,33 @@
 import 'package:dio/dio.dart';
-import 'package:hacker_news/blocs/network/network_bloc.dart';
+import 'package:hacker_news/const.dart';
+
+import '../../blocs/network/network_cubit.dart';
 
 class ChangelogCubit extends NetworkCubit<String> {
-  final String url;
   final Dio _client;
+  String _url;
 
-  ChangelogCubit(this.url, {Dio client})
-      : assert(url != null),
-        this._client = client ?? Dio();
+  ChangelogCubit({Dio client}) : this._client = client ?? Dio();
+
+  Future<void> getChangelog({String url = Const.changelog}) async {
+    emit(NetworkState.loading());
+    try {
+      this._url = url;
+      var response = await _client.get(_url);
+
+      emit(NetworkState.success(response.data));
+    } on Exception catch (e) {
+      emit(NetworkState.failure(error: e));
+    }
+  }
 
   @override
-  Future<void> fetchData() async {
+  Future<void> refresh() async {
+    if (_url == null) {
+      return;
+    }
     try {
-      var response = await _client.get(url);
+      var response = await _client.get(_url);
 
       emit(NetworkState.success(response.data));
     } on Exception catch (e) {

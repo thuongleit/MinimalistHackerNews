@@ -67,7 +67,7 @@ class _AboutScreenState extends State<AboutScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => BlocProvider<ChangelogCubit>(
-                create: (context) => ChangelogCubit(Const.changelog),
+                create: (_) => ChangelogCubit()..getChangelog(),
                 child: ChangelogScreen(),
               ),
               fullscreenDialog: true,

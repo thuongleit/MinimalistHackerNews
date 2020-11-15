@@ -8,7 +8,7 @@ import '../../presentation/widgets/reloadable_page.dart';
 /// This widget is used for all tabs inside the app.
 /// Its main features are connection error handling,
 /// pull to refresh, as well as working as a sliver list.
-class SliverPage<B extends NetworkBloc> extends StatelessWidget {
+class SliverPage<C extends NetworkCubit> extends StatelessWidget {
   final BuildContext context;
   final String title;
   final ScrollController controller;
@@ -70,10 +70,10 @@ class SliverPage<B extends NetworkBloc> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<B, NetworkState>(
+    return BlocBuilder<C, NetworkState>(
       builder: (context, state) => enablePullToRefresh
           ? RefreshIndicator(
-              onRefresh: () => _onRefresh(context),
+              onRefresh: () => context.read<C>().refresh(),
               child: _buildBody(context, state),
             )
           : _buildBody(context, state),
@@ -116,8 +116,4 @@ class SliverPage<B extends NetworkBloc> extends StatelessWidget {
   /// Centered [CircularProgressIndicator] widget.
   Widget get _loadingIndicator =>
       Center(child: const CircularProgressIndicator());
-
-  Future<void> _onRefresh<B extends NetworkBloc>(BuildContext context) {
-    BlocProvider.of<B>(context).add(RefreshData());
-  }
 }
