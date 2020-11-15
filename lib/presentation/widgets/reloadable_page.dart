@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'simple_page.dart';
 import '../../blocs/blocs.dart';
 
-/// Basic page which has reloading properties.
 class ReloadablePage<C extends NetworkCubit> extends StatelessWidget {
   final String title;
   final Widget body, fab;
@@ -28,6 +27,7 @@ class ReloadablePage<C extends NetworkCubit> extends StatelessWidget {
       title: title,
       fab: fab,
       body: BlocConsumer<C, NetworkState>(
+        listenWhen: (previous, current) => current.isFailure,
         listener: (context, state) => Scaffold.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -47,14 +47,26 @@ class ReloadablePage<C extends NetworkCubit> extends StatelessWidget {
           ),
         builder: (context, state) => RefreshIndicator(
           onRefresh: () => context.read<C>().refresh(),
-          child: (state.isLoading)
-              ? _loadingIndicator
-              : (state.isFailure)
-                  ? SliverFillRemaining(child: ConnectionError())
-                  : SafeArea(bottom: false, child: body),
+          child: _buildBody(context, state),
         ),
       ),
     );
+  }
+
+  Widget _buildBody(BuildContext context, NetworkState<dynamic> state) {
+    Scaffold.of(context)
+      ..hideCurrentSnackBar();
+    if (state.isInitial) {
+      return Container();
+    } else if (state.isLoading) {
+      return _loadingIndicator;
+    } else if (state.isFailure) {
+      return ConnectionError(
+        onRefresh: () => context.read<C>().refresh(),
+      );
+    } else {
+      return SafeArea(bottom: false, child: body);
+    }
   }
 
   /// Centered [CircularProgressIndicator] widget.
@@ -63,35 +75,38 @@ class ReloadablePage<C extends NetworkCubit> extends StatelessWidget {
 }
 
 /// Widget used to display a connection error message.
+
 /// It allows user to reload the page with a simple button.
-class ConnectionError<C extends NetworkCubit> extends StatelessWidget {
+class ConnectionError extends StatelessWidget {
+  final ValueGetter<Future<void>> onRefresh;
+
+  const ConnectionError({Key key, @required this.onRefresh}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<C, NetworkState>(
-      builder: (context, state) => BigTip(
-        subtitle: Text(
-          FlutterI18n.translate(
-            context,
-            'app.message.loading.connection_error.message',
-          ),
-          style:
-              GoogleFonts.rubikTextTheme(Theme.of(context).textTheme).subtitle1,
+    return BigTip(
+      subtitle: Text(
+        FlutterI18n.translate(
+          context,
+          'app.message.loading.connection_error.message',
         ),
-        action: Text(
-          FlutterI18n.translate(
-            context,
-            'app.message.loading.connection_error.reload',
-          ),
-          style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
-              .subtitle1
-              .copyWith(
-                color: Theme.of(context).accentColor,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        actionCallback: () => context.read<C>().refresh(),
-        child: Icon(Icons.cloud_off),
+        style:
+            GoogleFonts.rubikTextTheme(Theme.of(context).textTheme).subtitle1,
       ),
+      action: Text(
+        FlutterI18n.translate(
+          context,
+          'app.message.loading.connection_error.reload',
+        ),
+        style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
+            .subtitle1
+            .copyWith(
+              color: Theme.of(context).accentColor,
+              fontWeight: FontWeight.bold,
+            ),
+      ),
+      actionCallback: onRefresh,
+      child: Icon(Icons.cloud_off),
     );
   }
 }

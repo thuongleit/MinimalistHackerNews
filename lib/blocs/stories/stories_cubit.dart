@@ -27,4 +27,12 @@ class StoriesCubit extends NetworkCubit<List<int>> {
   void saveStory(Story story, int index) {}
 
   unSaveStory(Story story, int index) {}
+
+  @override
+  Future<void> refresh() async {
+    if (this._type == null) {
+      return;
+    }
+    return fetchStories(_type);
+  }
 }

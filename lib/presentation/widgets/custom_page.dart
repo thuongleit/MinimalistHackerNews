@@ -103,10 +103,16 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
               ),
           ],
         ),
-        if (state.isLoading)
+        if (state.isInitial)
+          Container()
+        else if (state.isLoading)
           SliverFillRemaining(child: _loadingIndicator)
         else if (state.isFailure)
-          SliverFillRemaining(child: ConnectionError())
+          SliverFillRemaining(
+            child: ConnectionError(
+              onRefresh: () => context.read<C>().refresh(),
+            ),
+          )
         else
           ...body,
       ],

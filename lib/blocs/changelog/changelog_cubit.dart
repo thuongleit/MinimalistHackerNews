@@ -10,6 +10,7 @@ class ChangelogCubit extends NetworkCubit<String> {
   ChangelogCubit({Dio client}) : this._client = client ?? Dio();
 
   Future<void> getChangelog({String url = Const.changelog}) async {
+    assert(url != null);
     emit(NetworkState.loading());
     try {
       this._url = url;
@@ -26,12 +27,6 @@ class ChangelogCubit extends NetworkCubit<String> {
     if (_url == null) {
       return;
     }
-    try {
-      var response = await _client.get(_url);
-
-      emit(NetworkState.success(response.data));
-    } on Exception catch (e) {
-      emit(NetworkState.failure(error: e));
-    }
+    return getChangelog(url: _url);
   }
 }
