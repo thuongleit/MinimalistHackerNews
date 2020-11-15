@@ -73,19 +73,17 @@ class _StoriesTabState extends State<StoriesTab> {
     return BlocProvider(
       create: (_) =>
           StoryCubit(StoriesRepositoryImpl())..getStory(storyIds[index]),
-      child: Container(
-        child: BlocBuilder<StoryCubit, NetworkState>(
-          builder: (context, state) {
-            if (state.isLoading) {
-              return FadeLoading();
-            } else if (state.isFailure) {
-              print('error = ${state.error}');
-              return Container();
-            } else {
-              return _buildStoryRow(context, state.data, index);
-            }
-          },
-        ),
+      child: BlocBuilder<StoryCubit, NetworkState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return FadeLoading();
+          } else if (state.isFailure) {
+            print('error = ${state.error}');
+            return Container();
+          } else {
+            return _buildStoryRow(context, state.data, index);
+          }
+        },
       ),
     );
   }
@@ -124,7 +122,7 @@ class _StoriesTabState extends State<StoriesTab> {
                 label: FlutterI18n.translate(context, 'app.action.undo')
                     .toUpperCase(),
                 onPressed: () =>
-                    context.read<StoriesCubit>().unSaveStory(story, index),
+                    context.read<StoriesCubit>().unsaveStory(story, index),
               ),
             ),
           );

@@ -1,17 +1,25 @@
-import 'dart:math';
-
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
 import 'package:dio/dio.dart';
-import 'package:hknews_repository/src/const.dart';
 
 import '../models/story.dart';
+import '../const.dart';
+import '../mapping/story_and_entity_mapping.dart';
+import '../../src/utils/pair.dart';
 
 /// Repository that holds stories information of Hacker News
 abstract class StoriesRepository {
   Future<List<int>> getStoryIds(StoryType type);
 
   Future<Story> getStory(int storyId);
+
+  Future<bool> saveStory(Story story);
+
+  Future<bool> unsaveStory(Story story);
+
+  Future<List<Story>> getSavedStories();
+
+  Future<bool> updateVisited(Story story);
 }
 
 class StoriesRepositoryImpl extends StoriesRepository {
@@ -23,65 +31,8 @@ class StoriesRepositoryImpl extends StoriesRepository {
       : this._localSource = localSource ?? StoryDao(),
         this._remoteSource = remoteSource ?? HackerNewsApiClient();
 
-  // List<int> _storyIds = [];
-  // Map<int, Story> _stories = Map(); //Map<story_id, Story>
-  //
-  // List<int> get storyIds => [..._storyIds];
-  //
-  // Map<int, Story> get stories => {..._stories};
-
-  // // Try to load the data using [ApiService]
-  // try {
-  //   if (type != null) {
-  //     // Receives the data from local source (database)
-  //     final Response<List> remoteDataResponse =
-  //         await localSource.getStories(type).then((localData) {
-  //       _storyIds = localData.map((story) => story.id).toList();
-  //       localData.forEach((story) {
-  //         _stories[story.id] = story;
-  //       });
-  //
-  //       finishLoading();
-  //       //then load data from remote source
-  //       return remoteSource.getStories(type);
-  //     });
-  //
-  //     //remove possible duplicated stories
-  //     var remoteData = remoteDataResponse.data.map((e) => e as int).toList();
-  //     remoteData.removeWhere((e) => _storyIds.contains(e));
-  //
-  //     print('get new remote $remoteData');
-  //     _storyIds.addAll(remoteData);
-  //     notifyListeners();
-  //   }
-  // } on Exception catch (e) {
-  //   print(e);
-  //   receivedError(error: e);
-  // }
-
-  // Future<Story> getStory(int storyId) async {
-  //   return remoteSource.getStory(storyId).then((response) {
-  //     print('get story id for - $storyId');
-  //     var story = Story.fromJson(response.data);
-  //
-  //     _stories[story.id] = story;
-  //     return story;
-  //   });
-  // }
-  //
-  // Future<bool> saveStory(Story story) async {
-  //   _storyIds.remove(story.id);
-  //   final storyToSave =
-  //       story.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
-  //   localSource.insertOrReplace(storyToSave);
-  //   notifyListeners();
-  // }
-  //
-  // Future unsaveStory(int index, Story story) async {
-  //   _storyIds.insert(index, story.id);
-  //   localSource.deleteStory(story.id);
-  //   notifyListeners();
-  // }
+  Map<int, Pair<Story, bool>> _stories =
+      Map(); //Map<story_id, Pair(Story, is_up_to_date)>
 
   @override
   Future<List<int>> getStoryIds(StoryType type) async {
@@ -93,7 +44,38 @@ class StoriesRepositoryImpl extends StoriesRepository {
       // Receives the data and parse it
       final Response response = await _remoteSource.perform(Request(type.url));
       print('request ${type.url}');
-      return (response.data as List<dynamic>).map((id) => id as int).toList();
+      // // Try to load the data using [ApiService]
+      // try {
+      //   if (type != null) {
+      //     // Receives the data from local source (database)
+      //     final Response<List> remoteDataResponse =
+      //         await localSource.getStories(type).then((localData) {
+      //       _storyIds = localData.map((story) => story.id).toList();
+      //       localData.forEach((story) {
+      //         _stories[story.id] = story;
+      //       });
+      //
+      //       finishLoading();
+      //       //then load data from remote source
+      //       return remoteSource.getStories(type);
+      //     });
+      //
+      //     //remove possible duplicated stories
+      //     var remoteData = remoteDataResponse.data.map((e) => e as int).toList();
+      //     remoteData.removeWhere((e) => _storyIds.contains(e));
+      //
+      //     print('get new remote $remoteData');
+      //     _storyIds.addAll(remoteData);
+      //     notifyListeners();
+      //   }
+      // } on Exception catch (e) {
+      //   print(e);
+      //   receivedError(error: e);
+      // }
+      final storyIds =
+          (response.data as List<dynamic>).map((id) => id as int).toList();
+
+      return storyIds;
     } on Exception catch (e) {
       throw e;
     }
@@ -102,13 +84,56 @@ class StoriesRepositoryImpl extends StoriesRepository {
   @override
   Future<Story> getStory(int storyId) async {
     try {
-      // Receives the data and parse it
+      if (_stories[storyId] != null) {
+        return _stories[storyId].first;
+      }
+      // If there is no cache data, request the data from api
       final requestUrl = '${Const.hackerNewsBaseUrl}/item/$storyId.json';
       final Response response =
           await _remoteSource.perform(Request(requestUrl));
-      return Story.fromJson(response.data);
+      final story = Story.fromJson(response.data);
+      _stories[story.id] = Pair(story, false);
+
+      return story;
     } on Exception catch (e) {
       throw e;
     }
+  }
+
+  @override
+  Future<bool> saveStory(Story story) async {
+    final storyToSave =
+        story.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+    return await _localSource.insertOrReplace(storyToSave.toEntity());
+  }
+
+  @override
+  Future<bool> unsaveStory(Story story) async {
+    return await _localSource.deleteStory(story.id);
+  }
+
+  @override
+  Future<List<Story>> getSavedStories() async {
+    // Try to load the data from database
+    try {
+      var stories = await _localSource.getStories();
+      return stories.map((storyEntity) {
+        var story = storyEntity.toStory();
+        _stories[storyEntity.id] = Pair(story, false);
+        return story;
+      }).toList();
+    } on Exception catch (e) {
+      throw e;
+    }
+  }
+
+  @override
+  Future<bool> updateVisited(Story story) async {
+    var isUpdated = await _localSource.updateVisitStory(story.id);
+    if (isUpdated) {
+      var copyStory = story.copyWith(visited: true);
+      _stories[story.id] = Pair(copyStory, true);
+    }
+    return isUpdated;
   }
 }

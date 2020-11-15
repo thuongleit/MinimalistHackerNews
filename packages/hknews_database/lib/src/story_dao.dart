@@ -23,11 +23,11 @@ class StoryDao {
         .toList(growable: false);
   }
 
-  Future<void> insertOrReplace(StoryEntity story) async {
+  Future<bool> insertOrReplace(StoryEntity story) async {
     var db = await _appDatabase.getDb();
 
-    await db.transaction((Transaction trn) async {
-      await _insertOrReplace(trn, story);
+    return await db.transaction((Transaction trn) async {
+      return await _insertOrReplace(trn, story);
     });
   }
 
@@ -41,8 +41,8 @@ class StoryDao {
     });
   }
 
-  Future<void> _insertOrReplace(Transaction trn, StoryEntity story) async {
-    await trn.rawInsert(
+  Future<bool> _insertOrReplace(Transaction trn, StoryEntity story) async {
+    var changed = await trn.rawInsert(
       'INSERT OR REPLACE INTO '
       '${StoryEntity.dbSavedStoriesTableName}(${StoryEntity.dbKeyId},${StoryEntity.dbKeyTitle},${StoryEntity.dbKeyBy},${StoryEntity.dbKeyDeleted},${StoryEntity.dbKeyTime},${StoryEntity.dbKeyType},${StoryEntity.dbKeyUrl},${StoryEntity.dbKeyText},${StoryEntity.dbKeyScore},${StoryEntity.dbKeyDescendants},${StoryEntity.dbKeyUpdatedAt},${StoryEntity.dbKeyVisited})'
       ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -60,14 +60,18 @@ class StoryDao {
         story.updatedAt,
       ],
     );
+
+    return changed == 1;
   }
 
-  Future deleteStory(int storyId) async {
+  Future<bool> deleteStory(int storyId) async {
     var db = await _appDatabase.getDb();
 
-    await db.transaction((Transaction trn) async {
-      await trn.rawDelete(
+    return db.transaction((Transaction trn) async {
+      var changed = await trn.rawDelete(
           'DELETE FROM ${StoryEntity.dbSavedStoriesTableName} WHERE ${StoryEntity.dbKeyId} = $storyId;');
+
+      return changed == 1;
     });
   }
 

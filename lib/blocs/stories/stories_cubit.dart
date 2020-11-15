@@ -24,15 +24,29 @@ class StoriesCubit extends NetworkCubit<List<int>> {
     }
   }
 
-  void saveStory(Story story, int index) {}
-
-  unSaveStory(Story story, int index) {}
-
   @override
   Future<void> refresh() async {
     if (this._type == null) {
       return;
     }
     return fetchStories(_type);
+  }
+
+  Future<void> saveStory(Story story, int index) async {
+    try {
+      final success = await _repository.saveStory(story);
+      //state.data.remove(value)
+    } on Exception catch (e) {
+      emit(NetworkState.failure(error: e));
+    }
+  }
+
+  Future<void> unsaveStory(Story story, int index) async {
+    try {
+      final success =  await _repository.unsaveStory(story);
+      //emit(NetworkState.success(storyIds));
+    } on Exception catch (e) {
+      emit(NetworkState.failure(error: e));
+    }
   }
 }
