@@ -1,3 +1,5 @@
+import 'dart:wasm';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -7,49 +9,41 @@ import '../../utils/colors.dart';
 
 part 'theme_state.dart';
 
-class ThemeCubit extends HydratedCubit<ThemeState> {
+enum AppTheme { system, light, dark, black }
+
+class ThemeCubit extends HydratedCubit<AppTheme> {
   static const _prefKey = 'theme';
 
-  ThemeCubit() : super(SystemTheme());
+  ThemeCubit() : super(AppTheme.system);
 
-  void updateTheme(ThemeState theme) => emit(theme);
+  void updateTheme(AppTheme theme) => emit(theme);
 
   @override
-  ThemeState fromJson(Map<String, dynamic> json) {
-    final themeCode = json[_prefKey] as String;
-    switch (themeCode) {
-      case 'system':
-        return SystemTheme();
-      case 'black':
-        return BlackTheme();
-      case 'dark':
-        return DarkTheme();
-      case 'light':
-        return LightTheme();
-      default:
-        return SystemTheme();
-    }
+  AppTheme fromJson(Map<String, dynamic> json) {
+    final index = json[_prefKey] as int;
+    return AppTheme.values[index];
   }
 
   @override
-  Map<String, dynamic> toJson(ThemeState state) {
-    return <String, String>{_prefKey: state.themeCode};
+  Map<String, dynamic> toJson(AppTheme state) {
+    return <String, int>{_prefKey: state.index};
   }
 }
 
-extension on ThemeState {
-  String get themeCode {
-    switch (runtimeType) {
-      case SystemTheme:
-        return 'system';
-      case BlackTheme:
-        return 'black';
-      case DarkTheme:
-        return 'dark';
-      case LightTheme:
-        return 'light';
+extension AppThemeToThemeState on AppTheme {
+  ThemeState get value {
+    final theme = AppTheme.values[index];
+    switch (theme) {
+      case AppTheme.system:
+        return SystemTheme();
+      case AppTheme.light:
+        return LightTheme();
+      case AppTheme.dark:
+        return DarkTheme();
+      case AppTheme.black:
+        return BlackTheme();
       default:
-        return 'system';
+        return SystemTheme();
     }
   }
 }

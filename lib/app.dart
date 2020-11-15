@@ -15,10 +15,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
         BlocProvider<BrowserCubit>(create: (_) => BrowserCubit()),
       ],
-      child: BlocBuilder<ThemeCubit, ThemeState>(
+      child: BlocBuilder<ThemeCubit, AppTheme>(
         builder: (context, theme) => MaterialApp(
           title: 'Simple Hacker News',
-          theme: theme.themeData,
+          theme: theme.value.themeData,
           // darkTheme: model.darkTheme,
           // themeMode: model.themeMode,
           debugShowCheckedModeBanner: false,

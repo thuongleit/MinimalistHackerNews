@@ -11,12 +11,12 @@ class BrowserCubit extends HydratedCubit<Browser> {
 
   @override
   Browser fromJson(Map<String, dynamic> json) {
-    final prefCode = json[_prefKey] as String;
-    return Browser.values[int.parse(prefCode)];
+    final prefCode = json[_prefKey] as int;
+    return Browser.values[prefCode];
   }
 
   @override
   Map<String, dynamic> toJson(Browser state) {
-    return <String, String>{_prefKey: '${state.index}'};
+    return <String, int>{_prefKey: state.index};
   }
 }

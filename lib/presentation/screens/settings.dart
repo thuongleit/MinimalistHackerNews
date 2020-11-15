@@ -18,7 +18,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  ThemeState _themeIndex;
+  AppTheme _themeIndex;
   Browser _browserIndex;
 
   @override
@@ -60,40 +60,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'screen.settings.theme.title',
               ),
               children: <Widget>[
-                RadioCell<ThemeState>(
+                RadioCell<AppTheme>(
                   title: FlutterI18n.translate(
                     context,
                     'screen.settings.theme.theme.dark',
                   ),
                   groupValue: _themeIndex,
-                  value: DarkTheme(),
+                  value: AppTheme.dark,
                   onChanged: (value) => _changeTheme(context, value),
                 ),
-                RadioCell<ThemeState>(
+                RadioCell<AppTheme>(
                   title: FlutterI18n.translate(
                     context,
                     'screen.settings.theme.theme.black',
                   ),
                   groupValue: _themeIndex,
-                  value: BlackTheme(),
+                  value: AppTheme.black,
                   onChanged: (value) => _changeTheme(context, value),
                 ),
-                RadioCell<ThemeState>(
+                RadioCell<AppTheme>(
                   title: FlutterI18n.translate(
                     context,
                     'screen.settings.theme.theme.light',
                   ),
                   groupValue: _themeIndex,
-                  value: LightTheme(),
+                  value: AppTheme.light,
                   onChanged: (value) => _changeTheme(context, value),
                 ),
-                RadioCell<ThemeState>(
+                RadioCell<AppTheme>(
                   title: FlutterI18n.translate(
                     context,
                     'screen.settings.theme.theme.system',
                   ),
                   groupValue: _themeIndex,
-                  value: SystemTheme(),
+                  value: AppTheme.system,
                   onChanged: (value) => _changeTheme(context, value),
                 ),
               ],
@@ -145,7 +145,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // Updates app's theme
-  void _changeTheme(BuildContext context, ThemeState theme) {
+  void _changeTheme(BuildContext context, AppTheme theme) {
     BlocProvider.of<ThemeCubit>(context).updateTheme(theme);
     setState(() => _themeIndex = theme);
     Navigator.of(context).pop();
