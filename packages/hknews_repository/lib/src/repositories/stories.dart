@@ -1,17 +1,18 @@
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
 import 'package:dio/dio.dart';
-
 import '../models/story.dart';
+
 import '../const.dart';
 import '../mapping/story_and_entity_mapping.dart';
 import '../../src/utils/pair.dart';
+import '../../src/utils/web_analyzer.dart';
 
 /// Repository that holds stories information of Hacker News
 abstract class StoriesRepository {
   Future<List<int>> getStoryIds(StoryType type);
 
-  Future<Story> getStory(int storyId);
+  Future<Story> getStory(int storyId, {bool contentPreview = false});
 
   Future<bool> saveStory(Story story);
 
@@ -82,7 +83,7 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<Story> getStory(int storyId) async {
+  Future<Story> getStory(int storyId, {bool contentPreview = false}) async {
     try {
       if (_stories[storyId] != null) {
         return _stories[storyId].first;
@@ -92,7 +93,19 @@ class StoriesRepositoryImpl extends StoriesRepository {
       final Response response =
           await _remoteSource.perform(Request(requestUrl));
       final story = Story.fromJson(response.data);
-      _stories[story.id] = Pair(story, false);
+
+      if (contentPreview && (story.text == null || story.text.isEmpty)) {
+        final storyInfo =
+            await WebAnalyzer.getInfo(story.url, multimedia: false);
+        if (storyInfo != null && storyInfo is WebInfo) {
+          final newCopiedStory = story.copyWith(text: storyInfo.description);
+          _stories[story.id] = Pair(newCopiedStory, true);
+
+          return newCopiedStory;
+        }
+      }
+
+      _stories[story.id] = Pair(story, true);
 
       return story;
     } on Exception catch (e) {

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:hacker_news/blocs/browser_chooser/browser_cubit.dart';
 import 'package:hacker_news/blocs/theme/theme_cubit.dart';
+import 'package:hacker_news/blocs/view_mode/view_mode_cubit.dart';
 import 'package:provider/provider.dart';
 import 'package:row_collection/row_collection.dart';
 
@@ -20,12 +21,14 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   AppTheme _themeIndex;
   Browser _browserIndex;
+  ViewMode _viewModeIndex;
 
   @override
   void initState() {
     // Get the app theme & browser chooser from the 'AppModel' model.
     _themeIndex = context.read<ThemeCubit>().state;
     _browserIndex = context.read<BrowserCubit>().state;
+    _viewModeIndex = context.read<ViewModeCubit>().state;
 
     super.initState();
   }
@@ -139,6 +142,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           Separator.divider(indent: 72),
+          ListCell.icon(
+            icon: Icons.chrome_reader_mode,
+            title: FlutterI18n.translate(
+              context,
+              'screen.settings.browser.title',
+            ),
+            subtitle: FlutterI18n.translate(
+              context,
+              'screen.settings.browser.body',
+            ),
+            onTap: () => showBottomRoundDialog(
+              context: context,
+              title: FlutterI18n.translate(
+                context,
+                'screen.settings.browser.title',
+              ),
+              children: <Widget>[
+                RadioCell<ViewMode>(
+                  title: FlutterI18n.translate(
+                    context,
+                    'title_only',
+                  ),
+                  groupValue: _viewModeIndex,
+                  value: ViewMode.titleOnly,
+                  onChanged: (value) => _changeViewMode(context, value),
+                ),
+                RadioCell<ViewMode>(
+                  title: FlutterI18n.translate(
+                    context,
+                    'minimalist',
+                  ),
+                  groupValue: _viewModeIndex,
+                  value: ViewMode.minimalist,
+                  onChanged: (value) => _changeViewMode(context, value),
+                ),
+                RadioCell<ViewMode>(
+                  title: FlutterI18n.translate(
+                    context,
+                    'with_detail',
+                  ),
+                  groupValue: _viewModeIndex,
+                  value: ViewMode.withDetail,
+                  onChanged: (value) => _changeViewMode(context, value),
+                ),
+              ],
+            ),
+          ),
+          Separator.divider(indent: 72),
         ],
       ),
     );
@@ -146,15 +197,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // Updates app's theme
   void _changeTheme(BuildContext context, AppTheme theme) {
-    BlocProvider.of<ThemeCubit>(context).updateTheme(theme);
+   context.read<ThemeCubit>().updateTheme(theme);
     setState(() => _themeIndex = theme);
     Navigator.of(context).pop();
   }
 
   // Updates app's chosen browser
   void _changeBrowser(BuildContext context, Browser browser) {
-    BlocProvider.of<BrowserCubit>(context).chooseBrowser(browser);
+    context.read<BrowserCubit>().chooseBrowser(browser);
     setState(() => _browserIndex = browser);
+    Navigator.of(context).pop();
+  }
+
+  void _changeViewMode(BuildContext context, ViewMode mode) {
+    context.read<ViewModeCubit>().changeViewMode(mode);
+    setState(() => _viewModeIndex = mode);
     Navigator.of(context).pop();
   }
 }

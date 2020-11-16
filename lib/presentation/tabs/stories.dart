@@ -71,8 +71,10 @@ class _StoriesTabState extends State<StoriesTab> {
 
   Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
     return BlocProvider(
-      create: (_) =>
-          StoryCubit(StoriesRepositoryImpl())..getStory(storyIds[index]),
+      create: (_) => StoryCubit(StoriesRepositoryImpl())
+        ..getStory(storyIds[index],
+            contentPreview:
+                context.read<ViewModeCubit>().state == ViewMode.withDetail),
       child: BlocBuilder<StoryCubit, NetworkState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -89,6 +91,7 @@ class _StoriesTabState extends State<StoriesTab> {
   }
 
   Widget _buildStoryRow(BuildContext context, Story story, int index) {
+    final viewMode = context.watch<ViewModeCubit>().state;
     return Dismissible(
       key: ValueKey(story.id),
       background: Container(
@@ -127,9 +130,11 @@ class _StoriesTabState extends State<StoriesTab> {
             ),
           );
       },
-      child: StoryRow(
-        story: story,
-      ),
+      child: (viewMode == ViewMode.titleOnly)
+          ? TitleOnlyStoryRow(story)
+          : (viewMode == ViewMode.minimalist)
+              ? MinimalistStoryRow(story)
+              : WithDetailStoryRow(story),
     );
   }
 }

@@ -5,11 +5,13 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../utils/url_util.dart';
 import '../../extensions/extensions.dart';
 
-class StoryRow extends StatelessWidget {
+class WithDetailStoryRow extends StatelessWidget {
   final Story story;
   final Function(Story story) onItemTap;
 
-  const StoryRow({Key key, this.story, this.onItemTap}) : super(key: key);
+  const WithDetailStoryRow(this.story, {Key key, this.onItemTap})
+      : assert(story != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +84,14 @@ class StoryRow extends StatelessWidget {
                           style: descriptionTextStyle,
                         ),
                       ],
-                    )
+                    ),
+                    const Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 4)),
+                    Text(
+                      '${story.text}',
+                      style: descriptionTextStyle,
+                      maxLines: 3,
+                    ),
                   ],
                 ),
               ),

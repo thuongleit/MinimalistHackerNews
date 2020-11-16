@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hacker_news/blocs/blocs.dart';
 
 import './utils/routes.dart';
 import 'blocs/browser_chooser/browser_cubit.dart';
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
         BlocProvider<BrowserCubit>(create: (_) => BrowserCubit()),
+        BlocProvider<ViewModeCubit>(create: (_) => ViewModeCubit()),
       ],
       child: BlocBuilder<ThemeCubit, AppTheme>(
         builder: (context, theme) => MaterialApp(

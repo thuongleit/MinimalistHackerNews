@@ -10,5 +10,8 @@ dependencies:
     path: ../hackernews_api
   hknews_database:
     path: ../hknews_database
+  http: ^0.12.2
+  html: ^0.14.0+4
+  gbk2utf8: ^1.0.1
 
 dev_dependencies:

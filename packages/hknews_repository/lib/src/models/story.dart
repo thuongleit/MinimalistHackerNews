@@ -1,5 +1,3 @@
-import 'package:hknews_database/src/story_entity.dart';
-
 enum StoryType { news, top, best, ask, show, jobs }
 
 class Story {
@@ -67,20 +65,29 @@ class Story {
   }
 
   @override
-  Story copyWith({int updatedAt, bool visited}) {
+  Story copyWith({
+    String title,
+    bool deleted,
+    String type,
+    String text,
+    int score,
+    int descendants,
+    int updatedAt,
+    bool visited,
+  }) {
     return Story(
       id: this.id,
-      title: this.title,
+      title: title ?? this.title,
       by: this.by,
-      deleted: this.deleted,
+      deleted: deleted ?? this.deleted,
       time: this.time,
-      type: this.type,
+      type: type ?? this.type,
       url: this.url,
-      text: this.text,
-      score: this.score,
-      descendants: this.descendants,
-      updatedAt: updatedAt,
-      visited: visited,
+      text: text ?? this.text,
+      score: score ?? this.score,
+      descendants: descendants ?? this.descendants,
+      updatedAt: updatedAt ?? this.updatedAt,
+      visited: visited ?? this.visited,
     );
   }
 }

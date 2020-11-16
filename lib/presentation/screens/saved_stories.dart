@@ -67,6 +67,7 @@ class SavedStoriesScreen extends StatelessWidget {
   }
 
   Widget _buildStoryRow(BuildContext context, Story story, int index) {
+    final viewMode = context.watch<ViewModeCubit>().state;
     return Dismissible(
       key: ValueKey(story.id),
       background: Container(
@@ -105,11 +106,23 @@ class SavedStoriesScreen extends StatelessWidget {
             ),
           );
       },
-      child: StoryRow(
-        story: story,
-        onItemTap: (story) =>
-            context.read<SavedStoriesCubit>().updateVisit(story),
-      ),
+      child: (viewMode == ViewMode.titleOnly)
+          ? TitleOnlyStoryRow(
+              story,
+              onItemTap: (story) =>
+                  context.read<SavedStoriesCubit>().updateVisit(story),
+            )
+          : (viewMode == ViewMode.minimalist)
+              ? MinimalistStoryRow(
+                  story,
+                  onItemTap: (story) =>
+                      context.read<SavedStoriesCubit>().updateVisit(story),
+                )
+              : WithDetailStoryRow(
+                  story,
+                  onItemTap: (story) =>
+                      context.read<SavedStoriesCubit>().updateVisit(story),
+                ),
     );
   }
 }

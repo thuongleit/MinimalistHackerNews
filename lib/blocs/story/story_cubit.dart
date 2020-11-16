@@ -9,10 +9,10 @@ class StoryCubit extends NetworkCubit<Story> {
 
   StoryCubit(this._repository) : assert(_repository != null);
 
-  Future<void> getStory(int storyId) async {
+  Future<void> getStory(int storyId, {bool contentPreview = false}) async {
     emit(NetworkState.loading());
     try {
-      var story = await _repository.getStory(storyId);
+      var story = await _repository.getStory(storyId, contentPreview: contentPreview);
 
       emit(NetworkState.success(story));
     } on Exception catch (e) {
