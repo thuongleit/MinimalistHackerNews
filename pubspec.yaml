@@ -37,6 +37,7 @@ dependencies:
   flutter_bloc: ^6.1.1
   hydrated_bloc: ^6.0.0
   dio: ^3.0.10
+  formz: ^0.3.2
 
 
 dev_dependencies:

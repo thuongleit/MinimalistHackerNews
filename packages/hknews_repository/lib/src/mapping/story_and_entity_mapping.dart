@@ -1,8 +1,8 @@
 import 'package:hknews_database/hknews_database.dart';
 
-import '../../src/models/story.dart';
+import '../../src/models/item.dart';
 
-extension StoryToStoryEntity on Story {
+extension StoryToStoryEntity on Item {
   StoryEntity toEntity() {
     return StoryEntity(
       id: this.id,
@@ -10,7 +10,6 @@ extension StoryToStoryEntity on Story {
       by: this.by,
       deleted: this.deleted,
       time: this.time,
-      type: this.type,
       url: this.url,
       text: this.text,
       score: this.score,
@@ -22,14 +21,13 @@ extension StoryToStoryEntity on Story {
 }
 
 extension StoryEntityToStory on StoryEntity {
-  Story toStory() {
-    return Story(
+  Item toStory() {
+    return Item(
       id: this.id,
       title: this.title,
       by: this.by,
       deleted: this.deleted,
       time: this.time,
-      type: this.type,
       url: this.url,
       text: this.text,
       score: this.score,

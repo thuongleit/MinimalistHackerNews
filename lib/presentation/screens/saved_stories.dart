@@ -66,7 +66,7 @@ class SavedStoriesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Story story, int index) {
+  Widget _buildStoryRow(BuildContext context, Item story, int index) {
     final viewMode = context.watch<ViewModeCubit>().state;
     return Dismissible(
       key: ValueKey(story.id),

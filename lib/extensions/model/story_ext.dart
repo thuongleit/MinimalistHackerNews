@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
-extension StoryUrl on Story {
+extension StoryUrl on Item {
   // story item browsing url
   static const itemBrowsingUrl = 'https://news.ycombinator.com';
 

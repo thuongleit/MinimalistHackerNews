@@ -17,7 +17,7 @@ class StoriesCubit extends NetworkCubit<List<int>> {
 
     emit(NetworkState.loading());
     try {
-      final storyIds = await _repository.getStoryIds(type);
+      final storyIds = await _repository.getStories(type);
       emit(NetworkState.success(storyIds));
     } on Exception catch (e) {
       emit(NetworkState.failure(error: e));
@@ -32,7 +32,7 @@ class StoriesCubit extends NetworkCubit<List<int>> {
     return fetchStories(_type);
   }
 
-  Future<void> saveStory(Story story, int index) async {
+  Future<void> saveStory(Item story, int index) async {
     try {
       final success = await _repository.saveStory(story);
       //state.data.remove(value)
@@ -41,7 +41,7 @@ class StoriesCubit extends NetworkCubit<List<int>> {
     }
   }
 
-  Future<void> unsaveStory(Story story, int index) async {
+  Future<void> unsaveStory(Item story, int index) async {
     try {
       final success =  await _repository.unsaveStory(story);
       //emit(NetworkState.success(storyIds));

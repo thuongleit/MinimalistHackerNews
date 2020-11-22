@@ -90,17 +90,21 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
           actions: <Widget>[
             if (actions != null) ...actions,
             if (popupMenu != null)
-              PopupMenuButton<String>(
-                itemBuilder: (context) => [
-                  for (final item in popupMenu.keys)
-                    PopupMenuItem(
-                      value: item,
-                      child: Text(FlutterI18n.translate(context, item)),
-                    )
-                ],
-                onSelected: (text) =>
-                    Navigator.pushNamed(context, popupMenu[text]),
-              ),
+              PopupMenuButton<dynamic>(
+                  itemBuilder: (context) => [
+                        for (final item in popupMenu.keys)
+                          PopupMenuItem(
+                            value: item,
+                            child: Text(FlutterI18n.translate(context, item)),
+                          )
+                      ],
+                  onSelected: (action) {
+                    if (action is String) {
+                      Navigator.pushNamed(context, popupMenu[action]);
+                    } else if (action is Function) {
+                      action.call();
+                    }
+                  }),
           ],
         ),
         if (state.isInitial)

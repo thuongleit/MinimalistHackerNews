@@ -6,8 +6,8 @@ import '../../utils/url_util.dart';
 import '../../extensions/extensions.dart';
 
 class MinimalistStoryRow extends StatelessWidget {
-  final Story story;
-  final Function(Story story) onItemTap;
+  final Item story;
+  final Function(Item story) onItemTap;
 
   const MinimalistStoryRow(this.story, {Key key, this.onItemTap})
       : assert(story != null),

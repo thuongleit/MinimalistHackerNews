@@ -2,7 +2,7 @@ import 'package:hknews_repository/hknews_repository.dart';
 
 import '../../blocs/network/network_cubit.dart';
 
-class SavedStoriesCubit extends NetworkCubit<List<Story>> {
+class SavedStoriesCubit extends NetworkCubit<List<Item>> {
   final StoriesRepository _repository;
 
   SavedStoriesCubit(this._repository)
@@ -19,8 +19,8 @@ class SavedStoriesCubit extends NetworkCubit<List<Story>> {
     }
   }
 
-  void saveStory(Story story) {}
-  void unsaveStory(Story story) {}
+  void saveStory(Item story) {}
+  void unsaveStory(Item story) {}
 
-  updateVisit(Story story) {}
+  updateVisit(Item story) {}
 }

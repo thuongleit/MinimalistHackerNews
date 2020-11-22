@@ -1,5 +1,5 @@
 import 'package:hknews_repository/hknews_repository.dart';
-import 'package:hknews_repository/src/models/story.dart';
+import 'package:hknews_repository/src/models/item.dart';
 
 /// Has all urls used in the app as static const strings.
 class Const {

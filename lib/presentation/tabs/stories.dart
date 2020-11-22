@@ -42,7 +42,7 @@ class _StoriesTabState extends State<StoriesTab> {
         opacity: null,
         counter: null,
         slides: null,
-        popupMenu: Menu.home,
+        popupMenu: _buildPopupMenu(context),
         actions: Menu.home_actions
             .map((action) => _buildMenuAction(context, action))
             .toList(),
@@ -90,7 +90,7 @@ class _StoriesTabState extends State<StoriesTab> {
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Story story, int index) {
+  Widget _buildStoryRow(BuildContext context, Item story, int index) {
     final viewMode = context.watch<ViewModeCubit>().state;
     return Dismissible(
       key: ValueKey(story.id),
@@ -136,5 +136,20 @@ class _StoriesTabState extends State<StoriesTab> {
               ? MinimalistStoryRow(story)
               : WithDetailStoryRow(story),
     );
+  }
+
+  Map<String, String> _buildPopupMenu(BuildContext context) {
+    final Map<String, String> popupMenu = {};
+    //add login/logout popup menu
+    var authenticationStatus = context.read<AuthenticationBloc>().state.status;
+    if (authenticationStatus.isAuthenticated) {
+      popupMenu['app.menu.logout'] = null;
+    } else {
+      popupMenu['app.menu.login'] = null;
+    }
+
+    popupMenu.addAll(Menu.home);
+
+    return popupMenu;
   }
 }

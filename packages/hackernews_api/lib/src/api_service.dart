@@ -14,13 +14,18 @@ class HackerNewsApiClient {
 
   factory HackerNewsApiClient() => _api;
 
-  Future<Response> perform(Request request) async {
+  Future<Response> get(Request request) async {
     return _client.get(request.url);
+  }
+
+  Future<Response> post(Request request) async {
+    return _client.post(request.url, data: request.data);
   }
 }
 
 class Request {
   final String url;
+  final dynamic data;
 
-  const Request(this.url);
+  const Request(this.url, {this.data});
 }
