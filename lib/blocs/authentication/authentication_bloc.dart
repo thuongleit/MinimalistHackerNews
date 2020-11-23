@@ -15,20 +15,18 @@ class AuthenticationBloc
       {@required AuthenticationRepository authenticationRepository})
       : assert(authenticationRepository != null),
         _authenticationRepository = authenticationRepository,
-        super(const AuthenticationState.unknown()) {
+        super(const AuthenticationState.unauthenticated()) {
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
       (status) => add(AuthenticationStatusChanged(status)),
     );
   }
 
   final AuthenticationRepository _authenticationRepository;
-  StreamSubscription<UserAuthenticationStatus>
-      _authenticationStatusSubscription;
+  StreamSubscription<Authentication> _authenticationStatusSubscription;
 
   @override
   Stream<AuthenticationState> mapEventToState(
-    AuthenticationEvent event,
-  ) async* {
+      AuthenticationEvent event) async* {
     if (event is AuthenticationStatusChanged) {
       yield await _mapAuthenticationStatusChangedToState(event);
     } else if (event is AuthenticationLogoutRequested) {
@@ -44,26 +42,12 @@ class AuthenticationBloc
   }
 
   Future<AuthenticationState> _mapAuthenticationStatusChangedToState(
-    AuthenticationStatusChanged event,
-  ) async {
+      AuthenticationStatusChanged event) async {
     if (event.status.isAuthenticated) {
-      final user = await _tryGetCurrentUser();
-      return user != null
-          ? AuthenticationState.authenticated(user)
-          : const AuthenticationState.unauthenticated();
-    } else if (event.status.isUnauthenticated) {
-      return const AuthenticationState.unauthenticated();
+      return AuthenticationState.authenticated(
+          await _authenticationRepository.getCurrentUserId());
     } else {
-      return const AuthenticationState.unknown();
-    }
-  }
-
-  Future<String> _tryGetCurrentUser() async {
-    try {
-      final user = await _authenticationRepository.getCurrentUserId();
-      return user;
-    } on Exception {
-      return null;
+      return const AuthenticationState.unauthenticated();
     }
   }
 }

@@ -1,26 +1,26 @@
 import 'dart:async';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hackernews_api/hackernews_api.dart';
-import 'package:dio/dio.dart';
-
-import '../../src/models/user.dart';
-import '../const.dart';
+import 'package:hknews_repository/hknews_repository.dart';
+import 'package:meta/meta.dart';
 
 abstract class UserRepository {
   Future<User> getUser(String userId);
+
+  Future<User> getCurrentUser();
 }
 
 class UserRepositoryImpl extends UserRepository {
-  final HackerNewsApiClient _remoteSource;
-  final FlutterSecureStorage _secureStorage;
+  final AuthenticationRepository _authRepository;
+  final HackerNewsApiClient _apiClient;
 
   final _usersCache = <String, User>{};
 
-  UserRepositoryImpl(
-      {FlutterSecureStorage secureStorage, HackerNewsApiClient remoteSource})
-      : this._secureStorage = secureStorage ?? FlutterSecureStorage(),
-        this._remoteSource = remoteSource ?? HackerNewsApiClient();
+  UserRepositoryImpl({
+    @required AuthenticationRepository authenticationRepository,
+    HackerNewsApiClient apiClient,
+  })  : this._authRepository = authenticationRepository,
+        this._apiClient = apiClient ?? HackerNewsApiClientImpl();
 
   @override
   Future<User> getUser(String userId) async {
@@ -30,11 +30,14 @@ class UserRepositoryImpl extends UserRepository {
     if (_usersCache.containsKey(userId)) {
       return _usersCache[userId];
     } else {
-      // Receives the data and parse it
-      String url = '${Const.hackerNewsBaseUrl}/user/$userId.json';
-      final Response response = await _remoteSource.get(Request(url));
-      print('request $url');
-      return _usersCache[userId] = User.fromJson(response.data);
+      final response = await _apiClient.getUser(userId);
+      return _usersCache[userId] = response;
     }
+  }
+
+  @override
+  Future<User> getCurrentUser() async {
+    final currentUserId = await _authRepository.getCurrentUserId();
+    return getUser(currentUserId);
   }
 }

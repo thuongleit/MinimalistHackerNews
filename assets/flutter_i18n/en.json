@@ -4,6 +4,8 @@
     "menu": {
       "settings": "Settings",
       "about": "About",
+      "login": "Login",
+      "logout": "Logout",
       "saved_stories": "Saved Stories"
     },
     "message": {

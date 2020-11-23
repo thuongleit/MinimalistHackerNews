@@ -17,7 +17,7 @@ class StoriesCubit extends NetworkCubit<List<int>> {
 
     emit(NetworkState.loading());
     try {
-      final storyIds = await _repository.getStories(type);
+      final storyIds = await _repository.getItemIds(type);
       emit(NetworkState.success(storyIds));
     } on Exception catch (e) {
       emit(NetworkState.failure(error: e));

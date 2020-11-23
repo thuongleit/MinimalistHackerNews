@@ -16,7 +16,8 @@ class SavedStoriesScreen extends StatelessWidget {
         FlutterI18n.translate(context, 'app.menu.saved_stories');
     return BlocProvider<SavedStoriesCubit>(
       create: (context) =>
-          SavedStoriesCubit(StoriesRepositoryImpl())..getSavedStories(),
+          SavedStoriesCubit(RepositoryProvider.of<StoriesRepository>(context))
+            ..getSavedStories(),
       child: BlocBuilder<SavedStoriesCubit, NetworkState>(
         builder: (context, state) => (state.isSuccess && state.data.isEmpty)
             ? SimplePage(

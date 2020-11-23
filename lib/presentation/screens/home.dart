@@ -76,7 +76,9 @@ class _MyHomePageState extends State<HomeScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocProvider<StoriesCubit>(
-        create: (context) => StoriesCubit(StoriesRepositoryImpl()),
+        create: (context) => StoriesCubit(
+          RepositoryProvider.of<StoriesRepository>(context),
+        ),
         child: StoriesTab(
           key: ValueKey(type.toString()),
           storyType: type,

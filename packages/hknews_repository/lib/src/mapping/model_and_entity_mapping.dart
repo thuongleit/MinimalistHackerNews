@@ -1,10 +1,9 @@
+import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
 
-import '../../src/models/item.dart';
-
-extension StoryToStoryEntity on Item {
-  StoryEntity toEntity() {
-    return StoryEntity(
+extension ModelToEntityMapping on Item {
+  ItemEntity toEntity() {
+    return ItemEntity(
       id: this.id,
       title: this.title,
       by: this.by,
@@ -20,8 +19,8 @@ extension StoryToStoryEntity on Item {
   }
 }
 
-extension StoryEntityToStory on StoryEntity {
-  Item toStory() {
+extension EntityToModelMapping on ItemEntity {
+  Item toModel() {
     return Item(
       id: this.id,
       title: this.title,

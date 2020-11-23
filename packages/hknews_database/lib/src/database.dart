@@ -3,7 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-import 'story_entity.dart';
+import 'item_entity.dart';
 
 /// This is the singleton database class which handlers all database transactions
 /// All the task raw queries is handle here and return a Future<T> with result
@@ -44,7 +44,7 @@ class AppDatabase {
       // When creating the db, create the table
       await _createStoriesTable(db);
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
-      await db.execute("DROP TABLE ${StoryEntity.dbSavedStoriesTableName}");
+      await db.execute("DROP TABLE ${ItemEntity.dbSavedStoriesTableName}");
       await _createStoriesTable(db);
     });
     didInit = true;
@@ -52,19 +52,19 @@ class AppDatabase {
 
   Future<void> _createStoriesTable(Database db) {
     return db.transaction((Transaction txn) async {
-      txn.execute("CREATE TABLE ${StoryEntity.dbSavedStoriesTableName} ("
-          "${StoryEntity.dbKeyId} INTEGER PRIMARY KEY,"
-          "${StoryEntity.dbKeyTitle} TEXT,"
-          "${StoryEntity.dbKeyBy} TEXT,"
-          "${StoryEntity.dbKeyDeleted} INTEGER,"
-          "${StoryEntity.dbKeyTime} INTEGER,"
-          "${StoryEntity.dbKeyType} TEXT,"
-          "${StoryEntity.dbKeyUrl} TEXT,"
-          "${StoryEntity.dbKeyText} TEXT,"
-          "${StoryEntity.dbKeyScore} INTEGER,"
-          "${StoryEntity.dbKeyDescendants} INTEGER,"
-          "${StoryEntity.dbKeyUpdatedAt} INTEGER,"
-          "${StoryEntity.dbKeyVisited} INTEGER);");
+      txn.execute("CREATE TABLE ${ItemEntity.dbSavedStoriesTableName} ("
+          "${ItemEntity.dbKeyId} INTEGER PRIMARY KEY,"
+          "${ItemEntity.dbKeyTitle} TEXT,"
+          "${ItemEntity.dbKeyBy} TEXT,"
+          "${ItemEntity.dbKeyDeleted} INTEGER,"
+          "${ItemEntity.dbKeyTime} INTEGER,"
+          "${ItemEntity.dbKeyType} TEXT,"
+          "${ItemEntity.dbKeyUrl} TEXT,"
+          "${ItemEntity.dbKeyText} TEXT,"
+          "${ItemEntity.dbKeyScore} INTEGER,"
+          "${ItemEntity.dbKeyDescendants} INTEGER,"
+          "${ItemEntity.dbKeyUpdatedAt} INTEGER,"
+          "${ItemEntity.dbKeyVisited} INTEGER);");
     });
   }
 

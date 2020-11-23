@@ -1,4 +1,4 @@
-class StoryEntity {
+class ItemEntity {
   static final dbSavedStoriesTableName = 'saved_stories';
   static final dbKeyId = 'id';
   static final dbKeyTitle = 'title';
@@ -26,7 +26,7 @@ class StoryEntity {
   final int updatedAt;
   final bool visited;
 
-  const StoryEntity({
+  const ItemEntity({
     this.id,
     this.title,
     this.by,
@@ -41,8 +41,8 @@ class StoryEntity {
     this.visited,
   });
 
-  factory StoryEntity.fromDatabase(Map<String, dynamic> result) {
-    return StoryEntity(
+  factory ItemEntity.fromDatabase(Map<String, dynamic> result) {
+    return ItemEntity(
       id: result[dbKeyId],
       title: result[dbKeyTitle],
       by: result[dbKeyBy],

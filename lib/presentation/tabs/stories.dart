@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:hacker_news/presentation/widgets/login_form.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../widgets/widgets.dart';
@@ -71,10 +72,11 @@ class _StoriesTabState extends State<StoriesTab> {
 
   Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
     return BlocProvider(
-      create: (_) => StoryCubit(StoriesRepositoryImpl())
-        ..getStory(storyIds[index],
-            contentPreview:
-                context.read<ViewModeCubit>().state == ViewMode.withDetail),
+      create: (_) =>
+          StoryCubit(RepositoryProvider.of<StoriesRepository>(context))
+            ..getStory(storyIds[index],
+                contentPreview:
+                    context.read<ViewModeCubit>().state == ViewMode.withDetail),
       child: BlocBuilder<StoryCubit, NetworkState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -138,14 +140,56 @@ class _StoriesTabState extends State<StoriesTab> {
     );
   }
 
-  Map<String, String> _buildPopupMenu(BuildContext context) {
-    final Map<String, String> popupMenu = {};
+  Map<String, dynamic> _buildPopupMenu(BuildContext context) {
+    final Map<String, dynamic> popupMenu = {};
     //add login/logout popup menu
-    var authenticationStatus = context.read<AuthenticationBloc>().state.status;
-    if (authenticationStatus.isAuthenticated) {
-      popupMenu['app.menu.logout'] = null;
+    var authenticationStatus = context.watch<AuthenticationBloc>().state.status;
+    if (authenticationStatus.isUnauthenticated) {
+      popupMenu['app.menu.login'] = () => showDialog(
+            context: context,
+            builder: (context) => SimpleDialog(
+              title: Text(FlutterI18n.translate(context, 'app.menu.login')),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: BlocProvider(
+                    create: (context) {
+                      return LoginBloc(
+                        authenticationRepository:
+                            RepositoryProvider.of<AuthenticationRepository>(
+                                context),
+                      );
+                    },
+                    child: LoginForm(),
+                  ),
+                ),
+              ],
+            ),
+          );
     } else {
-      popupMenu['app.menu.login'] = null;
+      popupMenu['app.menu.logout'] = () => showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              content: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: const Text('Are you sure to logout?'),
+              ),
+              actions: [
+                TextButton(
+                  key: const ValueKey('logout_dialog_ok_button'),
+                  onPressed: () => context
+                      .watch<AuthenticationBloc>()
+                      .add(AuthenticationLogoutRequested()),
+                  child: Text('OK'),
+                ),
+                TextButton(
+                  key: const ValueKey('logout_dialog_cancel_button'),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Cancel'),
+                ),
+              ],
+            ),
+          );
     }
 
     popupMenu.addAll(Menu.home);

@@ -13,7 +13,7 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
   final String title;
   final ScrollController controller;
   final List<Widget> body, actions;
-  final Map<String, String> popupMenu;
+  final Map<String, dynamic> popupMenu;
   final bool enablePullToRefresh;
 
   const SliverPage({
@@ -54,7 +54,7 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
     @required List<String> slides,
     @required List<Widget> body,
     List<Widget> actions,
-    Map<String, String> popupMenu,
+    Map<String, dynamic> popupMenu,
     bool enablePullToRefresh = true,
   }) {
     return SliverPage(
@@ -99,10 +99,10 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
                           )
                       ],
                   onSelected: (action) {
-                    if (action is String) {
+                    if (popupMenu[action] is String) {
                       Navigator.pushNamed(context, popupMenu[action]);
-                    } else if (action is Function) {
-                      action.call();
+                    } else if (popupMenu[action] is Function) {
+                      popupMenu[action].call();
                     }
                   }),
           ],

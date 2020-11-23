@@ -1,4 +1,4 @@
-import 'package:hknews_repository/src/utils/copyable.dart';
+import 'package:hackernews_api/src/utils/copyable.dart';
 
 enum StoryType { news, top, best, ask, show, jobs }
 

@@ -1,22 +1,19 @@
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
-import 'package:dio/dio.dart';
-import '../models/item.dart';
 
-import '../const.dart';
-import '../mapping/story_and_entity_mapping.dart';
+import '../mapping/model_and_entity_mapping.dart';
 import '../../src/utils/pair.dart';
 import '../../src/utils/web_analyzer.dart';
 
 /// Repository that holds stories information of Hacker News
 abstract class StoriesRepository {
-  Future<List<int>> getStories(StoryType type);
+  Future<List<int>> getItemIds(StoryType type);
 
-  Future<Item> getStory(int storyId, {bool previewContent = false});
+  Future<Item> getItem(int itemId, {bool previewContent = false});
 
-  Future<bool> saveStory(Item story);
+  Future<bool> saveStory(Item item);
 
-  Future<bool> unsaveStory(Item story);
+  Future<bool> unsaveStory(Item item);
 
   Future<List<Item>> getSavedStories();
 
@@ -25,58 +22,48 @@ abstract class StoriesRepository {
 
 class StoriesRepositoryImpl extends StoriesRepository {
   final StoryDao _localSource;
-  final HackerNewsApiClient _remoteSource;
+  final HackerNewsApiClient _apiClient;
 
-  StoriesRepositoryImpl(
-      {StoryDao localSource, HackerNewsApiClient remoteSource})
-      : this._localSource = localSource ?? StoryDao(),
-        this._remoteSource = remoteSource ?? HackerNewsApiClient();
+  StoriesRepositoryImpl({
+    StoryDao localSource,
+    HackerNewsApiClient apiClient,
+  })  : this._localSource = localSource ?? StoryDao(),
+        this._apiClient = apiClient ?? HackerNewsApiClientImpl();
 
-  Map<int, Pair<Item, bool>> _storiesCache =
+  Map<int, Pair<Item, bool>> _itemsCache =
       Map(); //Map<story_id, Pair(Story, is_up_to_date)>
 
   @override
-  Future<List<int>> getStories(StoryType type) async {
-    try {
-      if (type == null) {
-        return const [];
-      }
-
-      // Receives the data and parse it
-      final Response response = await _remoteSource.get(Request(type.url));
-      print('request ${type.url}');
-      return List<int>.from(response.data as List<dynamic>);
-    } on Exception catch (e) {
-      throw e;
+  Future<List<int>> getItemIds(StoryType type) async {
+    if (type == null) {
+      return const [];
     }
+
+    return _apiClient.getItemIds(type);
   }
 
   @override
-  Future<Item> getStory(int storyId, {bool previewContent = false}) async {
+  Future<Item> getItem(int storyId, {bool previewContent = false}) async {
     try {
-      if (_storiesCache.containsKey(storyId)) {
-        return _storiesCache[storyId].first;
+      if (_itemsCache.containsKey(storyId)) {
+        return _itemsCache[storyId].first;
       }
-      // If there is no cache data, request the data from api
-      final requestUrl = '${Const.hackerNewsBaseUrl}/item/$storyId.json';
-      final Response response =
-          await _remoteSource.get(Request(requestUrl));
-      final story = Item.fromJson(response.data);
+      final item = await _apiClient.getItem(storyId);
 
-      if (previewContent && (story.text == null || story.text.isEmpty)) {
+      if (previewContent && (item.text == null || item.text.isEmpty)) {
         final storyInfo =
-            await WebAnalyzer.getInfo(story.url, multimedia: false);
+            await WebAnalyzer.getInfo(item.url, multimedia: false);
         if (storyInfo != null && storyInfo is WebInfo) {
-          final newCopiedStory = story.copyWith(text: storyInfo.description);
-          _storiesCache[story.id] = Pair(newCopiedStory, true);
+          final newCopiedStory = item.copyWith(text: storyInfo.description);
+          _itemsCache[item.id] = Pair(newCopiedStory, true);
 
           return newCopiedStory;
         }
       }
 
-      _storiesCache[story.id] = Pair(story, true);
+      _itemsCache[item.id] = Pair(item, true);
 
-      return story;
+      return item;
     } on Exception catch (e) {
       throw e;
     }
@@ -97,10 +84,10 @@ class StoriesRepositoryImpl extends StoriesRepository {
   Future<List<Item>> getSavedStories() async {
     // Try to load the data from database
     try {
-      var stories = await _localSource.getStories();
+      var stories = await _localSource.getItems();
       return stories.map((storyEntity) {
-        var story = storyEntity.toStory();
-        _storiesCache[storyEntity.id] = Pair(story, false);
+        var story = storyEntity.toModel();
+        _itemsCache[storyEntity.id] = Pair(story, false);
         return story;
       }).toList();
     } on Exception catch (e) {
@@ -113,7 +100,7 @@ class StoriesRepositoryImpl extends StoriesRepository {
     var isUpdated = await _localSource.updateVisitStory(story.id);
     if (isUpdated) {
       story.visited = true;
-      _storiesCache[story.id] = Pair(story, true);
+      _itemsCache[story.id] = Pair(story, true);
     }
     return isUpdated;
   }
@@ -134,7 +121,7 @@ class StoriesRepositoryImpl extends StoriesRepository {
     if (item.kids.isEmpty) return;
 
     for (int kidId in item.kids) {
-      Item kid = await getStory(kidId);
+      Item kid = await getItem(kidId);
       if (kid == null) continue;
 
       if (assignDepth) kid.depth = depth;
@@ -160,7 +147,7 @@ class StoriesRepositoryImpl extends StoriesRepository {
     if (item.kids.isEmpty) return Future.value(result);
 
     await Future.wait(item.kids.map((kidId) async {
-      Item kid = await getStory(kidId);
+      Item kid = await getItem(kidId);
       if (kid != null) {
         await prefetchComments(item: kid);
       }

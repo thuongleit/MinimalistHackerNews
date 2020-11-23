@@ -2,45 +2,47 @@ import 'dart:async';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hackernews_api/hackernews_api.dart';
-import 'package:dio/dio.dart';
 
-import '../const.dart';
+enum Authentication { authenticated, unauthenticated }
 
-enum Authentication { unknown, authenticated, unauthenticated }
+extension AuthenticationStatusX on Authentication {
+  bool get isAuthenticated => index == 0;
 
-class UserAuthenticationStatus {
+  bool get isUnauthenticated => index == 1;
+}
+
+class AuthenticationStatus {
   final String message;
   final Authentication status;
 
-  const UserAuthenticationStatus._({
+  const AuthenticationStatus._({
     this.message,
-    this.status = Authentication.unknown,
+    this.status = Authentication.unauthenticated,
   });
 
-  const UserAuthenticationStatus.unknown() : this._();
-
-  const UserAuthenticationStatus.authenticated()
+  const AuthenticationStatus.authenticated()
       : this._(status: Authentication.authenticated);
 
-  const UserAuthenticationStatus.unauthenticated({String message})
+  const AuthenticationStatus.unauthenticated({String message})
       : this._(message: message, status: Authentication.authenticated);
 }
 
-extension UserAuthenticationX on UserAuthenticationStatus {
-  bool get isAuthenticated => status == Authentication.authenticated;
-
-  bool get isUnauthenticated => (status == Authentication.unauthenticated ||
-      status == Authentication.unknown);
-}
-
 abstract class AuthenticationRepository {
-  Stream<UserAuthenticationStatus> get status;
+  AuthenticationRepository({FlutterSecureStorage secureStorage})
+      : this._secureStorage = secureStorage ?? FlutterSecureStorage();
 
-  Future<String> getCurrentUserId();
+  static final _keyUsername = 'username';
+  static final _keyPassword = 'password';
+
+  final FlutterSecureStorage _secureStorage;
+
+  Stream<Authentication> get status;
 
   Future<bool> isAuthenticated();
 
-  Future<void> logIn(String username, String password);
+  Future<String> getCurrentUserId();
+
+  Future<AuthenticationStatus> logIn(String username, String password);
 
   Future<void> logOut();
 
@@ -48,75 +50,75 @@ abstract class AuthenticationRepository {
 }
 
 class AuthenticationRepositoryImpl extends AuthenticationRepository {
-  static RegExp validationRequired = RegExp(r'Validation required');
-  final _controller = StreamController<UserAuthenticationStatus>();
+  AuthenticationRepositoryImpl({
+    FlutterSecureStorage secureStorage,
+    HackerNewsApiClient apiClient,
+  })  : this._apiClient = apiClient ?? HackerNewsApiClientImpl(),
+        super(secureStorage: secureStorage);
 
-  final FlutterSecureStorage _secureStorage;
-  final HackerNewsApiClient _remoteSource;
-
-  AuthenticationRepositoryImpl(
-      {FlutterSecureStorage secureStorage, HackerNewsApiClient remoteSource})
-      : this._secureStorage = secureStorage ?? FlutterSecureStorage(),
-        this._remoteSource = remoteSource ?? HackerNewsApiClient();
+  final _controller = StreamController<Authentication>();
+  final HackerNewsApiClient _apiClient;
 
   @override
-  Future<String> getCurrentUserId() async =>
-      await _secureStorage.read(key: 'username');
-
-  @override
-  Stream<UserAuthenticationStatus> get status async* {
-    yield UserAuthenticationStatus.authenticated();
+  Stream<Authentication> get status async* {
+    if (await isAuthenticated()) {
+      yield Authentication.authenticated;
+    } else {
+      yield Authentication.unauthenticated;
+    }
     yield* _controller.stream;
   }
 
   @override
-  Future<void> logIn(String username, String password) async {
-    assert(username != null);
-    assert(password != null);
+  Future<AuthenticationStatus> logIn(String username, String password) async {
+    try {
+      final success = await _apiClient.logIn(username, password);
+      // If we get a 302 we assume it's successful
+      if (success) {
+        await _secureStorage.write(
+            key: AuthenticationRepository._keyUsername, value: username);
+        await _secureStorage.write(
+            key: AuthenticationRepository._keyPassword, value: password);
 
-    final url = '${Const.hackerNewsBaseUrl}/login';
-
-    Map body = {
-      'acct': username,
-      'pw': password,
-      'goto': 'news',
-    };
-
-    final Response response =
-        await _remoteSource.post(Request(url, data: body));
-
-    // If we get a 302 we assume it's successful
-    if (response.statusCode == 302) {
-      await _secureStorage.write(key: 'username', value: username);
-      await _secureStorage.write(key: 'password', value: password);
-
-      _controller.add(UserAuthenticationStatus.authenticated());
-    } else if (validationRequired.hasMatch(response.data)) {
-      // Validation required.
-      _controller.add(UserAuthenticationStatus.unauthenticated(
-        message: 'Login failed due to Captcha. Please try again later.',
-      ));
-    } else {
-      _controller.add(UserAuthenticationStatus.unauthenticated(
-        message: 'Login failed. Did you mistype your credentials?',
-      ));
+        _controller.add(Authentication.authenticated);
+        return AuthenticationStatus.authenticated();
+      } else {
+        _controller.add(Authentication.unauthenticated);
+        return AuthenticationStatus.unauthenticated(message: 'Login failed!');
+      }
+    } on Exception catch (e) {
+      print(e);
+      throw e;
     }
   }
 
   @override
   Future<void> logOut() async {
-    await _secureStorage.delete(key: 'username');
-    await _secureStorage.delete(key: 'password');
-    _controller
-        .add(UserAuthenticationStatus.unauthenticated(message: 'User logout!'));
+    await _secureStorage.delete(key: AuthenticationRepository._keyUsername);
+    await _secureStorage.delete(key: AuthenticationRepository._keyPassword);
+    _controller.add(Authentication.unauthenticated);
+  }
+
+  @override
+  Future<String> getCurrentUserId() async =>
+      await _secureStorage.read(key: AuthenticationRepository._keyUsername);
+
+  @override
+  Future<bool> isAuthenticated() async {
+    final username = await getCurrentUserId();
+    return username != null;
   }
 
   @override
   void dispose() => _controller.close();
+}
 
-  @override
-  Future<bool> isAuthenticated() async {
-    var username = await _secureStorage.read(key: 'username');
-    return username != null;
+extension AuthenticationRepositoryX on AuthenticationRepository {
+  Future<Map<String, String>> get userCredential async {
+    var userName =
+        await _secureStorage.read(key: AuthenticationRepository._keyUsername);
+    var password =
+        await _secureStorage.read(key: AuthenticationRepository._keyPassword);
+    return {userName: password};
   }
 }

@@ -17,7 +17,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json['id'],
-        delay: json['delay']       == null ? 0 : json['delay'],
+        delay: json['delay'] == null ? 0 : json['delay'],
         created: json['created'] == null ? 0 : json['created'],
         karma: json['karma'] == null ? 0 : json['karma'],
         about: json['about'] == null ? '' : json['about'],

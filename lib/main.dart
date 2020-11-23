@@ -8,10 +8,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build();
 
+  final authRepo = AuthenticationRepositoryImpl();
   runApp(
     MyApp(
-      authenticationRepository: AuthenticationRepositoryImpl(),
-      userRepository: UserRepositoryImpl(),
+      authenticationRepository: authRepo,
+      userRepository: UserRepositoryImpl(authenticationRepository: authRepo),
       storiesRepository: StoriesRepositoryImpl(),
     ),
   );
