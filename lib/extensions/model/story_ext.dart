@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hknews_repository/hknews_repository.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import '../../utils/url_util.dart';
 
 extension StoryUrl on Item {
   // story item browsing url
@@ -10,6 +12,24 @@ extension StoryUrl on Item {
 
   // vote an item url
   String get voteUrl => '$itemBrowsingUrl/vote?id=$id&how=up';
+
+  String get timeAgo {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(time * 1000);
+    return '${timeago.format(date)}';
+  }
+
+  String get description {
+    return "by $by ${(url != null && url.isNotEmpty) ? '(' + getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription : ''}";
+  }
+
+  String get _commentDescription {
+    if (descendants > 1) {
+      return '$descendants✍︎';
+    } else if (descendants == 1) {
+      return '$descendants✍︎';
+    }
+    return '';
+  }
 }
 
 // enum StoryType { news, top, best, ask, show, jobs }

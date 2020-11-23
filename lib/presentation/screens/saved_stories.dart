@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import '../../blocs/blocs.dart';
 import '../widgets/widgets.dart';
 import '../../utils/menu.dart';
+import '../../utils/url_util.dart';
+import '../../extensions/extensions.dart';
 
 class SavedStoriesScreen extends StatelessWidget {
   @override
@@ -67,10 +69,10 @@ class SavedStoriesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Item story, int index) {
+  Widget _buildStoryRow(BuildContext context, Item savedItem, int index) {
     final viewMode = context.watch<ViewModeCubit>().state;
     return Dismissible(
-      key: ValueKey(story.id),
+      key: ValueKey(savedItem.id),
       background: Container(
         color: Colors.red,
         padding: EdgeInsets.all(12.0),
@@ -90,7 +92,7 @@ class SavedStoriesScreen extends StatelessWidget {
         ),
       ),
       onDismissed: (direction) {
-        context.read<SavedStoriesCubit>().unsaveStory(story);
+        context.read<SavedStoriesCubit>().unsaveStory(savedItem);
         Scaffold.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -102,28 +104,28 @@ class SavedStoriesScreen extends StatelessWidget {
               action: SnackBarAction(
                 label: FlutterI18n.translate(context, 'app.action.undo'),
                 onPressed: () =>
-                    context.read<SavedStoriesCubit>().saveStory(story),
+                    context.read<SavedStoriesCubit>().saveStory(savedItem),
               ),
             ),
           );
       },
       child: (viewMode == ViewMode.titleOnly)
-          ? TitleOnlyStoryRow(
-              story,
-              onItemTap: (story) =>
-                  context.read<SavedStoriesCubit>().updateVisit(story),
-            )
+          ? TitleOnlyStoryTile(savedItem,
+              onItemTap: (item) => _onItemTap(context, item))
           : (viewMode == ViewMode.minimalist)
-              ? MinimalistStoryRow(
-                  story,
-                  onItemTap: (story) =>
-                      context.read<SavedStoriesCubit>().updateVisit(story),
-                )
-              : WithDetailStoryRow(
-                  story,
-                  onItemTap: (story) =>
-                      context.read<SavedStoriesCubit>().updateVisit(story),
-                ),
+              ? MinimalistStoryTile(savedItem,
+                  onItemTap: (item) => _onItemTap(context, item))
+              : ContentPreviewStoryTile(savedItem,
+                  onItemTap: (item) => _onItemTap(context, item)),
     );
+  }
+
+  void _onItemTap(BuildContext context, Item item) {
+    if (item.url == null || item.url.isEmpty) {
+      openWebBrowser(context, item.contentUrl);
+    } else {
+      openWebBrowser(context, item.url);
+    }
+    context.read<SavedStoriesCubit>().updateVisit(item);
   }
 }

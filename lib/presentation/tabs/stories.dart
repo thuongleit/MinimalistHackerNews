@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:hacker_news/presentation/widgets/login_form.dart';
-import 'package:hacker_news/utils/routes.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../widgets/widgets.dart';
 import '../../utils/menu.dart';
 import '../../extensions/extensions.dart';
 import '../../blocs/blocs.dart';
+import '../../utils/routes.dart';
+import '../../utils/url_util.dart';
 
 class StoriesTab extends StatefulWidget {
   final StoryType storyType;
@@ -134,10 +134,10 @@ class _StoriesTabState extends State<StoriesTab> {
           );
       },
       child: (viewMode == ViewMode.titleOnly)
-          ? TitleOnlyStoryRow(story)
+          ? TitleOnlyStoryTile(story, onItemTap: _onItemTap)
           : (viewMode == ViewMode.minimalist)
-              ? MinimalistStoryRow(story)
-              : WithDetailStoryRow(story),
+              ? MinimalistStoryTile(story, onItemTap: _onItemTap)
+              : ContentPreviewStoryTile(story, onItemTap: _onItemTap),
     );
   }
 
@@ -197,5 +197,13 @@ class _StoriesTabState extends State<StoriesTab> {
     popupMenu.addAll(Menu.home);
 
     return popupMenu;
+  }
+
+  void _onItemTap(Item item) {
+    if (item.url == null || item.url.isEmpty) {
+      openWebBrowser(context, item.contentUrl);
+    } else {
+      openWebBrowser(context, item.url);
+    }
   }
 }
