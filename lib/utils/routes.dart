@@ -7,6 +7,7 @@ import '../presentation/screens/screens.dart';
 class Routes {
   // Static route names
   static const home = '/';
+  static const login = '/login';
   static const about = '/about';
   static const settings = '/settings';
   static const saved_stories = '/saved_stories';
@@ -19,6 +20,12 @@ class Routes {
           return MaterialPageRoute(
             settings: routeSettings,
             builder: (_) => HomeScreen(),
+          );
+
+        case login:
+          return MaterialPageRoute(
+            settings: routeSettings,
+            builder: (_) => LoginScreen(),
           );
 
         case about:

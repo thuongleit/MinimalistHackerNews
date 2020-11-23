@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:hacker_news/presentation/widgets/login_form.dart';
+import 'package:hacker_news/utils/routes.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../widgets/widgets.dart';
@@ -145,27 +146,28 @@ class _StoriesTabState extends State<StoriesTab> {
     //add login/logout popup menu
     var authenticationStatus = context.watch<AuthenticationBloc>().state.status;
     if (authenticationStatus.isUnauthenticated) {
-      popupMenu['app.menu.login'] = () => showDialog(
-            context: context,
-            builder: (context) => SimpleDialog(
-              title: Text(FlutterI18n.translate(context, 'app.menu.login')),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: BlocProvider(
-                    create: (context) {
-                      return LoginBloc(
-                        authenticationRepository:
-                            RepositoryProvider.of<AuthenticationRepository>(
-                                context),
-                      );
-                    },
-                    child: LoginForm(),
-                  ),
-                ),
-              ],
-            ),
-          );
+      popupMenu['app.menu.login'] = Routes.login;
+      // () => showDialog(
+      //       context: context,
+      //       builder: (context) => SimpleDialog(
+      //         title: Text(FlutterI18n.translate(context, 'app.menu.login')),
+      //         children: [
+      //           Padding(
+      //             padding: const EdgeInsets.all(12.0),
+      //             child: BlocProvider(
+      //               create: (context) {
+      //                 return LoginBloc(
+      //                   authenticationRepository:
+      //                       RepositoryProvider.of<AuthenticationRepository>(
+      //                           context),
+      //                 );
+      //               },
+      //               child: LoginForm(),
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      //     );
     } else {
       popupMenu['app.menu.logout'] = () => showDialog(
             context: context,

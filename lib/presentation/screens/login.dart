@@ -18,7 +18,20 @@ class LoginScreen extends StatelessWidget {
                   RepositoryProvider.of<AuthenticationRepository>(context),
             );
           },
-          child: LoginForm(),
+          child: BlocListener<AuthenticationBloc, AuthenticationState>(
+            listener: (_, state) {
+              if (state.status.isAuthenticated) {
+                Navigator.of(context).pop();
+              } else {
+                Scaffold.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(content: Text('Authentication Failure')),
+                  );
+              }
+            },
+            child: LoginForm(),
+          ),
         ),
       ),
     );

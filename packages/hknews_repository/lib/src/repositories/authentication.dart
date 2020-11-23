@@ -42,7 +42,7 @@ abstract class AuthenticationRepository {
 
   Future<String> getCurrentUserId();
 
-  Future<AuthenticationStatus> logIn(String username, String password);
+  Future<void> logIn(String username, String password);
 
   Future<void> logOut();
 
@@ -70,7 +70,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
   }
 
   @override
-  Future<AuthenticationStatus> logIn(String username, String password) async {
+  Future<void> logIn(String username, String password) async {
     try {
       final success = await _apiClient.logIn(username, password);
       // If we get a 302 we assume it's successful
@@ -81,10 +81,8 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
             key: AuthenticationRepository._keyPassword, value: password);
 
         _controller.add(Authentication.authenticated);
-        return AuthenticationStatus.authenticated();
       } else {
         _controller.add(Authentication.unauthenticated);
-        return AuthenticationStatus.unauthenticated(message: 'Login failed!');
       }
     } on Exception catch (e) {
       print(e);
