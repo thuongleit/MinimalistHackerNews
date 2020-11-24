@@ -11,7 +11,7 @@ abstract class HackerNewsApiClient {
 
   Future<Item> getItem(int itemId);
 
-  Future<bool> logIn(String username, String password);
+  Future<LoginResult> logIn(String username, String password);
 
   Future<User> getUser(String userId);
 }
@@ -21,6 +21,8 @@ abstract class HackerNewsApiClient {
 /// Makes http calls to several services, including
 /// the open source r/HackerNews REST API.
 class HackerNewsApiClientImpl extends HackerNewsApiClient {
+  static RegExp _validationRequired = RegExp(r"Validation required");
+
   final Client _client;
 
   HackerNewsApiClientImpl({Client client}) : this._client = client ?? Client();
@@ -39,7 +41,7 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
   }
 
   @override
-  Future<bool> logIn(String username, String password) async {
+  Future<LoginResult> logIn(String username, String password) async {
     assert(username != null);
     assert(password != null);
 
@@ -54,7 +56,17 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
     print('${response.statusCode} - ${response.body}');
 
     // If we get a 302 we assume it's successful
-    return (response.statusCode == 302);
+    if (response.statusCode == 302) {
+      return LoginResult.success();
+    } else if (_validationRequired.hasMatch(response.body)) {
+      return LoginResult.failure(
+        message: 'Login failed due to Captcha. Please try again later!',
+      );
+    } else {
+      return LoginResult.failure(
+        message: 'Login failed. Did you mistype your username and password?',
+      );
+    }
   }
 
   @override
@@ -92,4 +104,16 @@ class Request {
   final dynamic body;
 
   const Request(this.url, {this.body});
+}
+
+class LoginResult {
+  final bool success;
+  final String message;
+
+  const LoginResult._({this.success, this.message});
+
+  const LoginResult.success() : this._(success: true);
+
+  const LoginResult.failure({String message})
+      : this._(success: false, message: message);
 }

@@ -75,9 +75,9 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
   @override
   Future<AuthenticationStatus> logIn(String username, String password) async {
     try {
-      final success = await _apiClient.logIn(username, password);
+      final result = await _apiClient.logIn(username, password);
       // If we get a 302 we assume it's successful
-      if (success) {
+      if (result.success) {
         await _secureStorage.write(
             key: AuthenticationRepository._keyUsername, value: username);
         await _secureStorage.write(
@@ -87,7 +87,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
         return AuthenticationStatus.authenticated();
       } else {
         _controller.add(Authentication.unauthenticated);
-        return AuthenticationStatus.unauthenticated(message: 'Login failed!');
+        return AuthenticationStatus.unauthenticated(message: result.message);
       }
     } on Exception catch (e) {
       print(e);
