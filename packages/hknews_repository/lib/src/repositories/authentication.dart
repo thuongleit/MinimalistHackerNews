@@ -47,6 +47,8 @@ abstract class AuthenticationRepository {
 
   Future<AuthenticationStatus> logIn(String username, String password);
 
+  Future<AuthenticationStatus> createAccount(String username, String password);
+
   Future<void> logOut();
 
   void dispose();
@@ -74,24 +76,36 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
 
   @override
   Future<AuthenticationStatus> logIn(String username, String password) async {
-    try {
-      final result = await _apiClient.logIn(username, password);
-      // If we get a 302 we assume it's successful
-      if (result.success) {
-        await _secureStorage.write(
-            key: AuthenticationRepository._keyUsername, value: username);
-        await _secureStorage.write(
-            key: AuthenticationRepository._keyPassword, value: password);
+    final response = await _apiClient.logIn(username, password);
+    if (response.success) {
+      await _secureStorage.write(
+          key: AuthenticationRepository._keyUsername, value: username);
+      await _secureStorage.write(
+          key: AuthenticationRepository._keyPassword, value: password);
 
-        _controller.add(Authentication.authenticated);
-        return AuthenticationStatus.authenticated();
-      } else {
-        _controller.add(Authentication.unauthenticated);
-        return AuthenticationStatus.unauthenticated(message: result.message);
-      }
-    } on Exception catch (e) {
-      print(e);
-      throw e;
+      _controller.add(Authentication.authenticated);
+      return AuthenticationStatus.authenticated();
+    } else {
+      _controller.add(Authentication.unauthenticated);
+      return AuthenticationStatus.unauthenticated(message: response.message);
+    }
+  }
+
+  @override
+  Future<AuthenticationStatus> createAccount(
+      String username, String password) async {
+    final response = await _apiClient.createAccount(username, password);
+    if (response.success) {
+      await _secureStorage.write(
+          key: AuthenticationRepository._keyUsername, value: username);
+      await _secureStorage.write(
+          key: AuthenticationRepository._keyPassword, value: password);
+
+      _controller.add(Authentication.authenticated);
+      return AuthenticationStatus.authenticated();
+    } else {
+      _controller.add(Authentication.unauthenticated);
+      return AuthenticationStatus.unauthenticated(message: response.message);
     }
   }
 
