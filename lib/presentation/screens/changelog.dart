@@ -19,7 +19,7 @@ class ChangelogScreen extends StatelessWidget {
         title: FlutterI18n.translate(context, 'screen.about.version.changelog'),
         body: Markdown(
           data: (state.data as String) ?? '',
-          onTapLink: (url) => FlutterWebBrowser.openWebPage(
+          onTapLink: (_, url, __) => FlutterWebBrowser.openWebPage(
             url: url,
             androidToolbarColor: Theme.of(context).primaryColor,
           ),
