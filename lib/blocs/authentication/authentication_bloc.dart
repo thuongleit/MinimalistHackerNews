@@ -15,7 +15,7 @@ class AuthenticationBloc
       {@required AuthenticationRepository authenticationRepository})
       : assert(authenticationRepository != null),
         _authenticationRepository = authenticationRepository,
-        super(const AuthenticationState.unauthenticated()) {
+        super(const AuthenticationState.unknown()) {
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
       (status) => add(AuthenticationStatusChanged(status)),
     );
@@ -43,7 +43,7 @@ class AuthenticationBloc
 
   Future<AuthenticationState> _mapAuthenticationStatusChangedToState(
       AuthenticationStatusChanged event) async {
-    if (event.status.isAuthenticated) {
+    if (event.status == Authentication.authenticated) {
       return AuthenticationState.authenticated(
           await _authenticationRepository.getCurrentUserId());
     } else {

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -63,11 +65,26 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (state.status.isValidated) {
       yield state.copyWith(status: FormzStatus.submissionInProgress);
       try {
-        await _authenticationRepository.logIn(
+        final authenticationStatus = await _authenticationRepository.logIn(
             state.username.value, state.password.value);
-        yield state.copyWith(status: FormzStatus.submissionSuccess);
-      } on Exception catch (_) {
-        yield state.copyWith(status: FormzStatus.submissionFailure);
+        if (authenticationStatus.isAuthenticated) {
+          yield state.copyWith(status: FormzStatus.submissionSuccess);
+        } else {
+          yield state.copyWith(
+            status: FormzStatus.submissionFailure,
+            message: authenticationStatus.message,
+          );
+        }
+      } on SocketException {
+        yield state.copyWith(
+          status: FormzStatus.submissionFailure,
+          message: 'Action failed! No Internet connection!'
+        );
+      } on Exception catch (e) {
+        yield state.copyWith(
+          status: FormzStatus.submissionFailure,
+          message: e.toString(),
+        );
       }
     }
   }

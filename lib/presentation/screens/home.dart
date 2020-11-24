@@ -79,10 +79,33 @@ class _MyHomePageState extends State<HomeScreen> {
         create: (context) => StoriesCubit(
           RepositoryProvider.of<StoriesRepository>(context),
         ),
-        child: StoriesTab(
-          key: ValueKey(type.toString()),
-          storyType: type,
-          scrollController: _scrollController,
+        child: BlocListener<AuthenticationBloc, AuthenticationState>(
+          listenWhen: (previous, current) =>
+              previous.status != Authentication.unknown,
+          listener: (context, state) {
+            if (state.status == Authentication.authenticated) {
+              Scaffold.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text('User login'),
+                  ),
+                );
+            } else {
+              Scaffold.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text('User logout'),
+                  ),
+                );
+            }
+          },
+          child: StoriesTab(
+            key: ValueKey(type.toString()),
+            storyType: type,
+            scrollController: _scrollController,
+          ),
         ),
       ),
       bottomNavigationBar: AnimatedContainer(

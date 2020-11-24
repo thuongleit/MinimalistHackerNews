@@ -8,7 +8,6 @@ import '../widgets/widgets.dart';
 import '../../utils/menu.dart';
 import '../../extensions/extensions.dart';
 import '../../blocs/blocs.dart';
-import '../../utils/routes.dart';
 import '../../utils/url_util.dart';
 
 class StoriesTab extends StatefulWidget {
@@ -145,30 +144,7 @@ class _StoriesTabState extends State<StoriesTab> {
     final Map<String, dynamic> popupMenu = {};
     //add login/logout popup menu
     var authenticationStatus = context.watch<AuthenticationBloc>().state.status;
-    if (authenticationStatus.isUnauthenticated) {
-      popupMenu['app.menu.login'] = Routes.login;
-      // () => showDialog(
-      //       context: context,
-      //       builder: (context) => SimpleDialog(
-      //         title: Text(FlutterI18n.translate(context, 'app.menu.login')),
-      //         children: [
-      //           Padding(
-      //             padding: const EdgeInsets.all(12.0),
-      //             child: BlocProvider(
-      //               create: (context) {
-      //                 return LoginBloc(
-      //                   authenticationRepository:
-      //                       RepositoryProvider.of<AuthenticationRepository>(
-      //                           context),
-      //                 );
-      //               },
-      //               child: LoginForm(),
-      //             ),
-      //           ),
-      //         ],
-      //       ),
-      //     );
-    } else {
+    if (authenticationStatus == Authentication.authenticated) {
       popupMenu['app.menu.logout'] = () => showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -179,15 +155,40 @@ class _StoriesTabState extends State<StoriesTab> {
               actions: [
                 TextButton(
                   key: const ValueKey('logout_dialog_ok_button'),
-                  onPressed: () => context
-                      .watch<AuthenticationBloc>()
-                      .add(AuthenticationLogoutRequested()),
+                  onPressed: () {
+                    context
+                        .read<AuthenticationBloc>()
+                        .add(AuthenticationLogoutRequested());
+                    Navigator.of(context).pop();
+                  },
                   child: Text('OK'),
                 ),
                 TextButton(
                   key: const ValueKey('logout_dialog_cancel_button'),
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text('Cancel'),
+                ),
+              ],
+            ),
+          );
+    } else {
+      popupMenu['app.menu.login'] = () => showDialog(
+            context: context,
+            builder: (context) => SimpleDialog(
+              title: Text('Login with HackerNews'),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: BlocProvider(
+                    create: (context) {
+                      return LoginBloc(
+                        authenticationRepository:
+                            RepositoryProvider.of<AuthenticationRepository>(
+                                context),
+                      );
+                    },
+                    child: LoginForm(),
+                  ),
                 ),
               ],
             ),
