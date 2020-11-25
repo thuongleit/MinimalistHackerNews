@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_repository/hknews_repository.dart';
+import 'package:hknews_repository/src/result.dart';
 import 'package:meta/meta.dart';
 
 abstract class UserRepository {
   Future<User> getUser(String userId);
 
   Future<User> getCurrentUser();
+
+  Future<Result> vote(int itemId);
 }
 
 class UserRepositoryImpl extends UserRepository {
@@ -39,5 +42,21 @@ class UserRepositoryImpl extends UserRepository {
   Future<User> getCurrentUser() async {
     final currentUserId = await _authRepository.getCurrentUserId();
     return getUser(currentUserId);
+  }
+
+  @override
+  Future<Result> vote(int itemId) async {
+    final isUserLogin = await _authRepository.isAuthenticated();
+    if (!isUserLogin) {
+      return Result.failure(message: 'You are not logged in.');
+    }
+
+    final userCredential = await _authRepository.userCredential;
+    final username = userCredential[0];
+    final password = userCredential[1];
+    //FIXME: unvote
+    final response =
+        await _apiClient.vote(username, password, itemId, upVote: true);
+    return response.getResult;
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hacker_news/presentation/widgets/item_title_text.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
-import '../../utils/url_util.dart';
+import '../../blocs/blocs.dart';
 import '../../extensions/extensions.dart';
 import 'item_description_text.dart';
 import 'up_vote.dart';
@@ -35,9 +36,8 @@ class MinimalistStoryTile extends StatelessWidget {
                   ItemDescriptionText('${item.score}'),
                 ],
               ),
-              onTap: () {
-                openWebBrowser(context, item.voteUrl);
-              },
+              onTap: () => BlocProvider.of<UserActionBloc>(context)
+                  .add(UserVoteRequested(item.id)),
             ),
             const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
             Flexible(

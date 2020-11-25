@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 import '../../hackernews_api.dart';
 import '../const.dart';
@@ -17,19 +17,26 @@ abstract class HackerNewsApiClient {
   Future<Response> createAccount(String username, String password);
 
   Future<User> getUser(String userId);
+
+  Future<Response> vote(String username, String password, int itemId,
+      {bool upVote = true});
 }
 
 /// Serves data to several data repositories.
 ///
-/// Makes http calls to several services, including
 /// the open source r/HackerNews REST API.
 class HackerNewsApiClientImpl extends HackerNewsApiClient {
   static final RegExp _serverResponseMsgReg =
       RegExp(r"<body>\n*.*\n*<br>", multiLine: true);
 
-  final Client _client;
+  static final _requestUsernameKey = 'acct';
+  static final _requestPasswordKey = 'pw';
+  static final _requestActionKey = 'goto';
 
-  HackerNewsApiClientImpl({Client client}) : this._client = client ?? Client();
+  final http.Client _client;
+
+  HackerNewsApiClientImpl({http.Client client})
+      : this._client = client ?? http.Client();
 
   @override
   Future<List<int>> getItemIds(StoryType type) async {
@@ -52,26 +59,11 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
     final url = '${Const.hackerNewsStoryBaseUrl}/login';
 
     Map body = {
-      'acct': username,
-      'pw': password,
-      'goto': 'user?id=$username',
+      _requestUsernameKey: username,
+      _requestPasswordKey: password,
+      _requestActionKey: 'user?id=$username',
     };
-    final response = await _client.post(url, body: body);
-    print('${response.statusCode} - ${response.body}');
-
-    // If we get a 302 we assume it's successful
-    if (response.statusCode == HttpStatus.found) {
-      return Response.success();
-    } else if (response.statusCode == HttpStatus.ok) {
-      return Response.failure(
-        message: _parseServerMessage(response.body),
-      );
-    } else {
-      return Response.failure(
-        message:
-            'Login failed. Something went wrong. Please try again!\nServer response: ${response.statusCode}',
-      );
-    }
+    return _handleResponse(await _client.post(url, body: body));
   }
 
   @override
@@ -83,27 +75,11 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
 
     Map body = {
       'creating': 't',
-      'acct': username,
-      'pw': password,
-      'goto': 'user?id=$username',
+      _requestUsernameKey: username,
+      _requestPasswordKey: password,
+      _requestActionKey: 'user?id=$username',
     };
-    final response = await _client.post(url, body: body);
-    print('${response.statusCode} - ${response.body}');
-
-    // If we get a 302 we assume it's successful
-    // If we get a 302 we assume it's successful
-    if (response.statusCode == HttpStatus.found) {
-      return Response.success();
-    } else if (response.statusCode == HttpStatus.ok) {
-      return Response.failure(
-        message: _parseServerMessage(response.body),
-      );
-    } else {
-      return Response.failure(
-        message:
-            'Oops! Something went wrong. Please try again later!\nServer response: ${response.statusCode}',
-      );
-    }
+    return _handleResponse(await _client.post(url, body: body));
   }
 
   @override
@@ -113,6 +89,25 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
     String url = '${Const.hackerNewsApiEndpoint}/user/$userId.json';
     final response = await _client.get(Request(url));
     return User.fromJson(jsonDecode(response.body));
+  }
+
+  @override
+  Future<Response> vote(String username, String password, int itemId,
+      {bool upVote = true}) async {
+    assert(username != null);
+    assert(password != null);
+    assert(itemId != null);
+
+    final url = '${Const.hackerNewsStoryBaseUrl}/vote';
+
+    Map body = {
+      _requestUsernameKey: username,
+      _requestPasswordKey: password,
+      _requestActionKey: 'user?id=$username',
+      'id': itemId,
+      'how': upVote ? 'up' : 'un',
+    };
+    return _handleResponse(await _client.post(url, body: body));
   }
 
   Future<String> _get(Request request, {String errorMessage}) async {
@@ -132,6 +127,24 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
       return response.body;
     } else {
       throw HackerNewsApiException(message: errorMessage);
+    }
+  }
+
+  Response _handleResponse(http.Response response) {
+    print('${response.statusCode} - ${response.body}');
+
+    // If we get a 302 we assume it's successful
+    if (response.statusCode == HttpStatus.found) {
+      return Response.success();
+    } else if (response.statusCode == HttpStatus.ok) {
+      return Response.failure(
+        message: _parseServerMessage(response.body),
+      );
+    } else {
+      return Response.failure(
+        message:
+            'Oops! Something went wrong. Please try again!\nServer response: ${response.statusCode}',
+      );
     }
   }
 

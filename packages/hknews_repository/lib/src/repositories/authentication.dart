@@ -131,11 +131,11 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
 }
 
 extension AuthenticationRepositoryX on AuthenticationRepository {
-  Future<Map<String, String>> get userCredential async {
+  Future<List<String>> get userCredential async {
     var userName =
         await _secureStorage.read(key: AuthenticationRepository._keyUsername);
     var password =
         await _secureStorage.read(key: AuthenticationRepository._keyPassword);
-    return {userName: password};
+    return [userName, password];
   }
 }

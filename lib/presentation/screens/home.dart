@@ -3,10 +3,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hacker_news/blocs/blocs.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../../extensions/extensions.dart';
+import '../../blocs/blocs.dart';
 import '../tabs/tabs.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -79,28 +79,46 @@ class _MyHomePageState extends State<HomeScreen> {
         create: (context) => StoriesCubit(
           RepositoryProvider.of<StoriesRepository>(context),
         ),
-        child: BlocListener<AuthenticationBloc, AuthenticationState>(
-          listenWhen: (previous, current) =>
-              previous.status != Authentication.unknown,
-          listener: (context, state) {
-            if (state.status == Authentication.authenticated) {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text('User login'),
-                  ),
-                );
-            } else {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text('User logout'),
-                  ),
-                );
-            }
-          },
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<AuthenticationBloc, AuthenticationState>(
+              listenWhen: (previous, current) =>
+                  previous.status != Authentication.unknown,
+              listener: (context, state) {
+                if (state.status == Authentication.authenticated) {
+                  Scaffold.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      SnackBar(
+                        content: Text('User login'),
+                      ),
+                    );
+                } else {
+                  Scaffold.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      SnackBar(
+                        content: Text('User logout'),
+                      ),
+                    );
+                }
+              },
+            ),
+            BlocListener<UserActionBloc, UserActionState>(
+              listenWhen: (previous, current) => current is UserActionResult,
+              listener: (context, state) {
+                if (state is UserActionResult) {
+                  Scaffold.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                      ),
+                    );
+                }
+              },
+            ),
+          ],
           child: StoriesTab(
             key: ValueKey(type.toString()),
             storyType: type,

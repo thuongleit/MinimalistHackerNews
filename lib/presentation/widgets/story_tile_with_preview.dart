@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hacker_news/blocs/blocs.dart';
 import 'package:hacker_news/presentation/widgets/item_description_text.dart';
 import 'package:hacker_news/presentation/widgets/item_title_text.dart';
 import 'package:hacker_news/presentation/widgets/up_vote.dart';
@@ -35,9 +37,8 @@ class ContentPreviewStoryTile extends StatelessWidget {
                   ItemDescriptionText('${item.score}'),
                 ],
               ),
-              onTap: () {
-                openWebBrowser(context, item.voteUrl);
-              },
+              onTap: () => BlocProvider.of<UserActionBloc>(context)
+                  .add(UserVoteRequested(item.id)),
             ),
             const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
             Flexible(

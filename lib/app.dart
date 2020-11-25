@@ -39,7 +39,13 @@ class MyApp extends StatelessWidget {
           BlocProvider<ViewModeCubit>(create: (_) => ViewModeCubit()),
           BlocProvider<AuthenticationBloc>(
             create: (_) => AuthenticationBloc(
-                authenticationRepository: authenticationRepository),
+              authenticationRepository: authenticationRepository,
+            ),
+          ),
+          BlocProvider<UserActionBloc>(
+            create: (_) => UserActionBloc(
+              userRepository: userRepository,
+            ),
           ),
         ],
         child: BlocBuilder<ThemeCubit, AppTheme>(
