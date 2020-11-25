@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<UserActionBloc>(
             create: (_) => UserActionBloc(
+              storiesRepository: storiesRepository,
               userRepository: userRepository,
             ),
           ),

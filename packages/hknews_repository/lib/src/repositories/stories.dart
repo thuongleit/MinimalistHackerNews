@@ -4,6 +4,7 @@ import 'package:hknews_database/hknews_database.dart';
 import '../mapping/model_and_entity_mapping.dart';
 import '../../src/utils/pair.dart';
 import '../../src/utils/web_analyzer.dart';
+import '../result.dart';
 
 /// Repository that holds stories information of Hacker News
 abstract class StoriesRepository {
@@ -11,13 +12,13 @@ abstract class StoriesRepository {
 
   Future<Item> getItem(int itemId, {bool previewContent = false});
 
-  Future<bool> saveStory(Item item);
+  Future<Result> saveStory(Item item);
 
-  Future<bool> unsaveStory(Item item);
+  Future<Result> unsaveStory(Item item);
 
   Future<List<Item>> getSavedStories();
 
-  Future<bool> updateVisited(Item story);
+  Future<Result> updateVisited(Item story);
 }
 
 class StoriesRepositoryImpl extends StoriesRepository {
@@ -70,14 +71,16 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<bool> saveStory(Item story) async {
+  Future<Result> saveStory(Item story) async {
     story.updatedAt = DateTime.now().millisecondsSinceEpoch;
-    return await _localSource.insertOrReplace(story.toEntity());
+    final success = await _localSource.insertOrReplace(story.toEntity());
+    return (success) ? Result.success() : Result.failure();
   }
 
   @override
-  Future<bool> unsaveStory(Item story) async {
-    return await _localSource.deleteStory(story.id);
+  Future<Result> unsaveStory(Item story) async {
+    final success = await _localSource.deleteStory(story.id);
+    return (success) ? Result.success() : Result.failure();
   }
 
   @override
@@ -96,13 +99,13 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<bool> updateVisited(Item story) async {
+  Future<Result> updateVisited(Item story) async {
     var isUpdated = await _localSource.updateVisitStory(story.id);
     if (isUpdated) {
       story.visited = true;
       _itemsCache[story.id] = Pair(story, true);
     }
-    return isUpdated;
+    return (isUpdated) ? Result.success() : Result.failure();
   }
 
   Future<List<int>> getCommentsIds(Item item) async {

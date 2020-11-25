@@ -92,7 +92,7 @@ class SavedStoriesScreen extends StatelessWidget {
         ),
       ),
       onDismissed: (direction) {
-        context.read<SavedStoriesCubit>().unsaveStory(savedItem);
+        context.read<UserActionBloc>().add(UserUnSaveStoryRequested(savedItem));
         Scaffold.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -104,7 +104,7 @@ class SavedStoriesScreen extends StatelessWidget {
               action: SnackBarAction(
                 label: FlutterI18n.translate(context, 'app.action.undo'),
                 onPressed: () =>
-                    context.read<SavedStoriesCubit>().saveStory(savedItem),
+                    context.read<UserActionBloc>().add(UserSaveStoryRequested(savedItem)),
               ),
             ),
           );
@@ -126,6 +126,6 @@ class SavedStoriesScreen extends StatelessWidget {
     } else {
       openWebBrowser(context, item.url);
     }
-    context.read<SavedStoriesCubit>().updateVisit(item);
+    context.read<UserActionBloc>().add(UserUpdateVisitRequested(item));
   }
 }

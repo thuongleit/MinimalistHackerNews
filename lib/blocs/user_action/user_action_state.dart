@@ -24,7 +24,8 @@ class UserActionResult extends UserActionState {
     this.message,
   });
 
-  const UserActionResult.success() : this._(success: true);
+  const UserActionResult.success({String message})
+      : this._(success: true, message: message);
 
   const UserActionResult.failure({String message})
       : this._(success: false, message: message);

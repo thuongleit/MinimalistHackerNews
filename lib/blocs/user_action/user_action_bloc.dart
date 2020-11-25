@@ -9,30 +9,47 @@ part 'user_action_event.dart';
 
 part 'user_action_state.dart';
 
+typedef Future<Result> Action();
+
 class UserActionBloc extends Bloc<UserActionEvent, UserActionState> {
-  UserActionBloc({@required UserRepository userRepository})
-      : assert(userRepository != null),
+  UserActionBloc({
+    @required UserRepository userRepository,
+    @required StoriesRepository storiesRepository,
+  })  : assert(userRepository != null),
+        assert(storiesRepository != null),
         _userRepository = userRepository,
+        _storiesRepository = storiesRepository,
         super(const UserActionInitial());
 
   final UserRepository _userRepository;
+  final StoriesRepository _storiesRepository;
 
   @override
   Stream<UserActionState> mapEventToState(UserActionEvent event) async* {
     if (event is UserVoteRequested) {
-      yield* _mapUserVoteRequestedToState(event);
+      yield* _mapUserRequestedToState(() => _userRepository.vote(event.itemId));
+    } else if (event is UserSaveStoryRequested) {
+      yield* _mapUserRequestedToState(
+          () => _storiesRepository.saveStory(event.item));
+    } else if (event is UserUnSaveStoryRequested) {
+      yield* _mapUserRequestedToState(
+          () => _storiesRepository.unsaveStory(event.item));
+    } else if (event is UserUpdateVisitRequested) {
+      yield* _mapUserRequestedToState(
+          () => _storiesRepository.updateVisited(event.item));
     }
   }
 
-  Stream<UserActionState> _mapUserVoteRequestedToState(
-      UserVoteRequested event) async* {
+  Stream<UserActionState> _mapUserRequestedToState(
+    Action action,
+  ) async* {
     yield const UserActionInProgress();
 
     try {
-      final result = await _userRepository.vote(event.itemId);
+      final result = await action();
 
       if (result.success) {
-        yield UserActionResult.success();
+        yield UserActionResult.success(message: result.message);
       } else {
         yield UserActionResult.failure(message: result.message);
       }

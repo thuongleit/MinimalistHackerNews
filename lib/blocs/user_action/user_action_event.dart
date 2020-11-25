@@ -15,3 +15,30 @@ class UserVoteRequested extends UserActionEvent {
   @override
   List<Object> get props => [itemId];
 }
+
+class UserSaveStoryRequested extends UserActionEvent {
+  const UserSaveStoryRequested(this.item);
+
+  final Item item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class UserUnSaveStoryRequested extends UserActionEvent {
+  const UserUnSaveStoryRequested(this.item);
+
+  final Item item;
+
+  @override
+  List<Object> get props => [item];
+}
+
+class UserUpdateVisitRequested extends UserActionEvent {
+  const UserUpdateVisitRequested(this.item);
+
+  final Item item;
+
+  @override
+  List<Object> get props => [item];
+}

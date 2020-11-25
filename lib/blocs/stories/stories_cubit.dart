@@ -32,21 +32,4 @@ class StoriesCubit extends NetworkCubit<List<int>> {
     return fetchStories(_type);
   }
 
-  Future<void> saveStory(Item story, int index) async {
-    try {
-      final success = await _repository.saveStory(story);
-      //state.data.remove(value)
-    } on Exception catch (e) {
-      emit(NetworkState.failure(error: e));
-    }
-  }
-
-  Future<void> unsaveStory(Item story, int index) async {
-    try {
-      final success =  await _repository.unsaveStory(story);
-      //emit(NetworkState.success(storyIds));
-    } on Exception catch (e) {
-      emit(NetworkState.failure(error: e));
-    }
-  }
 }

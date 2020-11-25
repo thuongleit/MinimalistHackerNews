@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../widgets/widgets.dart';
@@ -95,52 +96,88 @@ class _StoriesTabState extends State<StoriesTab> {
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Item story, int index) {
+  Widget _buildStoryRow(BuildContext context, Item item, int index) {
     final viewMode = context.watch<ViewModeCubit>().state;
-    return Dismissible(
-      key: ValueKey(story.id),
-      background: Container(
-        color: Colors.green[700],
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            Center(
-              child: Text(
-                FlutterI18n.translate(context, 'app.action.read_later'),
-                style: TextStyle(
-                    color: Colors.black54, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Flexible(
-              child: Container(),
-            ),
-          ],
+    return Slidable(
+      key: ValueKey(item.id),
+      closeOnScroll: true,
+      actionPane: SlidableScrollActionPane(),
+      actions: <Widget>[
+        IconSlideAction(
+          color: Colors.deepOrangeAccent,
+          icon: Icons.arrow_upward,
+          onTap: () =>
+              context.read<UserActionBloc>().add(UserVoteRequested(item.id)),
         ),
+        IconSlideAction(
+          color: Colors.blueAccent,
+          icon: Icons.save,
+          onTap: () =>
+              context.read<UserActionBloc>().add(UserSaveStoryRequested(item)),
+        ),
+      ],
+      dismissal: SlidableDismissal(
+        closeOnCanceled: true,
+        dismissThresholds: {
+          SlideActionType.primary: 0.2,
+          SlideActionType.secondary: 0.2,
+        },
+        child: SlidableDrawerDismissal(),
+        onWillDismiss: (actionType) {
+          context.read<UserActionBloc>().add(UserVoteRequested(item.id));
+          return false;
+        },
       ),
-      onDismissed: (direction) {
-        context.read<StoriesCubit>().saveStory(story, index);
-        Scaffold.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(
-                FlutterI18n.translate(context, 'app.message.story_saved'),
-              ),
-              action: SnackBarAction(
-                label: FlutterI18n.translate(context, 'app.action.undo')
-                    .toUpperCase(),
-                onPressed: () =>
-                    context.read<StoriesCubit>().unsaveStory(story, index),
-              ),
-            ),
-          );
-      },
       child: (viewMode == ViewMode.titleOnly)
-          ? TitleOnlyStoryTile(story, onItemTap: _onItemTap)
+          ? TitleOnlyStoryTile(item, onItemTap: _onItemTap)
           : (viewMode == ViewMode.minimalist)
-              ? MinimalistStoryTile(story, onItemTap: _onItemTap)
-              : ContentPreviewStoryTile(story, onItemTap: _onItemTap),
+              ? MinimalistStoryTile(item, onItemTap: _onItemTap)
+              : ContentPreviewStoryTile(item, onItemTap: _onItemTap),
     );
+    // return Dismissible(
+    //   key: ValueKey(story.id),
+    //   background: Container(
+    //     color: Colors.green[700],
+    //     padding: EdgeInsets.all(12.0),
+    //     child: Row(
+    //       children: [
+    //         Center(
+    //           child: Text(
+    //             FlutterI18n.translate(context, 'app.action.read_later'),
+    //             style: TextStyle(
+    //                 color: Colors.black54, fontWeight: FontWeight.bold),
+    //           ),
+    //         ),
+    //         Flexible(
+    //           child: Container(),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    //   onDismissed: (direction) {
+    //     context.read<StoriesCubit>().saveStory(story, index);
+    //     Scaffold.of(context)
+    //       ..hideCurrentSnackBar()
+    //       ..showSnackBar(
+    //         SnackBar(
+    //           content: Text(
+    //             FlutterI18n.translate(context, 'app.message.story_saved'),
+    //           ),
+    //           action: SnackBarAction(
+    //             label: FlutterI18n.translate(context, 'app.action.undo')
+    //                 .toUpperCase(),
+    //             onPressed: () =>
+    //                 context.read<StoriesCubit>().unsaveStory(story, index),
+    //           ),
+    //         ),
+    //       );
+    //   },
+    //   child: (viewMode == ViewMode.titleOnly)
+    //       ? TitleOnlyStoryTile(story, onItemTap: _onItemTap)
+    //       : (viewMode == ViewMode.minimalist)
+    //           ? MinimalistStoryTile(story, onItemTap: _onItemTap)
+    //           : ContentPreviewStoryTile(story, onItemTap: _onItemTap),
+    // );
   }
 
   Map<String, dynamic> _buildPopupMenu(BuildContext context) {

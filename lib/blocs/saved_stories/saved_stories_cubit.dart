@@ -18,9 +18,4 @@ class SavedStoriesCubit extends NetworkCubit<List<Item>> {
       emit(NetworkState.failure(error: e));
     }
   }
-
-  void saveStory(Item story) {}
-  void unsaveStory(Item story) {}
-
-  updateVisit(Item story) {}
 }
