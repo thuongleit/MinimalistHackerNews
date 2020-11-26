@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide showMenu;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:hacker_news/presentation/screens/comments.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../widgets/widgets.dart';
@@ -23,7 +24,7 @@ class StoriesTab extends StatefulWidget {
   _StoriesTabState createState() => _StoriesTabState();
 }
 
-class _StoriesTabState extends State<StoriesTab> {
+class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   @override
   void initState() {
     context.read<StoriesCubit>().fetchStories(widget.storyType);
@@ -135,6 +136,8 @@ class _StoriesTabState extends State<StoriesTab> {
                 ? MinimalistStoryTile(item)
                 : ContentPreviewStoryTile(item),
         onTap: () => _onItemTap(item),
+        onTapDown: storePosition,
+        onLongPress: () => _onItemLongPress(context, item),
       ),
     );
     // return Dismissible(
@@ -251,4 +254,20 @@ class _StoriesTabState extends State<StoriesTab> {
     }
   }
 
+  void _onItemLongPress(BuildContext context, Item item) async {
+    var chosenOption = await showMenu(
+      context: context,
+      items: <PopupMenuEntry<int>>[PlusMinusEntry()],
+    );
+    if (chosenOption == null) return;
+
+    if (chosenOption == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CommentsScreen(),
+        ),
+      );
+    }
+  }
 }
