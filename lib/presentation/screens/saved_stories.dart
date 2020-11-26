@@ -69,10 +69,10 @@ class SavedStoriesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Item savedItem, int index) {
+  Widget _buildStoryRow(BuildContext context, Item item, int index) {
     final viewMode = context.watch<ViewModeCubit>().state;
     return Dismissible(
-      key: ValueKey(savedItem.id),
+      key: ValueKey(item.id),
       background: Container(
         color: Colors.red,
         padding: EdgeInsets.all(12.0),
@@ -92,7 +92,7 @@ class SavedStoriesScreen extends StatelessWidget {
         ),
       ),
       onDismissed: (direction) {
-        context.read<UserActionBloc>().add(UserUnSaveStoryRequested(savedItem));
+        context.read<UserActionBloc>().add(UserUnSaveStoryRequested(item));
         Scaffold.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
@@ -104,19 +104,19 @@ class SavedStoriesScreen extends StatelessWidget {
               action: SnackBarAction(
                 label: FlutterI18n.translate(context, 'app.action.undo'),
                 onPressed: () =>
-                    context.read<UserActionBloc>().add(UserSaveStoryRequested(savedItem)),
+                    context.read<UserActionBloc>().add(UserSaveStoryRequested(item)),
               ),
             ),
           );
       },
-      child: (viewMode == ViewMode.titleOnly)
-          ? TitleOnlyStoryTile(savedItem,
-              onItemTap: (item) => _onItemTap(context, item))
-          : (viewMode == ViewMode.minimalist)
-              ? MinimalistStoryTile(savedItem,
-                  onItemTap: (item) => _onItemTap(context, item))
-              : ContentPreviewStoryTile(savedItem,
-                  onItemTap: (item) => _onItemTap(context, item)),
+      child: InkWell(
+        child: (viewMode == ViewMode.titleOnly)
+            ? TitleOnlyStoryTile(item)
+            : (viewMode == ViewMode.minimalist)
+            ? MinimalistStoryTile(item)
+            : ContentPreviewStoryTile(item),
+        onTap: () => _onItemTap(context, item),
+      ),
     );
   }
 

@@ -128,11 +128,14 @@ class _StoriesTabState extends State<StoriesTab> {
           return false;
         },
       ),
-      child: (viewMode == ViewMode.titleOnly)
-          ? TitleOnlyStoryTile(item, onItemTap: _onItemTap)
-          : (viewMode == ViewMode.minimalist)
-              ? MinimalistStoryTile(item, onItemTap: _onItemTap)
-              : ContentPreviewStoryTile(item, onItemTap: _onItemTap),
+      child: InkWell(
+        child: (viewMode == ViewMode.titleOnly)
+            ? TitleOnlyStoryTile(item)
+            : (viewMode == ViewMode.minimalist)
+                ? MinimalistStoryTile(item)
+                : ContentPreviewStoryTile(item),
+        onTap: () => _onItemTap(item),
+      ),
     );
     // return Dismissible(
     //   key: ValueKey(story.id),
@@ -247,4 +250,5 @@ class _StoriesTabState extends State<StoriesTab> {
       openWebBrowser(context, item.url);
     }
   }
+
 }
