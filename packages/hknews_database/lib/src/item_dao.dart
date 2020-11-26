@@ -61,7 +61,7 @@ class StoryDao {
       ],
     );
 
-    return changed == 1;
+    return changed == item.id;
   }
 
   Future<bool> deleteStory(int itemId) async {
@@ -79,7 +79,7 @@ class StoryDao {
     var db = await _appDatabase.getDb();
 
     return db.transaction((Transaction trn) async {
-      var changed = await trn.rawDelete(
+      var changed = await trn.rawUpdate(
           'UPDATE ${ItemEntity.dbSavedStoriesTableName} SET ${ItemEntity.dbKeyVisited}=1 WHERE ${ItemEntity.dbKeyId} = $itemId;');
 
       return changed == 1;

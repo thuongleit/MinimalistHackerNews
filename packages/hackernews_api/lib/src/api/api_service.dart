@@ -104,10 +104,11 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
       _requestUsernameKey: username,
       _requestPasswordKey: password,
       _requestActionKey: 'user?id=$username',
-      'id': itemId,
+      'id': '$itemId',
       'how': upVote ? 'up' : 'un',
     };
-    return _handleResponse(await _client.post(url, body: body));
+    final message = '${upVote ? "vote" : "unvote "} success';
+    return _handleResponse(await _client.post(url, body: body), successMessage: message);
   }
 
   Future<String> _get(Request request, {String errorMessage}) async {
@@ -130,12 +131,12 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
     }
   }
 
-  Response _handleResponse(http.Response response) {
+  Response _handleResponse(http.Response response, {String successMessage}) {
     print('${response.statusCode} - ${response.body}');
 
     // If we get a 302 we assume it's successful
     if (response.statusCode == HttpStatus.found) {
-      return Response.success();
+      return Response.success(message: successMessage);
     } else if (response.statusCode == HttpStatus.ok) {
       return Response.failure(
         message: _parseServerMessage(response.body),
@@ -168,7 +169,8 @@ class Response {
 
   const Response._({this.success, this.message});
 
-  const Response.success() : this._(success: true);
+  const Response.success({String message})
+      : this._(success: true, message: message);
 
   const Response.failure({String message})
       : this._(success: false, message: message);
