@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide showMenu;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -21,8 +21,9 @@ class CommentTile extends StatefulWidget {
   _CommentTileState createState() => _CommentTileState();
 }
 
-class _CommentTileState extends State<CommentTile> {
+class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
   bool isCollapsed = false;
+  bool replyRequest = false;
 
   @override
   void initState() {
@@ -40,8 +41,18 @@ class _CommentTileState extends State<CommentTile> {
       actionPane: SlidableScrollActionPane(),
       actions: <Widget>[
         IconSlideAction(
-          color: Theme.of(context).primaryColor,
+          color: Colors.deepOrange,
           icon: Icons.thumb_up,
+          onTap: () => context
+              .read<UserActionBloc>()
+              .add(UserVoteRequested(widget.item.id)),
+        ),
+      ],
+      secondaryActions: [
+        IconSlideAction(
+          color: Colors.green[700],
+          icon: Icons.reply,
+          onTap: () => _onReplyRequest(context, widget.item),
         ),
       ],
       dismissal: SlidableDismissal(
@@ -52,8 +63,16 @@ class _CommentTileState extends State<CommentTile> {
           },
           child: SlidableDrawerDismissal(),
           onWillDismiss: (actionType) {
+            if (actionType == SlideActionType.primary) {
+              context
+                  .read<UserActionBloc>()
+                  .add(UserVoteRequested(widget.item.id));
+            } else {
+              _onReplyRequest(context, widget.item);
+            }
             return false;
           }),
+      enabled: !replyRequest,
       child: InkWell(
         child: Padding(
           padding: EdgeInsets.only(
@@ -89,27 +108,41 @@ class _CommentTileState extends State<CommentTile> {
                 ),
               ),
               (!isCollapsed) ? Html(data: widget.item.text) : Container(),
-              (!isCollapsed && widget.item.kids.isNotEmpty)
-                  ? BlocBuilder<CommentCubit, NetworkState<List<Item>>>(
-                      builder: (context, state) {
-                        return (state.isLoading)
-                            ? LoadingItem(count: 2)
-                            : (state.isFailure)
-                                ? Container()
-                                : Column(
-                                    children: [
-                                      for (final item in state.data)
-                                        _buildChildCommentTile(context, item)
-                                    ],
-                                  );
-                      },
+              (replyRequest)
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CommentReplyView(
+                        parentItem: widget.item,
+                        onReplyDismissed: (_) {
+                          setState(() {
+                            replyRequest = false;
+                          });
+                        },
+                      ),
                     )
-                  : Container(),
+                  : (!isCollapsed && widget.item.kids.isNotEmpty)
+                      ? BlocBuilder<CommentCubit, NetworkState<List<Item>>>(
+                          builder: (context, state) {
+                            return (state.isLoading)
+                                ? LoadingItem(count: 2)
+                                : (state.isFailure)
+                                    ? Container()
+                                    : Column(
+                                        children: [
+                                          for (final item in state.data)
+                                            _buildChildCommentTile(
+                                                context, item)
+                                        ],
+                                      );
+                          },
+                        )
+                      : Container(),
             ],
           ),
         ),
         onTap: () => setState(() => isCollapsed = !isCollapsed),
-        onLongPress: null,
+        onTapDown: storePosition,
+        onLongPress: () => _showItemContextMenu(context, widget.item),
       ),
     );
   }
@@ -123,5 +156,21 @@ class _CommentTileState extends State<CommentTile> {
         item: item,
       ),
     );
+  }
+
+  void _showItemContextMenu(BuildContext context, Item item) async {
+    var chosenOption = await showMenu(
+      context: context,
+      items: <PopupMenuEntry<int>>[PlusMinusEntry()],
+    );
+    if (chosenOption == null) return;
+
+    if (chosenOption == 0) {}
+  }
+
+  void _onReplyRequest(BuildContext context, Item item) {
+    setState(() {
+      replyRequest = true;
+    });
   }
 }
