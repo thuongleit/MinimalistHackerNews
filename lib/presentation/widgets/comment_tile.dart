@@ -58,7 +58,7 @@ class _CommentTileState extends State<CommentTile> {
         child: Padding(
           padding: EdgeInsets.only(
             top: 8,
-            left: 8.0 * widget.item.depth * 0.75,
+            left: 8.0 * widget.item.depth * 0.5,
             bottom: 8,
           ),
           child: Column(
