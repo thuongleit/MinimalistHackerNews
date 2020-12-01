@@ -102,7 +102,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
       actionPane: SlidableScrollActionPane(),
       actions: <Widget>[
         IconSlideAction(
-          color: Theme.of(context).primaryColor,
+          color: Colors.deepOrange,
           icon: Icons.thumb_up,
           onTap: () =>
               context.read<UserActionBloc>().add(UserVoteRequested(item.id)),
@@ -114,6 +114,20 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
               context.read<UserActionBloc>().add(UserSaveStoryRequested(item)),
         ),
       ],
+      secondaryActions: [
+        IconSlideAction(
+          color: Colors.grey[500],
+          icon: Icons.more_vert_outlined,
+          foregroundColor: Colors.white,
+          onTap: () => _showItemContextMenu(context, item),
+          closeOnTap: false,
+        ),
+        IconSlideAction(
+          color: Colors.green[700],
+          icon: Icons.comment,
+          onTap: () => _goToComment(context, item),
+        ),
+      ],
       dismissal: SlidableDismissal(
         closeOnCanceled: true,
         dismissThresholds: {
@@ -122,7 +136,11 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
         },
         child: SlidableDrawerDismissal(),
         onWillDismiss: (actionType) {
-          context.read<UserActionBloc>().add(UserVoteRequested(item.id));
+          if (actionType == SlideActionType.primary) {
+            context.read<UserActionBloc>().add(UserVoteRequested(item.id));
+          } else {
+            _goToComment(context, item);
+          }
           return false;
         },
       ),
@@ -134,53 +152,9 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
                 : ContentPreviewStoryTile(item),
         onTap: () => _onItemTap(item),
         onTapDown: storePosition,
-        onLongPress: () => _onItemLongPress(context, item),
+        onLongPress: () => _showItemContextMenu(context, item),
       ),
     );
-    // return Dismissible(
-    //   key: ValueKey(story.id),
-    //   background: Container(
-    //     color: Colors.green[700],
-    //     padding: EdgeInsets.all(12.0),
-    //     child: Row(
-    //       children: [
-    //         Center(
-    //           child: Text(
-    //             FlutterI18n.translate(context, 'app.action.read_later'),
-    //             style: TextStyle(
-    //                 color: Colors.black54, fontWeight: FontWeight.bold),
-    //           ),
-    //         ),
-    //         Flexible(
-    //           child: Container(),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    //   onDismissed: (direction) {
-    //     context.read<StoriesCubit>().saveStory(story, index);
-    //     Scaffold.of(context)
-    //       ..hideCurrentSnackBar()
-    //       ..showSnackBar(
-    //         SnackBar(
-    //           content: Text(
-    //             FlutterI18n.translate(context, 'app.message.story_saved'),
-    //           ),
-    //           action: SnackBarAction(
-    //             label: FlutterI18n.translate(context, 'app.action.undo')
-    //                 .toUpperCase(),
-    //             onPressed: () =>
-    //                 context.read<StoriesCubit>().unsaveStory(story, index),
-    //           ),
-    //         ),
-    //       );
-    //   },
-    //   child: (viewMode == ViewMode.titleOnly)
-    //       ? TitleOnlyStoryTile(story, onItemTap: _onItemTap)
-    //       : (viewMode == ViewMode.minimalist)
-    //           ? MinimalistStoryTile(story, onItemTap: _onItemTap)
-    //           : ContentPreviewStoryTile(story, onItemTap: _onItemTap),
-    // );
   }
 
   Map<String, dynamic> _buildPopupMenu(BuildContext context) {
@@ -251,7 +225,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
     }
   }
 
-  void _onItemLongPress(BuildContext context, Item item) async {
+  void _showItemContextMenu(BuildContext context, Item item) async {
     var chosenOption = await showMenu(
       context: context,
       items: <PopupMenuEntry<int>>[PlusMinusEntry()],
@@ -259,10 +233,14 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
     if (chosenOption == null) return;
 
     if (chosenOption == 0) {
-      Navigator.push(
-        context,
-        CommentsScreen.route(context, item),
-      );
+      _goToComment(context, item);
     }
+  }
+
+  void _goToComment(BuildContext context, Item item) {
+    Navigator.push(
+      context,
+      CommentsScreen.route(context, item),
+    );
   }
 }
