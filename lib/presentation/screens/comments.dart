@@ -118,8 +118,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
         RepositoryProvider.of<StoriesRepository>(context),
       ),
       child: CommentTile(
-        commentItem,
         key: ObjectKey(commentItem),
+        item: commentItem,
       ),
     );
   }

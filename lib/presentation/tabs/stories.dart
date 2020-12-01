@@ -102,8 +102,8 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
       actionPane: SlidableScrollActionPane(),
       actions: <Widget>[
         IconSlideAction(
-          color: Colors.deepOrangeAccent,
-          icon: Icons.arrow_upward,
+          color: Theme.of(context).primaryColor,
+          icon: Icons.thumb_up,
           onTap: () =>
               context.read<UserActionBloc>().add(UserVoteRequested(item.id)),
         ),

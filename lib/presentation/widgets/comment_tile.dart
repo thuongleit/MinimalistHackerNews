@@ -10,27 +10,23 @@ import 'widgets.dart';
 import '../../blocs/blocs.dart';
 
 class CommentTile extends StatefulWidget {
-  const CommentTile(
-    this.item, {
+  const CommentTile({
+    @required this.item,
     Key key,
-    this.onItemTap,
-    this.onItemLongPress,
-    this.isCollapsed = false,
   }) : super(key: key);
 
   final Item item;
-  final bool isCollapsed;
-  final Function() onItemTap;
-  final Function() onItemLongPress;
 
   @override
   _CommentTileState createState() => _CommentTileState();
 }
 
 class _CommentTileState extends State<CommentTile> {
+  bool isCollapsed = false;
+
   @override
   void initState() {
-    if (!widget.isCollapsed && widget.item.kids.isNotEmpty) {
+    if (!isCollapsed && widget.item.kids.isNotEmpty) {
       BlocProvider.of<CommentCubit>(context).getComments(widget.item);
     }
     super.initState();
@@ -44,8 +40,8 @@ class _CommentTileState extends State<CommentTile> {
       actionPane: SlidableScrollActionPane(),
       actions: <Widget>[
         IconSlideAction(
-          color: Colors.deepOrangeAccent,
-          icon: Icons.how_to_vote,
+          color: Theme.of(context).primaryColor,
+          icon: Icons.thumb_up,
         ),
       ],
       dismissal: SlidableDismissal(
@@ -68,7 +64,8 @@ class _CommentTileState extends State<CommentTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
+              Container(
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
                   children: [
@@ -82,7 +79,7 @@ class _CommentTileState extends State<CommentTile> {
                           ),
                           TextSpan(
                             text:
-                                ' [${widget.isCollapsed ? '+${widget.item.kids.length + 1} more' : '-'}]',
+                                ' [${isCollapsed ? '+${widget.item.kids.length + 1} more' : '-'}]',
                             style: Theme.of(context).textTheme.caption,
                           ),
                         ],
@@ -91,10 +88,8 @@ class _CommentTileState extends State<CommentTile> {
                   ],
                 ),
               ),
-              (!widget.isCollapsed)
-                  ? Html(data: widget.item.text)
-                  : Container(),
-              (!widget.isCollapsed && widget.item.kids.isNotEmpty)
+              (!isCollapsed) ? Html(data: widget.item.text) : Container(),
+              (!isCollapsed && widget.item.kids.isNotEmpty)
                   ? BlocBuilder<CommentCubit, NetworkState<List<Item>>>(
                       builder: (context, state) {
                         return (state.isLoading)
@@ -113,8 +108,8 @@ class _CommentTileState extends State<CommentTile> {
             ],
           ),
         ),
-        onTap: widget.onItemTap,
-        onLongPress: widget.onItemTap,
+        onTap: () => setState(() => isCollapsed = !isCollapsed),
+        onLongPress: null,
       ),
     );
   }
@@ -125,7 +120,7 @@ class _CommentTileState extends State<CommentTile> {
         RepositoryProvider.of<StoriesRepository>(context),
       ),
       child: CommentTile(
-        item,
+        item: item,
       ),
     );
   }
