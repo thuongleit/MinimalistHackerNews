@@ -1,32 +1,35 @@
 import 'package:flutter/material.dart' hide showMenu;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
+import 'package:hacker_news/presentation/screens/comment_reply.dart';
+import 'package:hacker_news/presentation/widgets/single_comment_tile.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
-import '../../extensions/extensions.dart';
-import 'widgets.dart';
 import '../../blocs/blocs.dart';
+import 'widgets.dart';
 
 class CommentTile extends StatefulWidget {
   const CommentTile({
     @required this.item,
     Key key,
+    this.requestChildren = true,
+    this.isCollapsed = false,
   }) : super(key: key);
 
   final Item item;
+  final bool requestChildren;
+  final bool isCollapsed;
 
   @override
   _CommentTileState createState() => _CommentTileState();
 }
 
 class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
-  bool isCollapsed = false;
-  bool replyRequest = false;
+  bool isCollapsed;
 
   @override
   void initState() {
+    this.isCollapsed = widget.isCollapsed;
     if (!isCollapsed && widget.item.kids.isNotEmpty) {
       BlocProvider.of<CommentCubit>(context).getComments(widget.item);
     }
@@ -72,7 +75,6 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
             }
             return false;
           }),
-      enabled: !replyRequest,
       child: InkWell(
         child: Padding(
           padding: EdgeInsets.only(
@@ -83,60 +85,28 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        children: <TextSpan>[
-                          TextSpan(
-                            text:
-                                '• ${widget.item.by}, ${widget.item.score > 0 ? '${widget.item.score} points, ' : ''} ${widget.item.timeAgo}',
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                          TextSpan(
-                            text:
-                                ' [${isCollapsed ? '+${widget.item.kids.length + 1} more' : '-'}]',
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              SingleCommentTile(
+                item: widget.item,
+                isCollapsed: isCollapsed,
               ),
-              (!isCollapsed) ? Html(data: widget.item.text) : Container(),
-              (replyRequest)
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CommentReplyView(
-                        parentItem: widget.item,
-                        onReplyDismissed: (_) {
-                          setState(() {
-                            replyRequest = false;
-                          });
-                        },
-                      ),
+              (!isCollapsed &&
+                      widget.requestChildren &&
+                      widget.item.kids.isNotEmpty)
+                  ? BlocBuilder<CommentCubit, NetworkState<List<Item>>>(
+                      builder: (context, state) {
+                        return (state.isLoading)
+                            ? LoadingItem(count: 2)
+                            : (state.isFailure)
+                                ? Container()
+                                : Column(
+                                    children: [
+                                      for (final item in state.data)
+                                        _buildChildCommentTile(context, item)
+                                    ],
+                                  );
+                      },
                     )
-                  : (!isCollapsed && widget.item.kids.isNotEmpty)
-                      ? BlocBuilder<CommentCubit, NetworkState<List<Item>>>(
-                          builder: (context, state) {
-                            return (state.isLoading)
-                                ? LoadingItem(count: 2)
-                                : (state.isFailure)
-                                    ? Container()
-                                    : Column(
-                                        children: [
-                                          for (final item in state.data)
-                                            _buildChildCommentTile(
-                                                context, item)
-                                        ],
-                                      );
-                          },
-                        )
-                      : Container(),
+                  : Container(),
             ],
           ),
         ),
@@ -169,8 +139,9 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
   }
 
   void _onReplyRequest(BuildContext context, Item item) {
-    setState(() {
-      replyRequest = true;
-    });
+    Navigator.push(
+      context,
+      CommentReplyScreen.route(context, item),
+    );
   }
 }
