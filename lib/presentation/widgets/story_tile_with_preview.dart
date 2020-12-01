@@ -46,7 +46,7 @@ class ContentPreviewStoryTile extends StatelessWidget {
                   const Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 4)),
                   Row(
                     children: <Widget>[
-                      ItemDescriptionText(item.description),
+                      ItemDescriptionText(item.description1),
                       Expanded(child: Container()),
                       ItemDescriptionText(item.timeAgo),
                     ],

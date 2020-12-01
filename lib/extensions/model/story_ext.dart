@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
 import '../../utils/url_util.dart';
 
 extension StoryUrl on Item {
@@ -18,15 +19,26 @@ extension StoryUrl on Item {
     return '${timeago.format(date)}';
   }
 
-  String get description {
-    return "by $by ${(url != null && url.isNotEmpty) ? '(' + getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription : ''}";
+  String get description1 {
+    return "by $by ${(url != null && url.isNotEmpty) ? '(' + getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription1 : ''}";
   }
 
-  String get _commentDescription {
-    if (descendants > 1) {
+  String get description2 {
+    return '$by, $timeAgo, $_commentDescription2';
+  }
+
+  String get _commentDescription1 {
+    if (descendants > 0) {
       return '$descendants✍︎';
-    } else if (descendants == 1) {
-      return '$descendants✍︎';
+    }
+    return '';
+  }
+
+  String get _commentDescription2 {
+    if (descendants >= 0) {
+      return '$descendants comment';
+    } else if (descendants > 1) {
+      return '$descendants comments︎';
     }
     return '';
   }

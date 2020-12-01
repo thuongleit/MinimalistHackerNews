@@ -15,46 +15,27 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
   final List<Widget> body, actions;
   final Map<String, dynamic> popupMenu;
   final bool enablePullToRefresh;
+  final Widget customAppBar;
 
   const SliverPage({
     @required this.context,
-    @required this.title,
     @required this.body,
+    this.title,
+    this.customAppBar,
     this.controller,
     this.actions,
     this.popupMenu,
     this.enablePullToRefresh,
   });
 
-  factory SliverPage.slide({
-    @required BuildContext context,
-    @required String title,
-    @required List<String> slides,
-    @required List<Widget> body,
-    List<Widget> actions,
-    Map<String, String> popupMenu,
-    bool enablePullToRefresh = true,
-  }) {
-    return SliverPage(
-      context: context,
-      title: title,
-      body: body,
-      actions: actions,
-      popupMenu: popupMenu,
-      enablePullToRefresh: enablePullToRefresh,
-    );
-  }
-
   factory SliverPage.display({
     @required BuildContext context,
-    @required ScrollController controller,
-    @required String title,
-    @required double opacity,
-    @required Widget counter,
-    @required List<String> slides,
     @required List<Widget> body,
+    @required ScrollController controller,
+    String title,
     List<Widget> actions,
     Map<String, dynamic> popupMenu,
+    Widget customAppBar,
     bool enablePullToRefresh = true,
   }) {
     return SliverPage(
@@ -64,6 +45,7 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
       body: body,
       actions: actions,
       popupMenu: popupMenu,
+      customAppBar: customAppBar,
       enablePullToRefresh: enablePullToRefresh,
     );
   }
@@ -85,28 +67,31 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
       key: PageStorageKey(title),
       controller: controller,
       slivers: <Widget>[
-        SliverAppBar(
-          title: Text(title),
-          actions: <Widget>[
-            if (actions != null) ...actions,
-            if (popupMenu != null)
-              PopupMenuButton<dynamic>(
-                  itemBuilder: (context) => [
-                        for (final item in popupMenu.keys)
-                          PopupMenuItem(
-                            value: item,
-                            child: Text(FlutterI18n.translate(context, item)),
-                          )
-                      ],
-                  onSelected: (action) {
-                    if (popupMenu[action] is String) {
-                      Navigator.pushNamed(context, popupMenu[action]);
-                    } else if (popupMenu[action] is Function) {
-                      popupMenu[action].call();
-                    }
-                  }),
-          ],
-        ),
+        customAppBar != null
+            ? customAppBar
+            : SliverAppBar(
+                title: Text(title),
+                actions: <Widget>[
+                  if (actions != null) ...actions,
+                  if (popupMenu != null)
+                    PopupMenuButton<dynamic>(
+                        itemBuilder: (context) => [
+                              for (final item in popupMenu.keys)
+                                PopupMenuItem(
+                                  value: item,
+                                  child: Text(
+                                      FlutterI18n.translate(context, item)),
+                                )
+                            ],
+                        onSelected: (action) {
+                          if (popupMenu[action] is String) {
+                            Navigator.pushNamed(context, popupMenu[action]);
+                          } else if (popupMenu[action] is Function) {
+                            popupMenu[action].call();
+                          }
+                        }),
+                ],
+              ),
         if (state.isInitial)
           Container()
         else if (state.isLoading)

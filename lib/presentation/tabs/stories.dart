@@ -42,9 +42,6 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
           context,
           widget.storyType.tabTitle,
         ),
-        opacity: null,
-        counter: null,
-        slides: null,
         popupMenu: _buildPopupMenu(context),
         actions: Menu.home_actions
             .map((action) => _buildMenuAction(context, action))
@@ -264,9 +261,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
     if (chosenOption == 0) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => CommentsScreen(),
-        ),
+        CommentsScreen.route(context, item),
       );
     }
   }

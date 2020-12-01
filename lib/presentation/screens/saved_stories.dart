@@ -46,9 +46,6 @@ class SavedStoriesScreen extends StatelessWidget {
                   context: context,
                   controller: null,
                   title: screenTitle,
-                  opacity: null,
-                  counter: null,
-                  slides: null,
                   popupMenu: Menu.home,
                   enablePullToRefresh: false,
                   body: <Widget>[

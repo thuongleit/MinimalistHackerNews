@@ -48,7 +48,7 @@ class MinimalistStoryTile extends StatelessWidget {
                   ),
                   Row(
                     children: <Widget>[
-                      ItemDescriptionText(item.description),
+                      ItemDescriptionText(item.description1),
                       Expanded(child: Container()),
                       ItemDescriptionText(item.timeAgo),
                     ],
