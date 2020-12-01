@@ -19,6 +19,8 @@ abstract class StoriesRepository {
   Future<List<Item>> getSavedStories();
 
   Future<Result> updateVisited(Item story);
+
+  Stream<Item> getComments(Item parent);
 }
 
 class StoriesRepositoryImpl extends StoriesRepository {
@@ -74,13 +76,17 @@ class StoriesRepositoryImpl extends StoriesRepository {
   Future<Result> saveStory(Item story) async {
     story.updatedAt = DateTime.now().millisecondsSinceEpoch;
     final success = await _localSource.insertOrReplace(story.toEntity());
-    return (success) ? Result.success(message: 'Story saved') : Result.failure(message: 'Save story failed');
+    return (success)
+        ? Result.success(message: 'Story saved')
+        : Result.failure(message: 'Save story failed');
   }
 
   @override
   Future<Result> unsaveStory(Item story) async {
     final success = await _localSource.deleteStory(story.id);
-    return (success) ? Result.success(message: 'Story unsaved') : Result.failure(message: 'Unsave story failed');
+    return (success)
+        ? Result.success(message: 'Story unsaved')
+        : Result.failure(message: 'Unsave story failed');
   }
 
   @override
@@ -108,54 +114,17 @@ class StoriesRepositoryImpl extends StoriesRepository {
     return (isUpdated) ? Result.success() : Result.failure();
   }
 
-  Future<List<int>> getCommentsIds(Item item) async {
-    Stream<Item> stream = _lazyFetchComments(item, assignDepth: false);
-    List<int> comments = [];
+  @override
+  Stream<Item> getComments(Item parent) async* {
+    if (parent.kids.isEmpty) return;
 
-    await for (Item comment in stream) {
-      comments.add(comment.id);
-    }
-
-    return comments;
-  }
-
-  Stream<Item> _lazyFetchComments(Item item,
-      {int depth = 0, bool assignDepth = true}) async* {
-    if (item.kids.isEmpty) return;
-
-    for (int kidId in item.kids) {
+    for (int kidId in parent.kids) {
       Item kid = await getItem(kidId);
       if (kid == null) continue;
 
-      if (assignDepth) kid.depth = depth;
+      kid.depth = parent.depth + 1;
 
       yield kid;
-
-      Stream stream = _lazyFetchComments(kid, depth: kid.depth + 1);
-      await for (Item grandKid in stream) {
-        yield grandKid;
-      }
     }
-  }
-
-  /// Takes in an Item and fetches all of its
-  /// descendant in flat, non-sorted order.
-  ///
-  /// This mostly exists so that I can fetch items async,
-  /// put them in a cache, so that later I can retrieve them
-  /// in a sorted order.
-  Future<List<Item>> prefetchComments({Item item}) async {
-    List<Item> result = [];
-    if (item.parent != null) result.add(item);
-    if (item.kids.isEmpty) return Future.value(result);
-
-    await Future.wait(item.kids.map((kidId) async {
-      Item kid = await getItem(kidId);
-      if (kid != null) {
-        await prefetchComments(item: kid);
-      }
-    }));
-
-    return Future.value(result);
   }
 }

@@ -27,12 +27,15 @@ class CommentsScreen extends StatefulWidget {
 }
 
 class _CommentsScreenState extends State<CommentsScreen> {
+  final collapsed = Set();
   ScrollController _scrollController;
+  int dataSize;
 
   @override
   void initState() {
     _scrollController = ScrollController();
     context.read<StoryCubit>().getStory(widget.item.id);
+    dataSize = 0;
     super.initState();
   }
 
@@ -67,28 +70,30 @@ class _CommentsScreenState extends State<CommentsScreen> {
         ],
       ),
     );
-    return BlocBuilder<StoryCubit, NetworkState<Item>>(
-      key: ObjectKey(widget.item),
-      builder: (context, state) => SliverPage<StoryCubit>.display(
-        context: context,
-        controller: _scrollController,
-        customAppBar: customAppbar,
-        body: <Widget>[
-          (state.isSuccess)
-              ? SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) =>
-                        _buildStoryRows(context, state.data.kids, index),
-                    childCount: state.data.kids.length,
-                  ),
-                )
-              : Container(),
-        ],
+    return Scaffold(
+      body: BlocBuilder<StoryCubit, NetworkState<Item>>(
+        key: ObjectKey(widget.item),
+        builder: (context, state) => SliverPage<StoryCubit>.display(
+          context: context,
+          controller: _scrollController,
+          customAppBar: customAppbar,
+          body: <Widget>[
+            (state.isSuccess)
+                ? SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) =>
+                          _buildCommentRows(context, state.data.kids, index),
+                      childCount: (dataSize = state.data.kids.length),
+                    ),
+                  )
+                : Container(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildStoryRows(
+  Widget _buildCommentRows(
       BuildContext context, List<int> childItemIds, int index) {
     return BlocProvider(
       create: (_) {
@@ -101,42 +106,21 @@ class _CommentsScreenState extends State<CommentsScreen> {
               ? LoadingItem(count: 3)
               : (state.isFailure)
                   ? Container()
-                  : _buildStoryRow(context, state.data, index);
+                  : _buildCommentRow(context, state.data);
         },
       ),
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Item childItem, int index) {
-    return AnimatedSwitcher(
-      duration: Duration(milliseconds: 500),
-      switchInCurve: Curves.easeInOut,
-      switchOutCurve: Curves.easeInOut,
-      child: false
-          ? Container()
-          : Slidable(
-              key: ObjectKey(childItem),
-              closeOnScroll: true,
-              actionPane: SlidableScrollActionPane(),
-              actions: <Widget>[
-                IconSlideAction(
-                  color: Colors.deepOrangeAccent,
-                  icon: Icons.how_to_vote,
-                ),
-              ],
-              dismissal: SlidableDismissal(
-                closeOnCanceled: true,
-                dismissThresholds: {
-                  SlideActionType.primary: 0.2,
-                  SlideActionType.secondary: 0.2,
-                },
-                child: SlidableDrawerDismissal(),
-                onWillDismiss: (actionType) {
-                  return false;
-                },
-              ),
-              child: CommentTile(childItem),
-            ),
+  Widget _buildCommentRow(BuildContext context, Item commentItem) {
+    return BlocProvider<CommentCubit>(
+      create: (context) => CommentCubit(
+        RepositoryProvider.of<StoriesRepository>(context),
+      ),
+      child: CommentTile(
+        commentItem,
+        key: ObjectKey(commentItem),
+      ),
     );
   }
 }
