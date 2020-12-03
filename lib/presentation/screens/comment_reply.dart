@@ -153,18 +153,20 @@ class _UserInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UserInputBloc, UserInputState>(
-      buildWhen: (previous, current) => (previous.input != current.input || current.status.isInvalid),
+      buildWhen: (previous, current) =>
+          (previous.input != current.input || current.status.isInvalid),
       builder: (context, state) {
         return TextField(
           key: const Key('user_input_field'),
-          onChanged: (value) =>
-              context.read<UserInputBloc>().input(value),
+          onChanged: (value) => context.read<UserInputBloc>().input(value),
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderSide: BorderSide(width: 0.2),
             ),
             hintText: 'Enter your comment',
-            errorText: (state.input.invalid || state.status.isInvalid) ? 'Content must not be empty' : null,
+            errorText: (state.input.invalid || state.status.isInvalid)
+                ? 'Content must not be empty'
+                : null,
           ),
           style: TextStyle(fontSize: 14.0),
           minLines: 15,
