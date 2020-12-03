@@ -48,18 +48,13 @@ class SavedStoriesScreen extends StatelessWidget {
                   title: screenTitle,
                   popupMenu: Menu.home,
                   enablePullToRefresh: false,
-                  body: <Widget>[
-                    if (state.isSuccess)
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) =>
-                              _buildStoryRow(context, state.data[index], index),
-                          childCount: state.data.length,
-                        ),
-                      )
-                    else
-                      Container()
-                  ],
+                  body: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) =>
+                          _buildStoryRow(context, state.data[index], index),
+                      childCount: state.data?.length ?? 0,
+                    ),
+                  ),
                 ),
               ),
       ),
@@ -100,8 +95,9 @@ class SavedStoriesScreen extends StatelessWidget {
               ),
               action: SnackBarAction(
                 label: FlutterI18n.translate(context, 'app.action.undo'),
-                onPressed: () =>
-                    context.read<UserActionBloc>().add(UserSaveStoryRequested(item)),
+                onPressed: () => context
+                    .read<UserActionBloc>()
+                    .add(UserSaveStoryRequested(item)),
               ),
             ),
           );
@@ -110,8 +106,8 @@ class SavedStoriesScreen extends StatelessWidget {
         child: (viewMode == ViewMode.titleOnly)
             ? TitleOnlyStoryTile(item)
             : (viewMode == ViewMode.minimalist)
-            ? MinimalistStoryTile(item)
-            : ContentPreviewStoryTile(item),
+                ? MinimalistStoryTile(item)
+                : ContentPreviewStoryTile(item),
         onTap: () => _onItemTap(context, item),
       ),
     );

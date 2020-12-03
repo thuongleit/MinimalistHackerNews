@@ -11,11 +11,14 @@ import '../../presentation/widgets/reloadable_page.dart';
 class SliverPage<C extends NetworkCubit> extends StatelessWidget {
   final BuildContext context;
   final String title;
+  final Widget body;
   final ScrollController controller;
-  final List<Widget> body, actions;
+  final List<Widget> actions;
   final Map<String, dynamic> popupMenu;
   final bool enablePullToRefresh;
   final Widget customAppBar;
+  final Widget viewIfEmptyData;
+  final Function dataEmptyCondition;
 
   const SliverPage({
     @required this.context,
@@ -26,17 +29,21 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
     this.actions,
     this.popupMenu,
     this.enablePullToRefresh,
+    this.viewIfEmptyData,
+    this.dataEmptyCondition,
   });
 
   factory SliverPage.display({
     @required BuildContext context,
-    @required List<Widget> body,
+    @required Widget body,
     @required ScrollController controller,
     String title,
     List<Widget> actions,
     Map<String, dynamic> popupMenu,
     Widget customAppBar,
     bool enablePullToRefresh = true,
+    Widget viewIfEmptyData,
+    Function dataEmptyCondition,
   }) {
     return SliverPage(
       context: context,
@@ -47,6 +54,8 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
       popupMenu: popupMenu,
       customAppBar: customAppBar,
       enablePullToRefresh: enablePullToRefresh,
+      viewIfEmptyData: viewIfEmptyData,
+      dataEmptyCondition: dataEmptyCondition,
     );
   }
 
@@ -103,7 +112,13 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
             ),
           )
         else
-          ...body,
+          (dataEmptyCondition?.call() == true) || _isDataEmpty(state)
+              ? SliverFillRemaining(
+                  child: (viewIfEmptyData != null)
+                      ? viewIfEmptyData
+                      : Center(child: Text('No Data')),
+                )
+              : body,
       ],
     );
   }
@@ -111,4 +126,10 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
   /// Centered [CircularProgressIndicator] widget.
   Widget get _loadingIndicator =>
       Center(child: const CircularProgressIndicator());
+
+  bool _isDataEmpty(NetworkState state) {
+    return state.data == null ||
+        ((state.data is Iterable && (state.data as Iterable).isEmpty) ||
+            ((state.data is Map && (state.data as Map).isEmpty)));
+  }
 }

@@ -9,5 +9,5 @@ export 'view_mode/view_mode_cubit.dart';
 export 'authentication/login/login_bloc.dart';
 export 'authentication/authentication_bloc.dart';
 export 'user_action/user_action_bloc.dart';
-export 'stories/comment_cubit.dart';
+export 'stories/comments_cubit.dart';
 export 'user_input/user_input_bloc.dart';

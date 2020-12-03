@@ -1,3 +1,4 @@
+import 'package:big_tip/big_tip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,11 +31,13 @@ class _CommentsScreenState extends State<CommentsScreen> {
   final collapsed = Set();
   ScrollController _scrollController;
   int dataSize;
+  Item item;
 
   @override
   void initState() {
     _scrollController = ScrollController();
-    context.read<StoryCubit>().getStory(widget.item.id);
+    item = widget.item;
+    context.read<StoryCubit>().getStory(item.id);
     dataSize = 0;
     super.initState();
   }
@@ -53,7 +56,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${widget.item.title}',
+            '${item.title}',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -61,7 +64,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 2.0),
             child: Text(
-              widget.item.description2,
+              item.description2,
               style: TextStyle(fontSize: 11.0),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -70,32 +73,43 @@ class _CommentsScreenState extends State<CommentsScreen> {
         ],
       ),
     );
-    return Scaffold(
-      body: BlocBuilder<StoryCubit, NetworkState<Item>>(
-        key: ObjectKey(widget.item),
-        builder: (context, state) => SliverPage<StoryCubit>.display(
+    return BlocConsumer<StoryCubit, NetworkState<Item>>(
+      key: ObjectKey(item),
+      listenWhen: (previous, current) => current.isSuccess,
+      listener: (context, state) => setState(() => item = state.data),
+      builder: (context, state) => Scaffold(
+        body: SliverPage<StoryCubit>.display(
           context: context,
           controller: _scrollController,
           customAppBar: customAppbar,
-          body: <Widget>[
-            (state.isSuccess)
-                ? SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) =>
-                          _buildCommentRows(context, state.data.kids, index),
-                      childCount: (dataSize = state.data.kids.length),
-                    ),
-                  )
-                : Container(),
-          ],
+          dataEmptyCondition: () => state.data?.kids?.isEmpty,
+          viewIfEmptyData: BigTip(
+            title: const Text('No comments yet.'),
+            subtitle: const Text('Be the first to say something'),
+            action: const Text('Add a comment'),
+            actionCallback: () => Navigator.push(
+              context,
+              CommentReplyScreen.route(context, item),
+            ),
+            child: const Icon(Icons.comment_bank_outlined),
+          ),
+          body: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) =>
+                  _buildCommentRows(context, state.data.kids, index),
+              childCount: (dataSize = state.data?.kids?.length ?? 0),
+            ),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.reply),
-        onPressed: () => Navigator.push(
-          context,
-          CommentReplyScreen.route(context, widget.item),
-        ),
+        floatingActionButton: (state.data?.kids?.isNotEmpty == true)
+            ? FloatingActionButton(
+                child: Icon(Icons.reply),
+                onPressed: () => Navigator.push(
+                  context,
+                  CommentReplyScreen.route(context, item),
+                ),
+              )
+            : null,
       ),
     );
   }
