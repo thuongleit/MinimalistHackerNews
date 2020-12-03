@@ -54,7 +54,9 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
           }
         },
         child: SimplePage(
-          title: '',
+          title: (widget.parentItem.type == ItemType.comment)
+              ? 'Reply'
+              : 'Comment',
           body: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(8.0),
