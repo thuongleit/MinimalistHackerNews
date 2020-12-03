@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../../extensions/extensions.dart';
 import '../../presentation/widgets/widgets.dart';
 import '../../blocs/blocs.dart';
+import 'screens.dart';
 
 class CommentsScreen extends StatefulWidget {
   static Route route(BuildContext context, Item item) {
@@ -88,6 +88,13 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   )
                 : Container(),
           ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.reply),
+        onPressed: () => Navigator.push(
+          context,
+          CommentReplyScreen.route(context, widget.item),
         ),
       ),
     );

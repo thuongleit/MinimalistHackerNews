@@ -54,9 +54,7 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
           }
         },
         child: SimplePage(
-          title: (widget.parentItem.type == ItemType.comment)
-              ? 'Reply'
-              : 'Comment',
+          title: _isComment() ? 'Reply' : 'Add comment',
           body: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(8.0),
@@ -81,7 +79,7 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
                           child: Row(
                             children: [
                               Text(
-                                'Original content',
+                                _isComment() ? 'Reply to' : 'Comment on',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText2
@@ -106,9 +104,14 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
                                   top: 2.0,
                                   bottom: 16.0,
                                 ),
-                                child: SingleCommentTile(
-                                  item: widget.parentItem,
-                                ),
+                                child: _isComment()
+                                    ? SingleCommentTile(
+                                        item: widget.parentItem,
+                                      )
+                                    : MinimalistStoryTile(
+                                        widget.parentItem,
+                                        voteable: false,
+                                      ),
                               ),
                       ],
                     ),
@@ -135,6 +138,8 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
       ),
     );
   }
+
+  bool _isComment() => (widget.parentItem.type == ItemType.comment);
 
   Widget _buildMenuAction(BuildContext context, Map<String, Object> action) {
     return IconButton(
