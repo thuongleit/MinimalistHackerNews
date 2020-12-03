@@ -21,6 +21,7 @@ class UserInputBloc extends Bloc<UserInputEvent, UserInputState> {
 
   @override
   Stream<UserInputState> mapEventToState(UserInputEvent event) async* {
+    print('map state $event');
     if (event is UserInputChanged) {
       yield _mapInputChangedToState(event, state);
     } else if (event is UserInputSubmitted) {
@@ -33,17 +34,18 @@ class UserInputBloc extends Bloc<UserInputEvent, UserInputState> {
     UserInputState state,
   ) {
     final inputValue = InputField.dirty(event.value);
-    return state.copyWith(
+    final status = state.copyWith(
       value: inputValue,
-      status: Formz.validate([state.input]),
+      status: Formz.validate([inputValue]),
     );
+    return status;
   }
 
   Stream<UserInputState> _mapInputSubmittedToState(
     UserInputSubmitted event,
     UserInputState state,
   ) async* {
-    if (state.status.isValidated) {
+    if (state.status.isValid) {
       yield state.copyWith(status: FormzStatus.submissionInProgress);
       try {
         userAction.add(event.action);
@@ -55,7 +57,12 @@ class UserInputBloc extends Bloc<UserInputEvent, UserInputState> {
         );
       }
     } else {
-      yield state.copyWith(status: FormzStatus.invalid);
+      final inputValue = InputField.dirty();
+      yield state.copyWith(
+        value: inputValue,
+        status: FormzStatus.submissionFailure,
+        message: '',
+      );
     }
   }
 }

@@ -134,6 +134,7 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
     assert(content != null);
 
     final url = '${Const.hackerNewsStoryBaseUrl}/comment';
+    //xedit is edit a reply
 
     Map body = {
       _requestUsernameKey: username,

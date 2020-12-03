@@ -4,6 +4,7 @@ import 'package:hknews_repository/hknews_repository.dart';
 import 'package:formz/formz.dart';
 
 import '../../blocs/blocs.dart';
+import '../../extensions/extensions.dart';
 import '../../presentation/widgets/single_comment_tile.dart';
 import '../../presentation/widgets/widgets.dart';
 
@@ -43,7 +44,7 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => UserInputBloc(
+      create: (_) => UserInputBloc(
         userAction: context.read<UserActionBloc>(),
       ),
       child: BlocListener<UserInputBloc, UserInputState>(
@@ -121,19 +122,16 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
               ),
             ),
           ),
-          actions: [],
-          fab: BlocBuilder<UserInputBloc, UserInputState>(
-            buildWhen: (previous, current) => previous.input != current.input,
-            builder: (context, state) => FloatingActionButton(
-              child: Icon(Icons.reply),
-              onPressed: () {
-                context
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                icon: Icon(Icons.send),
+                onPressed: () => context
                     .read<UserInputBloc>()
-                    .replyToComment(widget.parentItem.id);
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-            ),
-          ),
+                    .replyToComment(widget.parentItem.id),
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -150,28 +148,48 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
   }
 }
 
-class _UserInputField extends StatelessWidget {
+class _UserInputField extends StatefulWidget {
   const _UserInputField({
     Key key,
   }) : super(key: key);
 
   @override
+  __UserInputFieldState createState() => __UserInputFieldState();
+}
+
+class __UserInputFieldState extends State<_UserInputField> {
+  FocusNode focusNode;
+
+  @override
+  void initState() {
+    focusNode = FocusNode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserInputBloc, UserInputState>(
-      buildWhen: (previous, current) =>
-          (previous.input != current.input || current.status.isInvalid),
+    return BlocConsumer<UserInputBloc, UserInputState>(
+      listenWhen: (previous, current) => current.status.isSubmitted,
+      listener: (context, state) => focusNode.unfocus(),
+      buildWhen: (previous, current) => previous.input != current.input,
       builder: (context, state) {
         return TextField(
           key: const Key('user_input_field'),
           onChanged: (value) => context.read<UserInputBloc>().input(value),
+          focusNode: focusNode,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderSide: BorderSide(width: 0.2),
             ),
-            hintText: 'Enter your comment',
-            errorText: (state.input.invalid || state.status.isInvalid)
-                ? 'Content must not be empty'
-                : null,
+            hintText: 'Write a comment...',
+            errorText:
+                (state.input.invalid) ? 'Comment must not be empty' : null,
           ),
           style: TextStyle(fontSize: 14.0),
           minLines: 15,
