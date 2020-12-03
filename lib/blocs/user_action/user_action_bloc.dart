@@ -37,6 +37,9 @@ class UserActionBloc extends Bloc<UserActionEvent, UserActionState> {
     } else if (event is UserUpdateVisitRequested) {
       yield* _mapUserRequestedToState(
           () => _storiesRepository.updateVisited(event.item));
+    } else if (event is UserReplyToCommentRequested) {
+      yield* _mapUserRequestedToState(
+          () => _userRepository.reply(event.itemId, event.content));
     }
   }
 

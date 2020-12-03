@@ -18,8 +18,19 @@ abstract class HackerNewsApiClient {
 
   Future<User> getUser(String userId);
 
-  Future<Response> vote(String username, String password, int itemId,
-      {bool upVote = true});
+  Future<Response> vote(
+    String username,
+    String password,
+    int itemId, {
+    bool upVote = true,
+  });
+
+  Future<Response> reply(
+    String username,
+    String password,
+    int itemId,
+    String content,
+  );
 }
 
 /// Serves data to several data repositories.
@@ -108,7 +119,34 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
       'how': upVote ? 'up' : 'un',
     };
     final message = '${upVote ? "vote" : "unvote "} success';
-    return _handleResponse(await _client.post(url, body: body), successMessage: message);
+    return _handleResponse(
+      await _client.post(url, body: body),
+      successMessage: message,
+    );
+  }
+
+  @override
+  Future<Response> reply(
+      String username, String password, int itemId, String content) async {
+    assert(username != null);
+    assert(password != null);
+    assert(itemId != null);
+    assert(content != null);
+
+    final url = '${Const.hackerNewsStoryBaseUrl}/comment';
+
+    Map body = {
+      _requestUsernameKey: username,
+      _requestPasswordKey: password,
+      _requestActionKey: 'item?id=$itemId',
+      'parent': '$itemId',
+      'text': content
+    };
+    final message = 'reply to comment success';
+    return _handleResponse(
+      await _client.post(url, body: body),
+      successMessage: message,
+    );
   }
 
   Future<String> _get(Request request, {String errorMessage}) async {

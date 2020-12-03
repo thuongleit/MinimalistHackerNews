@@ -42,3 +42,13 @@ class UserUpdateVisitRequested extends UserActionEvent {
   @override
   List<Object> get props => [item];
 }
+
+class UserReplyToCommentRequested extends UserActionEvent {
+  const UserReplyToCommentRequested(this.itemId, this.content);
+
+  final int itemId;
+  final String content;
+
+  @override
+  List<Object> get props => [itemId, content];
+}

@@ -11,6 +11,8 @@ abstract class UserRepository {
   Future<User> getCurrentUser();
 
   Future<Result> vote(int itemId);
+
+  Future<Result> reply(int itemId, String content);
 }
 
 class UserRepositoryImpl extends UserRepository {
@@ -46,17 +48,50 @@ class UserRepositoryImpl extends UserRepository {
 
   @override
   Future<Result> vote(int itemId) async {
+    final user = await _getUserCredential();
+    //FIXME: unvote
+    final response = await _apiClient.vote(
+      user.username,
+      user.password,
+      itemId,
+      upVote: true,
+    );
+    return response.getResult;
+  }
+
+  @override
+  Future<Result> reply(int itemId, String content) async {
+    final user = await _getUserCredential();
+    //FIXME: unvote
+    final response = await _apiClient.reply(
+      user.username,
+      user.password,
+      itemId,
+      content
+    );
+    return response.getResult;
+  }
+
+  Future<_UserCredential> _getUserCredential() async {
     final isUserLogin = await _authRepository.isAuthenticated();
     if (!isUserLogin) {
-      return Result.failure(message: 'You are not logged in.');
+      // return Result.failure(message: 'You are not logged in.');
     }
 
     final userCredential = await _authRepository.userCredential;
     final username = userCredential[0];
     final password = userCredential[1];
-    //FIXME: unvote
-    final response =
-        await _apiClient.vote(username, password, itemId, upVote: true);
-    return response.getResult;
+
+    return _UserCredential(
+      username: username,
+      password: password,
+    );
   }
+}
+
+class _UserCredential {
+  _UserCredential({this.username, this.password});
+
+  final String username;
+  final String password;
 }
