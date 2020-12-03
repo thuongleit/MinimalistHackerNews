@@ -33,12 +33,34 @@ class _CommentsScreenState extends State<CommentsScreen> {
   int dataSize;
   Item item;
 
+  bool _showFab;
+
   @override
   void initState() {
     _scrollController = ScrollController();
     item = widget.item;
     context.read<StoryCubit>().getStory(item.id);
     dataSize = 0;
+    _showFab = true;
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_showFab) {
+          setState(() {
+            _showFab = false;
+          });
+        }
+      }
+
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!_showFab) {
+          setState(() {
+            _showFab = true;
+          });
+        }
+      }
+    });
     super.initState();
   }
 
@@ -101,7 +123,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
             ),
           ),
         ),
-        floatingActionButton: (state.data?.kids?.isNotEmpty == true)
+        floatingActionButton: (state.data?.kids?.isNotEmpty == true && _showFab)
             ? FloatingActionButton(
                 child: Icon(Icons.reply),
                 onPressed: () => Navigator.push(
