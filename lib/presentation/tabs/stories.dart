@@ -27,7 +27,7 @@ class StoriesTab extends StatefulWidget {
 class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   @override
   void initState() {
-    context.read<StoriesCubit>().fetchStories(widget.storyType);
+    context.read<StoriesCubit>().getStories(widget.storyType);
     super.initState();
   }
 
@@ -67,6 +67,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
     final viewMode = context.read<ViewModeCubit>().state;
     return BlocProvider(
+      key: ObjectKey(storyIds[index]),
       create: (_) {
         return StoryCubit(RepositoryProvider.of<StoriesRepository>(context))
           ..getStory(storyIds[index],

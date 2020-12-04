@@ -7,12 +7,25 @@ import '../network/network_cubit.dart';
 class CommentCubit extends NetworkCubit<List<Item>> {
   final StoriesRepository _repository;
 
-  CommentCubit(this._repository) : assert(_repository != null);
+  Item _item;
 
-  Future<void> getComments(Item parent) async {
+  CommentCubit(this._repository)
+      : assert(_repository != null),
+        super();
+
+  Future<void> getComments(Item item) async {
+    this._item = item;
+
     emit(NetworkState.loading());
+    await _getComments(item);
+  }
+
+  @override
+  Future<void> refresh() => _getComments(_item);
+
+  Future<void> _getComments(Item item) async {
     try {
-      final stream = _repository.getComments(parent);
+      final stream = _repository.getComments(item);
       emit(NetworkState.success(await stream.toList()));
     } on Exception catch (e) {
       emit(NetworkState.failure(error: e));

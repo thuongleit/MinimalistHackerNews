@@ -11,11 +11,17 @@ class StoriesCubit extends NetworkCubit<List<int>> {
       : assert(_repository != null),
         super();
 
-  Future<void> fetchStories(StoryType type) async {
-    assert(type != null);
+  Future<void> getStories(StoryType type) async {
     this._type = type;
 
     emit(NetworkState.loading());
+    await _getStoryIds(type);
+  }
+
+  @override
+  Future<void> refresh() => _getStoryIds(_type);
+
+  Future<void> _getStoryIds(StoryType type) async {
     try {
       final storyIds = await _repository.getItemIds(type);
       emit(NetworkState.success(storyIds));
@@ -23,13 +29,4 @@ class StoriesCubit extends NetworkCubit<List<int>> {
       emit(NetworkState.failure(error: e));
     }
   }
-
-  @override
-  Future<void> refresh() async {
-    if (this._type == null) {
-      return;
-    }
-    return fetchStories(_type);
-  }
-
 }
