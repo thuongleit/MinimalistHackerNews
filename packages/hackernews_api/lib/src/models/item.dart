@@ -110,7 +110,7 @@ class Item with Copyable<Item> {
       type: this.type,
       by: this.by,
       time: this.time,
-      text: text ?? '',
+      text: text ?? this.text,
       dead: this.dead,
       parent: this.parent,
       poll: this.poll,
