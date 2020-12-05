@@ -76,7 +76,7 @@ class _MyHomePageState extends State<HomeScreen> {
     final type = _tabs[_currentIndex];
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: AppStateListener(
+      body: UserActionListener(
         child: BlocProvider<StoriesCubit>(
           create: (context) => StoriesCubit(
             RepositoryProvider.of<StoriesRepository>(context),

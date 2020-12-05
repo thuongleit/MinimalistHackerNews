@@ -5,10 +5,15 @@ import 'package:hknews_repository/hknews_repository.dart';
 import '../../blocs/blocs.dart';
 import '../../utils/utils.dart' as utils;
 
-class AppStateListener extends StatelessWidget {
-  const AppStateListener({this.child, Key key}) : super(key: key);
+class UserActionListener extends StatelessWidget {
+  const UserActionListener({
+    this.child,
+    this.callback,
+    Key key,
+  }) : super(key: key);
 
   final Widget child;
+  final Function(UserActionResult) callback;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +66,7 @@ class AppStateListener extends StatelessWidget {
                       content: Text(state.message),
                     ),
                   );
+                callback?.call(state);
               }
             }
           },

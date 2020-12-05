@@ -100,7 +100,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
       listenWhen: (previous, current) => current.isSuccess,
       listener: (context, state) => setState(() => item = state.data),
       builder: (context, state) => Scaffold(
-        body: AppStateListener(
+        body: UserActionListener(
           child: SliverPage<StoryCubit>.display(
             context: context,
             controller: _scrollController,

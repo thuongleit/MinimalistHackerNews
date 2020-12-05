@@ -47,16 +47,15 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
       create: (_) => UserInputBloc(
         userAction: context.read<UserActionBloc>(),
       ),
-      child: BlocListener<UserInputBloc, UserInputState>(
-        listenWhen: (previous, current) => current.status.isSubmissionSuccess,
-        listener: (context, state) {
-          if (state.status.isSubmissionSuccess) {
-            Navigator.of(context).pop();
-          }
-        },
-        child: SimplePage(
-          title: _isComment() ? 'Reply' : 'Add comment',
-          body: SingleChildScrollView(
+      child: SimplePage(
+        title: _isComment() ? 'Reply' : 'Add comment',
+        body: UserActionListener(
+          callback: (result) {
+            if (result.success) {
+              Navigator.of(context).pop();
+            }
+          },
+          child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(8.0),
               child: Column(
@@ -122,17 +121,17 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
               ),
             ),
           ),
-          actions: [
-            Builder(
-              builder: (context) => IconButton(
-                icon: Icon(Icons.send),
-                onPressed: () => context
-                    .read<UserInputBloc>()
-                    .replyToComment(widget.parentItem.id),
-              ),
-            )
-          ],
         ),
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () => context
+                  .read<UserInputBloc>()
+                  .replyToComment(widget.parentItem.id),
+            ),
+          )
+        ],
       ),
     );
   }
