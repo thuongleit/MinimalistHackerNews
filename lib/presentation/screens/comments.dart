@@ -100,26 +100,28 @@ class _CommentsScreenState extends State<CommentsScreen> {
       listenWhen: (previous, current) => current.isSuccess,
       listener: (context, state) => setState(() => item = state.data),
       builder: (context, state) => Scaffold(
-        body: SliverPage<StoryCubit>.display(
-          context: context,
-          controller: _scrollController,
-          customAppBar: customAppbar,
-          dataEmptyCondition: () => state.data?.kids?.isEmpty,
-          viewIfEmptyData: BigTip(
-            title: const Text('No comments yet.'),
-            subtitle: const Text('Be the first to say something'),
-            action: const Text('Add a comment'),
-            actionCallback: () => Navigator.push(
-              context,
-              CommentReplyScreen.route(context, item),
+        body: AppStateListener(
+          child: SliverPage<StoryCubit>.display(
+            context: context,
+            controller: _scrollController,
+            customAppBar: customAppbar,
+            dataEmptyCondition: () => state.data?.kids?.isEmpty,
+            viewIfEmptyData: BigTip(
+              title: const Text('No comments yet.'),
+              subtitle: const Text('Be the first to say something'),
+              action: const Text('Add a comment'),
+              actionCallback: () => Navigator.push(
+                context,
+                CommentReplyScreen.route(context, item),
+              ),
+              child: const Icon(Icons.comment_bank_outlined),
             ),
-            child: const Icon(Icons.comment_bank_outlined),
-          ),
-          body: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) =>
-                  _buildCommentRows(context, state.data.kids, index),
-              childCount: (dataSize = state.data?.kids?.length ?? 0),
+            body: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) =>
+                    _buildCommentRows(context, state.data.kids, index),
+                childCount: (dataSize = state.data?.kids?.length ?? 0),
+              ),
             ),
           ),
         ),

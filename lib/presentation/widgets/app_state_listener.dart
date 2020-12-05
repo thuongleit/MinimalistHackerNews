@@ -17,7 +17,7 @@ class AppStateListener extends StatelessWidget {
         BlocListener<AuthenticationBloc, AuthenticationState>(
           listenWhen: (previous, current) =>
               previous.status != Authentication.unknown,
-          listener: (context, state) {
+          listener: (_, state) {
             if (state.status == Authentication.authenticated) {
               Scaffold.of(context)
                 ..hideCurrentSnackBar()
@@ -39,27 +39,29 @@ class AppStateListener extends StatelessWidget {
         ),
         BlocListener<UserActionBloc, UserActionState>(
           listenWhen: (previous, current) => current is UserActionResult,
-          listener: (context, state) {
-            if (state is UserNotFound) {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text('User not logged in'),
-                    action: SnackBarAction(
-                      label: 'Log in'.toUpperCase(),
-                      onPressed: () => utils.Dialog.showLoginDialog(context),
+          listener: (_, state) {
+            if (ModalRoute.of(context).isCurrent) {
+              if (state is UserNotFound) {
+                Scaffold.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text('User not logged in'),
+                      action: SnackBarAction(
+                        label: 'Log in'.toUpperCase(),
+                        onPressed: () => utils.Dialog.showLoginDialog(context),
+                      ),
                     ),
-                  ),
-                );
-            } else if (state is UserActionResult) {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                  ),
-                );
+                  );
+              } else if (state is UserActionResult) {
+                Scaffold.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                    ),
+                  );
+              }
             }
           },
         ),
