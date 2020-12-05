@@ -26,7 +26,13 @@ class CommentCubit extends NetworkCubit<List<Item>> {
   Future<void> _getComments(Item item) async {
     try {
       final stream = _repository.getComments(item);
-      emit(NetworkState.success(await stream.toList()));
+      emit(
+        NetworkState.success(
+          await stream
+              .where((e) => !(e.deleted && e.dead) && e.text != null)
+              .toList(),
+        ),
+      );
     } on Exception catch (e) {
       emit(NetworkState.failure(error: e));
     }
