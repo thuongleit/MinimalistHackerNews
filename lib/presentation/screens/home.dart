@@ -107,7 +107,16 @@ class _MyHomePageState extends State<HomeScreen> {
             BlocListener<UserActionBloc, UserActionState>(
               listenWhen: (previous, current) => current is UserActionResult,
               listener: (context, state) {
-                if (state is UserActionResult) {
+                if (state is UserNotFound) {
+                  Scaffold.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      SnackBar(
+                        content: Text('User not logged in'),
+                      ),
+                    );
+                }
+                else if (state is UserActionResult) {
                   Scaffold.of(context)
                     ..hideCurrentSnackBar()
                     ..showSnackBar(

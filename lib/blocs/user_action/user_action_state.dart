@@ -33,3 +33,7 @@ class UserActionResult extends UserActionState {
   @override
   List<Object> get props => [success, message];
 }
+
+class UserNotFound extends UserActionResult {
+  UserNotFound() : super.failure();
+}

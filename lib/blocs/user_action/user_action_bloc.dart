@@ -56,6 +56,8 @@ class UserActionBloc extends Bloc<UserActionEvent, UserActionState> {
       } else {
         yield UserActionResult.failure(message: result.message);
       }
+    } on UserNotFoundException {
+      yield UserNotFound();
     } on Exception catch (e) {
       yield UserActionResult.failure(message: e.toString());
     }

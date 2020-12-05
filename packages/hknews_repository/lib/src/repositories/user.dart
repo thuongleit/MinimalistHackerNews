@@ -49,7 +49,7 @@ class UserRepositoryImpl extends UserRepository {
   @override
   Future<Result> vote(int itemId) async {
     final user = await _getUserCredential();
-    //FIXME: unvote
+    //TODO: support unvote
     final response = await _apiClient.vote(
       user.username,
       user.password,
@@ -62,12 +62,11 @@ class UserRepositoryImpl extends UserRepository {
   @override
   Future<Result> reply(int itemId, String content) async {
     final user = await _getUserCredential();
-    //FIXME: unvote
     final response = await _apiClient.reply(
       user.username,
       user.password,
       itemId,
-      content
+      content,
     );
     return response.getResult;
   }
@@ -75,7 +74,7 @@ class UserRepositoryImpl extends UserRepository {
   Future<_UserCredential> _getUserCredential() async {
     final isUserLogin = await _authRepository.isAuthenticated();
     if (!isUserLogin) {
-      // return Result.failure(message: 'You are not logged in.');
+      throw UserNotFoundException();
     }
 
     final userCredential = await _authRepository.userCredential;
