@@ -10,7 +10,7 @@ import '../widgets/widgets.dart';
 import '../../utils/menu.dart';
 import '../../extensions/extensions.dart';
 import '../../blocs/blocs.dart';
-import '../../utils/url_util.dart';
+import '../../utils/utils.dart' as utils;
 
 class StoriesTab extends StatefulWidget {
   final StoryType storyType;
@@ -158,54 +158,10 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
     //add login/logout popup menu
     var authenticationStatus = context.watch<AuthenticationBloc>().state.status;
     if (authenticationStatus == Authentication.authenticated) {
-      popupMenu['app.menu.logout'] = () => showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              content: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: const Text('Are you sure to logout?'),
-              ),
-              actions: [
-                TextButton(
-                  key: const ValueKey('logout_dialog_ok_button'),
-                  onPressed: () {
-                    context
-                        .read<AuthenticationBloc>()
-                        .add(AuthenticationLogoutRequested());
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('OK'),
-                ),
-                TextButton(
-                  key: const ValueKey('logout_dialog_cancel_button'),
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Cancel'),
-                ),
-              ],
-            ),
-          );
+      popupMenu['app.menu.logout'] =
+          () => utils.Dialog.showLogoutDialog(context);
     } else {
-      popupMenu['app.menu.login'] = () => showDialog(
-            context: context,
-            builder: (context) => SimpleDialog(
-              title: Text('Login with HackerNews'),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: BlocProvider(
-                    create: (context) {
-                      return LoginBloc(
-                        authenticationRepository:
-                            RepositoryProvider.of<AuthenticationRepository>(
-                                context),
-                      );
-                    },
-                    child: LoginForm(),
-                  ),
-                ),
-              ],
-            ),
-          );
+      popupMenu['app.menu.login'] = () => utils.Dialog.showLoginDialog(context);
     }
 
     popupMenu.addAll(Menu.home);
@@ -215,9 +171,9 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
 
   void _onItemTap(Item item) {
     if (item.url == null || item.url.isEmpty) {
-      openWebBrowser(context, item.contentUrl);
+      utils.openWebBrowser(context, item.contentUrl);
     } else {
-      openWebBrowser(context, item.url);
+      utils.openWebBrowser(context, item.url);
     }
   }
 

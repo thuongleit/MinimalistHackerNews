@@ -8,6 +8,7 @@ import 'package:hknews_repository/hknews_repository.dart';
 import '../../extensions/extensions.dart';
 import '../../blocs/blocs.dart';
 import '../tabs/tabs.dart';
+import '../../utils/utils.dart' as utils;
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -113,10 +114,14 @@ class _MyHomePageState extends State<HomeScreen> {
                     ..showSnackBar(
                       SnackBar(
                         content: Text('User not logged in'),
+                        action: SnackBarAction(
+                          label: 'Log in'.toUpperCase(),
+                          onPressed: () =>
+                              utils.Dialog.showLoginDialog(context),
+                        ),
                       ),
                     );
-                }
-                else if (state is UserActionResult) {
+                } else if (state is UserActionResult) {
                   Scaffold.of(context)
                     ..hideCurrentSnackBar()
                     ..showSnackBar(
