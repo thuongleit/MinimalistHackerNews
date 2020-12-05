@@ -8,7 +8,7 @@ import 'package:hknews_repository/hknews_repository.dart';
 import '../../extensions/extensions.dart';
 import '../../blocs/blocs.dart';
 import '../tabs/tabs.dart';
-import '../../utils/utils.dart' as utils;
+import '../../presentation/widgets/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -76,63 +76,11 @@ class _MyHomePageState extends State<HomeScreen> {
     final type = _tabs[_currentIndex];
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: BlocProvider<StoriesCubit>(
-        create: (context) => StoriesCubit(
-          RepositoryProvider.of<StoriesRepository>(context),
-        ),
-        child: MultiBlocListener(
-          listeners: [
-            BlocListener<AuthenticationBloc, AuthenticationState>(
-              listenWhen: (previous, current) =>
-                  previous.status != Authentication.unknown,
-              listener: (context, state) {
-                if (state.status == Authentication.authenticated) {
-                  Scaffold.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(
-                        content: Text('User login'),
-                      ),
-                    );
-                } else {
-                  Scaffold.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(
-                        content: Text('User logout'),
-                      ),
-                    );
-                }
-              },
-            ),
-            BlocListener<UserActionBloc, UserActionState>(
-              listenWhen: (previous, current) => current is UserActionResult,
-              listener: (context, state) {
-                if (state is UserNotFound) {
-                  Scaffold.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(
-                        content: Text('User not logged in'),
-                        action: SnackBarAction(
-                          label: 'Log in'.toUpperCase(),
-                          onPressed: () =>
-                              utils.Dialog.showLoginDialog(context),
-                        ),
-                      ),
-                    );
-                } else if (state is UserActionResult) {
-                  Scaffold.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                      ),
-                    );
-                }
-              },
-            ),
-          ],
+      body: AppStateListener(
+        child: BlocProvider<StoriesCubit>(
+          create: (context) => StoriesCubit(
+            RepositoryProvider.of<StoriesRepository>(context),
+          ),
           child: StoriesTab(
             key: ValueKey(type.toString()),
             storyType: type,
