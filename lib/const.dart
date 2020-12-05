@@ -15,4 +15,8 @@ class Const {
   static const apiSource = 'https://github.com/HackerNews/API';
   static const flutterPage = 'https://flutter.dev';
   static const author = "Thuong Le";
+
+  static final generalErrorMessage =
+      'Oops, something went wrong. Please try again later.';
+
 }

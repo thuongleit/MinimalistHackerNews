@@ -17,23 +17,24 @@ class UserActionInProgress extends UserActionState {
 
 class UserActionResult extends UserActionState {
   final bool success;
+  final UserActionEvent event;
+  final dynamic error;
   final String message;
 
   const UserActionResult._({
     this.success,
+    @required this.event,
+    this.error,
     this.message,
   });
 
-  const UserActionResult.success({String message})
-      : this._(success: true, message: message);
+  const UserActionResult.success({@required UserActionEvent event, String message})
+      : this._(success: true, event: event, message: message);
 
-  const UserActionResult.failure({String message})
-      : this._(success: false, message: message);
+  const UserActionResult.failure(
+      {@required UserActionEvent event, dynamic error, String message})
+      : this._(success: false, event: event, error: error, message: message);
 
   @override
-  List<Object> get props => [success, message];
-}
-
-class UserNotFound extends UserActionResult {
-  UserNotFound() : super.failure();
+  List<Object> get props => [event, error];
 }

@@ -74,7 +74,7 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
       _requestPasswordKey: password,
       _requestActionKey: 'user?id=$username',
     };
-    return _handleResponse(await _client.post(url, body: body));
+    return _handlePostResponse(await _client.post(url, body: body));
   }
 
   @override
@@ -90,7 +90,7 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
       _requestPasswordKey: password,
       _requestActionKey: 'user?id=$username',
     };
-    return _handleResponse(await _client.post(url, body: body));
+    return _handlePostResponse(await _client.post(url, body: body));
   }
 
   @override
@@ -118,11 +118,7 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
       'id': '$itemId',
       'how': upVote ? 'up' : 'un',
     };
-    final message = '${upVote ? "vote" : "unvote "} success';
-    return _handleResponse(
-      await _client.post(url, body: body),
-      successMessage: message,
-    );
+    return _handlePostResponse(await _client.post(url, body: body));
   }
 
   @override
@@ -143,47 +139,49 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
       'parent': '$itemId',
       'text': content
     };
-    final message = 'reply to comment success';
-    return _handleResponse(
-      await _client.post(url, body: body),
-      successMessage: message,
-    );
+    return _handlePostResponse(await _client.post(url, body: body));
   }
 
-  Future<String> _get(Request request, {String errorMessage}) async {
+  Future<String> _get(Request request) async {
     final response = await _client.get(request.url);
     print('[GET] ${request.url}');
     if (response.statusCode == HttpStatus.ok) {
       return response.body;
     } else {
-      throw HackerNewsApiException(message: errorMessage);
+      throw HackerNewsApiException(
+        errorCode: response.statusCode,
+        message: response.body,
+      );
     }
   }
 
-  Future<String> _post(Request request, {String errorMessage}) async {
+  Future<String> _post(Request request) async {
     final response = await _client.post(request.url, body: request.body);
     print('[POST] ${request.url}:${request.body}');
     if (response.statusCode == HttpStatus.ok) {
       return response.body;
     } else {
-      throw HackerNewsApiException(message: errorMessage);
+      throw HackerNewsApiException(
+        errorCode: response.statusCode,
+        message: response.body,
+      );
     }
   }
 
-  Response _handleResponse(http.Response response, {String successMessage}) {
+  Response _handlePostResponse(http.Response response) {
     print('${response.statusCode} - ${response.body}');
 
     // If we get a 302 we assume it's successful
     if (response.statusCode == HttpStatus.found) {
-      return Response.success(message: successMessage);
+      return Response.success();
     } else if (response.statusCode == HttpStatus.ok) {
       return Response.failure(
         message: _parseServerMessage(response.body),
       );
     } else {
-      return Response.failure(
-        message:
-            'Oops! Something went wrong. Please try again!\nServer response: ${response.statusCode}',
+      throw HackerNewsApiException(
+        errorCode: response.statusCode,
+        message: response.body,
       );
     }
   }

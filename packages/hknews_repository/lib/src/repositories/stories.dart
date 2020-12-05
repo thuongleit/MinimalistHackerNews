@@ -77,17 +77,13 @@ class StoriesRepositoryImpl extends StoriesRepository {
     final copiedStory =
         item.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
     final success = await _localSource.insertOrReplace(copiedStory.toEntity());
-    return (success)
-        ? Result.success(message: 'Story saved')
-        : Result.failure(message: 'Save story failed');
+    return (success) ? Result.success() : Result.failure();
   }
 
   @override
   Future<Result> unsave(Item item) async {
     final success = await _localSource.deleteStory(item.id);
-    return (success)
-        ? Result.success(message: 'Story unsaved')
-        : Result.failure(message: 'Unsave story failed');
+    return (success) ? Result.success() : Result.failure();
   }
 
   @override
