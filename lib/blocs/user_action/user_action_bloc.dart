@@ -30,10 +30,10 @@ class UserActionBloc extends Bloc<UserActionEvent, UserActionState> {
       yield* _mapUserRequestedToState(() => _userRepository.vote(event.itemId));
     } else if (event is UserSaveStoryRequested) {
       yield* _mapUserRequestedToState(
-          () => _storiesRepository.saveStory(event.item));
+          () => _storiesRepository.save(event.item));
     } else if (event is UserUnSaveStoryRequested) {
       yield* _mapUserRequestedToState(
-          () => _storiesRepository.unsaveStory(event.item));
+          () => _storiesRepository.unsave(event.item));
     } else if (event is UserUpdateVisitRequested) {
       yield* _mapUserRequestedToState(
           () => _storiesRepository.updateVisited(event.item));

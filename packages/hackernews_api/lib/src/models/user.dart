@@ -21,10 +21,10 @@ class User {
     }
     return User(
       id: json['id'],
-      delay: json['delay'] == null ? 0 : json['delay'],
-      created: json['created'] == null ? 0 : json['created'],
-      karma: json['karma'] == null ? 0 : json['karma'],
-      about: json['about'] == null ? '' : json['about'],
+      delay: json['delay'] ??= 0,
+      created: json['created'] ??= 0,
+      karma: json['karma'] ??= 0,
+      about: json['about'] ??= '',
       submitted: json['submitted'] == null
           ? []
           : List<int>.from(json['submitted'].map((e) => e)),

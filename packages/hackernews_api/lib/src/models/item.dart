@@ -5,7 +5,7 @@ enum StoryType { news, top, best, ask, show, jobs }
 enum ItemType { job, story, comment, poll, pollopt }
 
 class Item with Copyable<Item> {
-  int depth;
+  final int depth;
   final int id;
   final bool deleted;
   final ItemType type;
@@ -21,8 +21,8 @@ class Item with Copyable<Item> {
   final String title;
   final List<int> parts;
   final int descendants;
-  int updatedAt;
-  bool visited;
+  final int updatedAt;
+  final bool visited;
 
   Item({
     this.depth = 0,
@@ -51,24 +51,24 @@ class Item with Copyable<Item> {
     }
     return Item(
       id: json['id'],
-      deleted: json['deleted'] == null ? false : json['deleted'],
+      deleted: json['deleted'] ??= false,
       type: _castItemType(json['type']),
       by: json['by'],
-      time: json['time'] == null ? 0 : json['time'],
+      time: json['time'] ??= 0,
       text: json['text'],
-      dead: json['dead'] == null ? false : json['dead'],
+      dead: json['dead'] ??= false,
       parent: json['parent'],
       poll: json['poll'],
       kids: json['kids'] == null
           ? []
           : List<int>.from(json['kids'].map((e) => e)),
       url: json['url'],
-      score: json['score'] == null ? 0 : json['score'],
+      score: json['score'] ??= 0,
       title: json['title'],
       parts: json['parts'] == null
           ? []
           : List<int>.from(json['parts'].map((e) => e)),
-      descendants: json['descendants'] == null ? 0 : json['descendants'],
+      descendants: json['descendants'] ??= 0,
     );
   }
 
@@ -97,15 +97,20 @@ class Item with Copyable<Item> {
   }
 
   @override
-  Item copyWith({String text}) {
+  Item copyWith({
+    int depth,
+    String text,
+    int updatedAt,
+    bool visited,
+  }) {
     return Item(
-      depth: this.depth,
+      depth: depth ?? 0,
       id: this.id,
       deleted: this.deleted,
       type: this.type,
       by: this.by,
       time: this.time,
-      text: text ?? this.text,
+      text: text ?? '',
       dead: this.dead,
       parent: this.parent,
       poll: this.poll,
@@ -115,8 +120,8 @@ class Item with Copyable<Item> {
       title: this.title,
       parts: this.parts,
       descendants: this.descendants,
-      updatedAt: this.updatedAt,
-      visited: this.visited,
+      updatedAt: updatedAt ?? 0,
+      visited: visited ?? false,
     );
   }
 

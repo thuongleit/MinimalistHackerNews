@@ -12,13 +12,13 @@ abstract class StoriesRepository {
 
   Future<Item> getItem(int itemId, {bool previewContent = false});
 
-  Future<Result> saveStory(Item item);
+  Future<Result> save(Item item);
 
-  Future<Result> unsaveStory(Item item);
+  Future<Result> unsave(Item item);
 
   Future<List<Item>> getSavedStories();
 
-  Future<Result> updateVisited(Item story);
+  Future<Result> updateVisited(Item item);
 
   Stream<Item> getComments(Item parent);
 }
@@ -46,12 +46,12 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<Item> getItem(int storyId, {bool previewContent = false}) async {
+  Future<Item> getItem(int itemId, {bool previewContent = false}) async {
     try {
-      if (_itemsCache.containsKey(storyId)) {
-        return _itemsCache[storyId].first;
+      if (_itemsCache.containsKey(itemId)) {
+        return _itemsCache[itemId].first;
       }
-      final item = await _apiClient.getItem(storyId);
+      final item = await _apiClient.getItem(itemId);
 
       if (previewContent && (item.text == null || item.text.isEmpty)) {
         final storyInfo =
@@ -73,17 +73,18 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<Result> saveStory(Item story) async {
-    story.updatedAt = DateTime.now().millisecondsSinceEpoch;
-    final success = await _localSource.insertOrReplace(story.toEntity());
+  Future<Result> save(Item item) async {
+    final copiedStory =
+        item.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+    final success = await _localSource.insertOrReplace(copiedStory.toEntity());
     return (success)
         ? Result.success(message: 'Story saved')
         : Result.failure(message: 'Save story failed');
   }
 
   @override
-  Future<Result> unsaveStory(Item story) async {
-    final success = await _localSource.deleteStory(story.id);
+  Future<Result> unsave(Item item) async {
+    final success = await _localSource.deleteStory(item.id);
     return (success)
         ? Result.success(message: 'Story unsaved')
         : Result.failure(message: 'Unsave story failed');
@@ -105,11 +106,11 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<Result> updateVisited(Item story) async {
-    var isUpdated = await _localSource.updateVisitStory(story.id);
+  Future<Result> updateVisited(Item item) async {
+    var isUpdated = await _localSource.updateVisitStory(item.id);
     if (isUpdated) {
-      story.visited = true;
-      _itemsCache[story.id] = Pair(story, true);
+      final copiedItem = item.copyWith(visited: true);
+      _itemsCache[copiedItem.id] = Pair(copiedItem, true);
     }
     return (isUpdated) ? Result.success() : Result.failure();
   }
@@ -122,9 +123,7 @@ class StoriesRepositoryImpl extends StoriesRepository {
       Item kid = await getItem(kidId);
       if (kid == null) continue;
 
-      kid.depth = parent.depth + 1;
-
-      yield kid;
+      yield kid.copyWith(depth: parent.depth + 1);
     }
   }
 }
