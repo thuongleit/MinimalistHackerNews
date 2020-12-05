@@ -45,27 +45,32 @@ class Item with Copyable<Item> {
     this.visited = false,
   });
 
-  factory Item.fromJson(Map<String, dynamic> json) => Item(
-        id: json['id'],
-        deleted: json['deleted'] == null ? false : json['deleted'],
-        type: _castItemType(json['type']),
-        by: json['by'],
-        time: json['time'] == null ? 0 : json['time'],
-        text: json['text'],
-        dead: json['dead'] == null ? false : json['dead'],
-        parent: json['parent'],
-        poll: json['poll'],
-        kids: json['kids'] == null
-            ? []
-            : List<int>.from(json['kids'].map((e) => e)),
-        url: json['url'],
-        score: json['score'] == null ? 0 : json['score'],
-        title: json['title'],
-        parts: json['parts'] == null
-            ? []
-            : List<int>.from(json['parts'].map((e) => e)),
-        descendants: json['descendants'] == null ? 0 : json['descendants'],
-      );
+  factory Item.fromJson(Map<String, dynamic> json) {
+    if (!json.containsKey('id') || json['id'] == null) {
+      return null;
+    }
+    return Item(
+      id: json['id'],
+      deleted: json['deleted'] == null ? false : json['deleted'],
+      type: _castItemType(json['type']),
+      by: json['by'],
+      time: json['time'] == null ? 0 : json['time'],
+      text: json['text'],
+      dead: json['dead'] == null ? false : json['dead'],
+      parent: json['parent'],
+      poll: json['poll'],
+      kids: json['kids'] == null
+          ? []
+          : List<int>.from(json['kids'].map((e) => e)),
+      url: json['url'],
+      score: json['score'] == null ? 0 : json['score'],
+      title: json['title'],
+      parts: json['parts'] == null
+          ? []
+          : List<int>.from(json['parts'].map((e) => e)),
+      descendants: json['descendants'] == null ? 0 : json['descendants'],
+    );
+  }
 
   @override
   Item copy() {
