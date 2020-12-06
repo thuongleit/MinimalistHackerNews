@@ -73,7 +73,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   Widget build(BuildContext context) {
     final customAppbar = SliverAppBar(
-      leadingWidth: 24.0,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
