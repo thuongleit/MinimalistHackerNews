@@ -112,11 +112,12 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
         ),
       ],
       secondaryActions: [
-        IconSlideAction(
+        MyCustomIconSlideAction(
           color: Colors.grey[500],
           icon: Icons.more_vert_outlined,
           foregroundColor: Colors.white,
           onTap: () => _showItemContextMenu(context, item),
+          onTapDown: storePosition,
           closeOnTap: false,
         ),
         IconSlideAction(
@@ -196,9 +197,11 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
       );
       if (shareChosen == null) return;
       if (shareChosen == PopupMenu.shareHKNewsArticle) {
-        await Share.share('${item.title}\n\n${item.hackerNewsUrl}', subject: '${item.title}');
+        await Share.share('${item.title}\n\n${item.hackerNewsUrl}',
+            subject: '${item.title}');
       } else if (shareChosen == PopupMenu.shareRealArticle) {
-        await Share.share('${item.title}\n\n${item.url}', subject: '${item.title}');
+        await Share.share('${item.title}\n\n${item.url}',
+            subject: '${item.title}');
       } else {
         return;
       }
