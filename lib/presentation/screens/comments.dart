@@ -2,6 +2,7 @@ import 'package:big_tip/big_tip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../../extensions/extensions.dart';
@@ -106,9 +107,17 @@ class _CommentsScreenState extends State<CommentsScreen> {
             customAppBar: customAppbar,
             dataEmptyCondition: () => state.data?.kids?.isEmpty,
             viewIfEmptyData: BigTip(
-              title: const Text('No comments yet.'),
+              title: const Text('No comments yet'),
               subtitle: const Text('Be the first to say something'),
-              action: const Text('Add a comment'),
+              action: Text(
+                'Add a comment'.toUpperCase(),
+                style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
+                    .subtitle1
+                    .copyWith(
+                      color: Theme.of(context).accentColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
               actionCallback: () => Navigator.push(
                 context,
                 CommentReplyScreen.route(context, item),
