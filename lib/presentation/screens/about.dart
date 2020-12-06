@@ -98,7 +98,7 @@ class _AboutScreenState extends State<AboutScreen> {
             context,
             'screen.about.free_software.body',
           ),
-          onTap: () => openWebBrowser(context, Const.appSource),
+          onTap: () => UrlUtils.openWebBrowser(context, Const.appSource),
         ),
         HeaderText(FlutterI18n.translate(
           context,
@@ -115,7 +115,7 @@ class _AboutScreenState extends State<AboutScreen> {
             context,
             'screen.about.author.body',
           ),
-          onTap: () => openWebBrowser(context, Const.authorProfile),
+          onTap: () => UrlUtils.openWebBrowser(context, Const.authorProfile),
         ),
         Separator.divider(indent: 72),
         ListCell.icon(
@@ -147,7 +147,7 @@ class _AboutScreenState extends State<AboutScreen> {
             context,
             'screen.about.flutter.body',
           ),
-          onTap: () => openWebBrowser(context, Const.flutterPage),
+          onTap: () => UrlUtils.openWebBrowser(context, Const.flutterPage),
         ),
         Separator.divider(indent: 72),
         ListCell.icon(
@@ -161,7 +161,7 @@ class _AboutScreenState extends State<AboutScreen> {
             'screen.about.credits.body',
             translationParams: {'api': Const.apiSourceName},
           ),
-          onTap: () => openWebBrowser(context, Const.apiSource),
+          onTap: () => UrlUtils.openWebBrowser(context, Const.apiSource),
         ),
         Separator.divider(indent: 72),
       ]),

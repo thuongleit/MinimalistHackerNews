@@ -115,9 +115,9 @@ class SavedStoriesScreen extends StatelessWidget {
 
   void _onItemTap(BuildContext context, Item item) {
     if (item.url == null || item.url.isEmpty) {
-      openWebBrowser(context, item.contentUrl);
+      UrlUtils.openWebBrowser(context, item.contentUrl);
     } else {
-      openWebBrowser(context, item.url);
+      UrlUtils.openWebBrowser(context, item.url);
     }
     context.read<UserActionBloc>().add(UserUpdateVisitRequested(item));
   }

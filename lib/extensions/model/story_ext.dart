@@ -20,7 +20,7 @@ extension StoryUrl on Item {
   }
 
   String get description1 {
-    return "by $by ${(url != null && url.isNotEmpty) ? '(' + getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription1 : ''}";
+    return "by $by ${(url != null && url.isNotEmpty) ? '(' + UrlUtils.getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription1 : ''}";
   }
 
   String get description2 {

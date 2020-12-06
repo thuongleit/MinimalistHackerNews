@@ -171,9 +171,9 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
 
   void _onItemTap(Item item) {
     if (item.url == null || item.url.isEmpty) {
-      utils.openWebBrowser(context, item.contentUrl);
+      utils.UrlUtils.openWebBrowser(context, item.contentUrl);
     } else {
-      utils.openWebBrowser(context, item.url);
+      utils.UrlUtils.openWebBrowser(context, item.url);
     }
   }
 
