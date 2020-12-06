@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart' hide showMenu;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hacker_news/utils/utils.dart';
 import 'package:hknews_repository/hknews_repository.dart';
+import 'package:share/share.dart';
 
 import '../../blocs/blocs.dart';
 import 'single_comment_tile.dart';
 import 'widgets.dart';
 import '../../presentation/screens/screens.dart';
+import '../../utils/utils.dart';
+import '../../extensions/extensions.dart';
 
 class CommentTile extends StatefulWidget {
   const CommentTile({
@@ -139,8 +141,9 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
     } else if (chosenOption == PopupMenu.vote) {
       _voteItem(context, item);
     } else if (chosenOption == PopupMenu.share) {
+      await Share.share('${item.textAsHtml}\n\n${item.hackerNewsUrl}');
     } else {
-      return null;
+    return;
     }
   }
 

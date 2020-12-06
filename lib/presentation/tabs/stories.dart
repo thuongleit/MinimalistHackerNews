@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hknews_repository/hknews_repository.dart';
+import 'package:share/share.dart';
 
 import '../widgets/widgets.dart';
 import '../../utils/menu.dart';
@@ -171,7 +172,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
 
   void _onItemTap(Item item) {
     if (item.url == null || item.url.isEmpty) {
-      utils.UrlUtils.openWebBrowser(context, item.contentUrl);
+      utils.UrlUtils.openWebBrowser(context, item.hackerNewsUrl);
     } else {
       utils.UrlUtils.openWebBrowser(context, item.url);
     }
@@ -195,12 +196,14 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
       );
       if (shareChosen == null) return;
       if (shareChosen == PopupMenu.shareHKNewsArticle) {
+        await Share.share('${item.title}\n\n${item.hackerNewsUrl}', subject: '${item.title}');
       } else if (shareChosen == PopupMenu.shareRealArticle) {
+        await Share.share('${item.title}\n\n${item.url}', subject: '${item.title}');
       } else {
-        return null;
+        return;
       }
     } else {
-      return null;
+      return;
     }
   }
 

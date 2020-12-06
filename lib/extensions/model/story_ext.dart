@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:html/parser.dart' as htmlparser;
 
 import '../../utils/url_util.dart';
 
-extension StoryUrl on Item {
+extension ItemX on Item {
   // story item browsing url
   static const itemBrowsingUrl = 'https://news.ycombinator.com';
 
   // content of an item url
-  String get contentUrl => '$itemBrowsingUrl/item?id=$id';
-
-  // vote an item url
-  String get voteUrl => '$itemBrowsingUrl/vote?id=$id&how=up';
+  String get hackerNewsUrl => '$itemBrowsingUrl/item?id=$id';
 
   String get timeAgo {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(time * 1000);
     return '${timeago.format(date)}';
   }
+
+  String get textAsHtml => (text != null) ? htmlparser.parse(text).body.text : '';
 
   String get description1 {
     return "by $by ${(url != null && url.isNotEmpty) ? '(' + UrlUtils.getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription1 : ''}";
@@ -45,7 +45,7 @@ extension StoryUrl on Item {
 }
 
 // enum StoryType { news, top, best, ask, show, jobs }
-extension StoryTypeTitleAndIcon on StoryType {
+extension StoryTypeX on StoryType {
   String get tabBarTitle {
     switch (index) {
       case 0:
