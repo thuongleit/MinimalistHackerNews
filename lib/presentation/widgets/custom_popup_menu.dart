@@ -13,7 +13,7 @@ mixin CustomPopupMenu<T extends StatefulWidget> on State<T> {
   /// Use this method to show the menu.
   Future<T> showMenu<T>({
     @required BuildContext context,
-    @required List<PopupMenuEntry<T>> items,
+    @required PopupMenuEntry<T> item,
     T initialValue,
     double elevation,
     String semanticLabel,
@@ -32,7 +32,7 @@ mixin CustomPopupMenu<T extends StatefulWidget> on State<T> {
         overlay.size.width - _tapPosition.dx,
         overlay.size.height - _tapPosition.dy,
       ),
-      items: items,
+      items: [item],
       initialValue: initialValue,
       elevation: elevation,
       semanticLabel: semanticLabel,
@@ -44,32 +44,78 @@ mixin CustomPopupMenu<T extends StatefulWidget> on State<T> {
   }
 }
 
-class PlusMinusEntry extends PopupMenuEntry<int> {
+enum PopupMenu {
+  viewComment,
+  viewUser,
+  share,
+  shareHKNewsArticle,
+  shareRealArticle,
+  vote,
+  unvote,
+  reply,
+  refresh,
+}
+
+extension PopupMenuItemDescription on PopupMenu {
+  String get description {
+    if (this == PopupMenu.viewComment) {
+      return 'View Comment';
+    } else if (this == PopupMenu.share) {
+      return 'Share';
+    } else if (this == PopupMenu.shareHKNewsArticle) {
+      return 'Share Hacker News link';
+    } else if (this == PopupMenu.shareRealArticle) {
+      return 'Share article link';
+    } else if (this == PopupMenu.vote) {
+      return 'Vote';
+    } else if (this == PopupMenu.unvote) {
+      return 'Unvote';
+    } else if (this == PopupMenu.reply) {
+      return 'Reply';
+    } else if (this == PopupMenu.refresh) {
+      return 'Refresh';
+    } else {
+      return '';
+    }
+  }
+}
+
+class ItemPopupMenuEntry extends PopupMenuEntry<PopupMenu> {
+  final List<PopupMenu> items;
+
+  ItemPopupMenuEntry({@required this.items});
+
   @override
-  double height = 100;
+  final double height = 100;
 
   // height doesn't matter, as long as we are not giving
   // initialValue to showMenu().
   @override
-  bool represents(int n) => n == 1 || n == -1;
+  bool represents(PopupMenu item) => items.isNotEmpty && item == items[0];
 
   @override
-  _PlusMinusEntryState createState() => _PlusMinusEntryState();
+  _ItemPopupMenuEntryState createState() => _ItemPopupMenuEntryState();
 }
 
-class _PlusMinusEntryState extends State<PlusMinusEntry> {
-  void _onPressed(int position) {
-    Navigator.pop<int>(context, position);
-  }
-
+class _ItemPopupMenuEntryState extends State<ItemPopupMenuEntry> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FlatButton(onPressed: () => _onPressed(0), child: Text('View Comment')),
-        FlatButton(onPressed: () => _onPressed(1), child: Text('View user')),
-        FlatButton(onPressed: () => _onPressed(2), child: Text('Share')),
+        for (final item in widget.items)
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 6.0),
+            child: FlatButton(
+              child: Text(item.description),
+              onPressed: () => _onPressed(item),
+            ),
+          ),
       ],
     );
+  }
+
+  void _onPressed(PopupMenu menuItem) {
+    Navigator.pop<PopupMenu>(context, menuItem);
   }
 }

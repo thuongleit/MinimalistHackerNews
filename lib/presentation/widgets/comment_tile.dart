@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart' hide showMenu;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hacker_news/presentation/screens/comment_reply.dart';
-import 'package:hacker_news/presentation/widgets/single_comment_tile.dart';
+import 'package:hacker_news/utils/utils.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../../blocs/blocs.dart';
+import 'single_comment_tile.dart';
 import 'widgets.dart';
+import '../../presentation/screens/screens.dart';
 
 class CommentTile extends StatefulWidget {
   const CommentTile({
@@ -67,9 +68,7 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
           child: SlidableDrawerDismissal(),
           onWillDismiss: (actionType) {
             if (actionType == SlideActionType.primary) {
-              context
-                  .read<UserActionBloc>()
-                  .add(UserVoteRequested(widget.item.id));
+              _voteItem(context, widget.item);
             } else {
               _onReplyRequest(context, widget.item);
             }
@@ -131,11 +130,24 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
   void _showItemContextMenu(BuildContext context, Item item) async {
     var chosenOption = await showMenu(
       context: context,
-      items: <PopupMenuEntry<int>>[PlusMinusEntry()],
+      item: ItemPopupMenuEntry(items: Menu.comment_popup_menu),
     );
     if (chosenOption == null) return;
 
-    if (chosenOption == 0) {}
+    if (chosenOption == PopupMenu.reply) {
+      _onReplyRequest(context, item);
+    } else if (chosenOption == PopupMenu.vote) {
+      _voteItem(context, item);
+    } else if (chosenOption == PopupMenu.share) {
+    } else {
+      return null;
+    }
+  }
+
+  void _voteItem(BuildContext context, Item item) {
+    context
+        .read<UserActionBloc>()
+        .add(UserVoteRequested(item.id));
   }
 
   void _onReplyRequest(BuildContext context, Item item) {

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart' hide showMenu;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hacker_news/presentation/screens/comments.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../widgets/widgets.dart';
 import '../../utils/menu.dart';
 import '../../extensions/extensions.dart';
 import '../../blocs/blocs.dart';
+import '../../presentation/screens/screens.dart';
 import '../../utils/utils.dart' as utils;
 
 class StoriesTab extends StatefulWidget {
@@ -133,7 +133,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
         child: SlidableDrawerDismissal(),
         onWillDismiss: (actionType) {
           if (actionType == SlideActionType.primary) {
-            context.read<UserActionBloc>().add(UserVoteRequested(item.id));
+            _voteItem(context, item);
           } else {
             _goToComment(context, item);
           }
@@ -178,15 +178,34 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   }
 
   void _showItemContextMenu(BuildContext context, Item item) async {
-    var chosenOption = await showMenu(
+    final chosenOption = await showMenu(
       context: context,
-      items: <PopupMenuEntry<int>>[PlusMinusEntry()],
+      item: ItemPopupMenuEntry(items: Menu.story_popup_menu),
     );
     if (chosenOption == null) return;
 
-    if (chosenOption == 0) {
+    if (chosenOption == PopupMenu.viewComment) {
       _goToComment(context, item);
+    } else if (chosenOption == PopupMenu.vote) {
+      _voteItem(context, item);
+    } else if (chosenOption == PopupMenu.share) {
+      final shareChosen = await showMenu(
+        context: context,
+        item: ItemPopupMenuEntry(items: Menu.share_popup_menu),
+      );
+      if (shareChosen == null) return;
+      if (shareChosen == PopupMenu.shareHKNewsArticle) {
+      } else if (shareChosen == PopupMenu.shareRealArticle) {
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
+  }
+
+  void _voteItem(BuildContext context, Item item) {
+    context.read<UserActionBloc>().add(UserVoteRequested(item.id));
   }
 
   void _goToComment(BuildContext context, Item item) {
