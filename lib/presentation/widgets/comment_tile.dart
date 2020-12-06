@@ -129,28 +129,29 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
     );
   }
 
-  void _showItemContextMenu(BuildContext context, Item item) async {
+  Future<bool> _showItemContextMenu(BuildContext context, Item item) async {
     var chosenOption = await showMenu(
       context: context,
       item: ItemPopupMenuEntry(items: Menu.comment_popup_menu),
     );
-    if (chosenOption == null) return;
+    if (chosenOption == null) return false;
 
     if (chosenOption == PopupMenu.reply) {
       _onReplyRequest(context, item);
+      return true;
     } else if (chosenOption == PopupMenu.vote) {
       _voteItem(context, item);
+      return true;
     } else if (chosenOption == PopupMenu.share) {
       await Share.share('${item.textAsHtml}\n\n${item.hackerNewsUrl}');
+      return true;
     } else {
-    return;
+      return false;
     }
   }
 
   void _voteItem(BuildContext context, Item item) {
-    context
-        .read<UserActionBloc>()
-        .add(UserVoteRequested(item.id));
+    context.read<UserActionBloc>().add(UserVoteRequested(item.id));
   }
 
   void _onReplyRequest(BuildContext context, Item item) {

@@ -112,13 +112,19 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
         ),
       ],
       secondaryActions: [
-        MyCustomIconSlideAction(
-          color: Colors.grey[500],
-          icon: Icons.more_vert_outlined,
-          foregroundColor: Colors.white,
-          onTap: () => _showItemContextMenu(context, item),
-          onTapDown: storePosition,
-          closeOnTap: false,
+        Builder(
+          builder: (context) => MyCustomIconSlideAction(
+            color: Colors.grey[500],
+            icon: Icons.more_vert_outlined,
+            foregroundColor: Colors.white,
+            onTap: () async {
+              if (await _showItemContextMenu(context, item)) {
+                Slidable.of(context)?.close();
+              }
+            },
+            onTapDown: storePosition,
+            closeOnTap: false,
+          ),
         ),
         IconSlideAction(
           color: Colors.green[700],
@@ -179,34 +185,39 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
     }
   }
 
-  void _showItemContextMenu(BuildContext context, Item item) async {
+  Future<bool> _showItemContextMenu(BuildContext context, Item item) async {
     final chosenOption = await showMenu(
       context: context,
       item: ItemPopupMenuEntry(items: Menu.story_popup_menu),
     );
-    if (chosenOption == null) return;
+    if (chosenOption == null) return false;
 
     if (chosenOption == PopupMenu.viewComment) {
       _goToComment(context, item);
+      return true;
     } else if (chosenOption == PopupMenu.vote) {
       _voteItem(context, item);
+      return true;
     } else if (chosenOption == PopupMenu.share) {
       final shareChosen = await showMenu(
         context: context,
         item: ItemPopupMenuEntry(items: Menu.share_popup_menu),
       );
-      if (shareChosen == null) return;
+      if (shareChosen == null) return false;
+
       if (shareChosen == PopupMenu.shareHKNewsArticle) {
         await Share.share('${item.title}\n\n${item.hackerNewsUrl}',
             subject: '${item.title}');
+        return true;
       } else if (shareChosen == PopupMenu.shareRealArticle) {
         await Share.share('${item.title}\n\n${item.url}',
             subject: '${item.title}');
+        return true;
       } else {
-        return;
+        return false;
       }
     } else {
-      return;
+      return false;
     }
   }
 
