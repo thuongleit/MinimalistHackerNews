@@ -54,6 +54,8 @@ enum PopupMenu {
   unvote,
   reply,
   refresh,
+  readLater,
+  delete,
 }
 
 extension PopupMenuItemDescription on PopupMenu {
@@ -74,6 +76,10 @@ extension PopupMenuItemDescription on PopupMenu {
       return 'Reply';
     } else if (this == PopupMenu.refresh) {
       return 'Refresh';
+    } else if (this == PopupMenu.readLater) {
+      return 'Read later';
+    } else if (this == PopupMenu.delete) {
+      return 'Delete';
     } else {
       return '';
     }

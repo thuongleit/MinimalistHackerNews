@@ -190,35 +190,38 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
       context: context,
       item: ItemPopupMenuEntry(items: Menu.story_popup_menu),
     );
-    if (chosenOption == null) return false;
-
-    if (chosenOption == PopupMenu.viewComment) {
-      _goToComment(context, item);
-      return true;
-    } else if (chosenOption == PopupMenu.vote) {
-      _voteItem(context, item);
-      return true;
-    } else if (chosenOption == PopupMenu.share) {
-      final shareChosen = await showMenu(
-        context: context,
-        item: ItemPopupMenuEntry(items: Menu.share_popup_menu),
-      );
-      if (shareChosen == null) return false;
-
-      if (shareChosen == PopupMenu.shareHKNewsArticle) {
-        await Share.share('${item.title}\n\n${item.hackerNewsUrl}',
-            subject: '${item.title}');
-        return true;
-      } else if (shareChosen == PopupMenu.shareRealArticle) {
-        await Share.share('${item.title}\n\n${item.url}',
-            subject: '${item.title}');
-        return true;
-      } else {
+    switch (chosenOption) {
+      case PopupMenu.viewComment:
+        _goToComment(context, item);
+        break;
+      case PopupMenu.vote:
+        _voteItem(context, item);
+        break;
+      case PopupMenu.share:
+        final shareChosen = await showMenu(
+          context: context,
+          item: ItemPopupMenuEntry(items: Menu.share_popup_menu),
+        );
+        switch (shareChosen) {
+          case PopupMenu.shareHKNewsArticle:
+            await Share.share('${item.title}\n\n${item.hackerNewsUrl}',
+                subject: '${item.title}');
+            break;
+          case PopupMenu.shareRealArticle:
+            await Share.share('${item.title}\n\n${item.url}',
+                subject: '${item.title}');
+            break;
+          default:
+            return false;
+        }
+        break;
+      case PopupMenu.readLater:
+        context.read<UserActionBloc>().add(UserSaveStoryRequested(item));
+        break;
+      default:
         return false;
-      }
-    } else {
-      return false;
     }
+    return true;
   }
 
   void _voteItem(BuildContext context, Item item) {

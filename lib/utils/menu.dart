@@ -20,6 +20,7 @@ class Menu {
   static const story_popup_menu = <PopupMenu>[
     PopupMenu.viewComment,
     PopupMenu.vote,
+    PopupMenu.readLater,
     PopupMenu.share,
   ];
 
