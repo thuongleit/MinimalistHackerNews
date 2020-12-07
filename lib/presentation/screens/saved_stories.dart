@@ -96,6 +96,7 @@ class SavedStoriesScreen extends StatelessWidget {
         onWillDismiss: (actionType) {
           if (actionType == SlideActionType.primary) {
             context.read<UserActionBloc>().add(UserUnSaveStoryRequested(item));
+            return true;
           } else {
             _goToComment(context, item);
           }
