@@ -2,13 +2,11 @@ import 'package:cherry_components/cherry_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:hacker_news/blocs/browser_chooser/browser_cubit.dart';
-import 'package:hacker_news/blocs/theme/theme_cubit.dart';
-import 'package:hacker_news/blocs/view_mode/view_mode_cubit.dart';
 import 'package:provider/provider.dart';
 import 'package:row_collection/row_collection.dart';
 
 import '../widgets/widgets.dart';
+import '../../blocs/blocs.dart';
 
 /// Here lays all available options for the user to be configurable.
 class SettingsScreen extends StatefulWidget {
@@ -142,54 +140,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           Separator.divider(indent: 72),
-          ListCell.icon(
-            icon: Icons.chrome_reader_mode,
-            title: FlutterI18n.translate(
-              context,
-              'screen.settings.browser.title',
-            ),
-            subtitle: FlutterI18n.translate(
-              context,
-              'screen.settings.browser.body',
-            ),
-            onTap: () => showBottomRoundDialog(
-              context: context,
-              title: FlutterI18n.translate(
-                context,
-                'screen.settings.browser.title',
-              ),
-              children: <Widget>[
-                RadioCell<ViewMode>(
-                  title: FlutterI18n.translate(
-                    context,
-                    'title_only',
-                  ),
-                  groupValue: _viewModeIndex,
-                  value: ViewMode.titleOnly,
-                  onChanged: (value) => _changeViewMode(context, value),
-                ),
-                RadioCell<ViewMode>(
-                  title: FlutterI18n.translate(
-                    context,
-                    'minimalist',
-                  ),
-                  groupValue: _viewModeIndex,
-                  value: ViewMode.minimalist,
-                  onChanged: (value) => _changeViewMode(context, value),
-                ),
-                RadioCell<ViewMode>(
-                  title: FlutterI18n.translate(
-                    context,
-                    'with_detail',
-                  ),
-                  groupValue: _viewModeIndex,
-                  value: ViewMode.withDetail,
-                  onChanged: (value) => _changeViewMode(context, value),
-                ),
-              ],
-            ),
-          ),
-          Separator.divider(indent: 72),
+          // ListCell.icon(
+          //   icon: Icons.chrome_reader_mode,
+          //   title: FlutterI18n.translate(
+          //     context,
+          //     'screen.settings.browser.title',
+          //   ),
+          //   subtitle: FlutterI18n.translate(
+          //     context,
+          //     'screen.settings.browser.body',
+          //   ),
+          //   onTap: () => showBottomRoundDialog(
+          //     context: context,
+          //     title: FlutterI18n.translate(
+          //       context,
+          //       'screen.settings.browser.title',
+          //     ),
+          //     children: <Widget>[
+          //       RadioCell<ViewMode>(
+          //         title: FlutterI18n.translate(
+          //           context,
+          //           'title_only',
+          //         ),
+          //         groupValue: _viewModeIndex,
+          //         value: ViewMode.titleOnly,
+          //         onChanged: (value) => _changeViewMode(context, value),
+          //       ),
+          //       RadioCell<ViewMode>(
+          //         title: FlutterI18n.translate(
+          //           context,
+          //           'minimalist',
+          //         ),
+          //         groupValue: _viewModeIndex,
+          //         value: ViewMode.minimalist,
+          //         onChanged: (value) => _changeViewMode(context, value),
+          //       ),
+          //       RadioCell<ViewMode>(
+          //         title: FlutterI18n.translate(
+          //           context,
+          //           'with_detail',
+          //         ),
+          //         groupValue: _viewModeIndex,
+          //         value: ViewMode.withDetail,
+          //         onChanged: (value) => _changeViewMode(context, value),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // Separator.divider(indent: 72),
         ],
       ),
     );
