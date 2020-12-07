@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hknews_repository/hknews_repository.dart';
-import 'package:formz/formz.dart';
 
 import '../../blocs/blocs.dart';
 import '../../extensions/extensions.dart';
@@ -12,11 +11,8 @@ class CommentReplyScreen extends StatefulWidget {
   static Route route(BuildContext context, Item item) {
     return MaterialPageRoute<void>(
       fullscreenDialog: true,
-      builder: (_) => BlocProvider.value(
-        value: BlocProvider.of<StoryCubit>(context),
-        child: CommentReplyScreen(
-          parentItem: item,
-        ),
+      builder: (_) => CommentReplyScreen(
+        parentItem: item,
       ),
     );
   }

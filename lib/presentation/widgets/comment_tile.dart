@@ -34,7 +34,7 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
   void initState() {
     this.isCollapsed = widget.isCollapsed;
     if (!isCollapsed && widget.item.kids.isNotEmpty) {
-      BlocProvider.of<CommentCubit>(context).getComments(widget.item);
+      BlocProvider.of<CommentsCubit>(context).getComments(widget.item.id);
     }
     super.initState();
   }
@@ -93,7 +93,7 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
               (!isCollapsed &&
                       widget.requestChildren &&
                       widget.item.kids.isNotEmpty)
-                  ? BlocBuilder<CommentCubit, NetworkState<List<Item>>>(
+                  ? BlocBuilder<CommentsCubit, NetworkState<List<Item>>>(
                       builder: (context, state) {
                         return (state.isLoading)
                             ? LoadingItem(count: 2)
@@ -119,8 +119,8 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
   }
 
   Widget _buildChildCommentTile(BuildContext context, Item item) {
-    return BlocProvider<CommentCubit>(
-      create: (context) => CommentCubit(
+    return BlocProvider<CommentsCubit>(
+      create: (context) => CommentsCubit(
         RepositoryProvider.of<StoriesRepository>(context),
       ),
       child: CommentTile(

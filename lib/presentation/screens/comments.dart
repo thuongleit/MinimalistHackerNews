@@ -29,9 +29,7 @@ class CommentsScreen extends StatefulWidget {
 }
 
 class _CommentsScreenState extends State<CommentsScreen> {
-  final collapsed = Set();
   ScrollController _scrollController;
-  int dataSize;
   Item item;
 
   bool _showFab;
@@ -41,7 +39,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
     _scrollController = ScrollController();
     item = widget.item;
     context.read<StoryCubit>().getStory(item.id);
-    dataSize = 0;
     _showFab = true;
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection ==
@@ -128,7 +125,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) =>
                     _buildCommentRows(context, state.data.kids, index),
-                childCount: (dataSize = state.data?.kids?.length ?? 0),
+                childCount: (state.data?.kids?.length ?? 0),
               ),
             ),
           ),
@@ -166,8 +163,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
 
   Widget _buildCommentRow(BuildContext context, Item commentItem) {
-    return BlocProvider<CommentCubit>(
-      create: (context) => CommentCubit(
+    return BlocProvider<CommentsCubit>(
+      create: (context) => CommentsCubit(
         RepositoryProvider.of<StoriesRepository>(context),
       ),
       child: CommentTile(

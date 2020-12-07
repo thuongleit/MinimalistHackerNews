@@ -4,31 +4,32 @@ import 'package:hknews_repository/hknews_repository.dart';
 
 import '../network/network_cubit.dart';
 
-class CommentCubit extends NetworkCubit<List<Item>> {
+class CommentsCubit extends NetworkCubit<List<Item>> {
   final StoriesRepository _repository;
 
-  Item _item;
+  int _itemId;
 
-  CommentCubit(this._repository)
-      : assert(_repository != null),
+  CommentsCubit(this._repository)
+    : assert(_repository != null),
         super();
 
-  Future<void> getComments(Item item) async {
-    this._item = item;
+  Future<void> getComments(int itemId) async {
+    this._itemId = itemId;
 
     emit(NetworkState.loading());
-    await _getComments(item);
+    await _getComments(itemId);
   }
 
   @override
-  Future<void> refresh() => _getComments(_item);
+  Future<void> refresh() => _getComments(_itemId);
 
-  Future<void> _getComments(Item item) async {
+  Future<void> _getComments(int itemId) async {
     try {
-      final stream = _repository.getComments(item);
+      final latestItem = await _repository.getItem(_itemId);
+      final itemStream = _repository.getComments(latestItem);
       emit(
         NetworkState.success(
-          await stream
+          await itemStream
               .where((e) => !(e.deleted && e.dead) && e.text != null)
               .toList(),
         ),
