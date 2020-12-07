@@ -2,6 +2,7 @@ import 'package:big_tip/big_tip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,7 @@ import '../widgets/widgets.dart';
 import '../../utils/menu.dart';
 import '../../utils/url_util.dart';
 import '../../extensions/extensions.dart';
+import 'screens.dart';
 
 class SavedStoriesScreen extends StatelessWidget {
   @override
@@ -42,17 +44,19 @@ class SavedStoriesScreen extends StatelessWidget {
                 ),
               )
             : Scaffold(
-                body: SliverPage<SavedStoriesCubit>.display(
-                  context: context,
-                  controller: null,
-                  title: screenTitle,
-                  popupMenu: Menu.home,
-                  enablePullToRefresh: false,
-                  body: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) =>
-                          _buildStoryRow(context, state.data[index], index),
-                      childCount: state.data?.length ?? 0,
+                body: UserActionListener(
+                  child: SliverPage<SavedStoriesCubit>.display(
+                    context: context,
+                    controller: null,
+                    title: screenTitle,
+                    popupMenu: Menu.home,
+                    enablePullToRefresh: false,
+                    body: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) =>
+                            _buildStoryRow(context, state.data[index], index),
+                        childCount: state.data?.length ?? 0,
+                      ),
                     ),
                   ),
                 ),
@@ -63,45 +67,41 @@ class SavedStoriesScreen extends StatelessWidget {
 
   Widget _buildStoryRow(BuildContext context, Item item, int index) {
     final viewMode = context.watch<ViewModeCubit>().state;
-    return Dismissible(
+    return Slidable(
       key: ValueKey(item.id),
-      background: Container(
-        color: Colors.red,
-        padding: EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            Center(
-              child: Text(
-                FlutterI18n.translate(context, 'app.action.delete'),
-                style: TextStyle(
-                    color: Colors.black54, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Flexible(
-              child: Container(),
-            ),
-          ],
+      closeOnScroll: true,
+      actionPane: SlidableScrollActionPane(),
+      actions: <Widget>[
+        IconSlideAction(
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: () =>
+              context.read<UserActionBloc>().add(UserUnSaveStoryRequested(item)),
         ),
+      ],
+      secondaryActions: [
+        IconSlideAction(
+          color: Colors.green[700],
+          icon: Icons.comment,
+          onTap: () => _goToComment(context, item),
+        ),
+      ],
+      dismissal: SlidableDismissal(
+        closeOnCanceled: true,
+        dismissThresholds: {
+          SlideActionType.primary: 0.2,
+          SlideActionType.secondary: 0.2,
+        },
+        child: SlidableDrawerDismissal(),
+        onWillDismiss: (actionType) {
+          if (actionType == SlideActionType.primary) {
+            context.read<UserActionBloc>().add(UserUnSaveStoryRequested(item));
+          } else {
+            _goToComment(context, item);
+          }
+          return false;
+        },
       ),
-      onDismissed: (direction) {
-        context.read<UserActionBloc>().add(UserUnSaveStoryRequested(item));
-        Scaffold.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(
-                FlutterI18n.translate(
-                    context, 'screen.saved_stories.story_unsaved'),
-              ),
-              action: SnackBarAction(
-                label: FlutterI18n.translate(context, 'app.action.undo'),
-                onPressed: () => context
-                    .read<UserActionBloc>()
-                    .add(UserSaveStoryRequested(item)),
-              ),
-            ),
-          );
-      },
       child: InkWell(
         child: (viewMode == ViewMode.titleOnly)
             ? TitleOnlyStoryTile(item)
@@ -120,5 +120,12 @@ class SavedStoriesScreen extends StatelessWidget {
       UrlUtils.openWebBrowser(context, item.url);
     }
     context.read<UserActionBloc>().add(UserUpdateVisitRequested(item));
+  }
+
+  void _goToComment(BuildContext context, Item item) {
+    Navigator.push(
+      context,
+      CommentsScreen.route(context, item),
+    );
   }
 }

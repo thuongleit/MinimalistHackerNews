@@ -13,8 +13,9 @@ import 'screens.dart';
 class CommentsScreen extends StatefulWidget {
   static Route route(BuildContext context, Item item) {
     return MaterialPageRoute<void>(
-      builder: (_) => BlocProvider.value(
-        value: BlocProvider.of<StoryCubit>(context),
+      builder: (_) => BlocProvider<StoryCubit>(
+        create: (context) =>
+            StoryCubit(RepositoryProvider.of<StoriesRepository>(context)),
         child: CommentsScreen(item),
       ),
     );
