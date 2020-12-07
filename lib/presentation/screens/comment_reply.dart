@@ -45,7 +45,7 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
       ),
       child: SimplePage(
         title: _isComment() ? 'Reply' : 'Add comment',
-        body: UserActionListener(
+        body: UserActionsListener(
           callback: (result) {
             if (result.success) {
               Navigator.of(context).pop();

@@ -44,7 +44,7 @@ class SavedStoriesScreen extends StatelessWidget {
                 ),
               )
             : Scaffold(
-                body: UserActionListener(
+                body: UserActionsListener(
                   child: SliverPage<SavedStoriesCubit>.display(
                     context: context,
                     controller: null,

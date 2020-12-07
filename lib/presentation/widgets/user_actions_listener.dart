@@ -8,8 +8,8 @@ import '../../blocs/blocs.dart';
 import '../../const.dart';
 import '../../utils/utils.dart' as utils;
 
-class UserActionListener extends StatelessWidget {
-  const UserActionListener({
+class UserActionsListener extends StatelessWidget {
+  const UserActionsListener({
     this.child,
     this.callback,
     Key key,
