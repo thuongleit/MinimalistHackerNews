@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
 
@@ -16,7 +18,7 @@ abstract class StoriesRepository {
 
   Future<Result> unsave(Item item);
 
-  Future<List<Item>> getSavedStories();
+  Future<List<Item>> getSavedItems();
 
   Future<Result> updateVisited(Item item);
 
@@ -87,15 +89,18 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<List<Item>> getSavedStories() async {
+  Future<List<Item>> getSavedItems() async {
     // Try to load the data from database
     try {
-      var stories = await _localSource.getItems();
-      return stories.map((storyEntity) {
-        var story = storyEntity.toModel();
-        _itemsCache[storyEntity.id] = Pair(story, false);
-        return story;
-      }).toList();
+      final itemsInDb = await _localSource.getItems();
+      return await Future.wait(
+        itemsInDb.map((element) async {
+          // final itemModel = itemEntity.toModel();
+          final latestItem = await _apiClient.getItem(element.id);
+          _itemsCache[latestItem.id] = Pair(latestItem, true);
+          return latestItem;
+        }).toList(),
+      );
     } on Exception catch (e) {
       throw e;
     }

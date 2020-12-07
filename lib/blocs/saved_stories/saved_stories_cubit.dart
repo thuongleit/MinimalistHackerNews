@@ -12,7 +12,7 @@ class SavedStoriesCubit extends NetworkCubit<List<Item>> {
   Future<void> getSavedStories() async {
     emit(NetworkState.loading());
     try {
-      final stories = await _repository.getSavedStories();
+      final stories = await _repository.getSavedItems();
       emit(NetworkState.success(stories));
     } on Exception catch (e) {
       emit(NetworkState.failure(error: e));
