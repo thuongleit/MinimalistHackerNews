@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -23,48 +24,51 @@ class SavedStoriesScreen extends StatelessWidget {
           SavedStoriesCubit(RepositoryProvider.of<StoriesRepository>(context))
             ..getSavedStories(),
       child: BlocBuilder<SavedStoriesCubit, NetworkState>(
-        builder: (context, state) => (state.isSuccess && state.data.isEmpty)
-            ? SimplePage(
-                title: screenTitle,
-                body: BigTip(
-                  title: Text(
-                    FlutterI18n.translate(context,
-                        'screen.saved_stories.hint_message.no_saved_stories_title'),
-                  ),
-                  subtitle: Text(
-                    FlutterI18n.translate(context,
-                        'screen.saved_stories.hint_message.swipe_to_save'),
-                  ),
-                  action: Text(
-                    FlutterI18n.translate(
-                        context, 'screen.saved_stories.hint_message.action'),
-                  ),
-                  actionCallback: () => Navigator.pop(context),
-                  child: Icon(Icons.swipe),
+        builder: (context, state) => Scaffold(
+          body: UserActionsListener(
+            child: SliverPage<SavedStoriesCubit>.display(
+              context: context,
+              controller: null,
+              title: screenTitle,
+              popupMenu: Menu.home,
+              enablePullToRefresh: false,
+              viewIfEmptyData: BigTip(
+                title: Text(
+                  FlutterI18n.translate(context,
+                      'screen.saved_stories.hint_message.no_saved_stories_title'),
                 ),
-              )
-            : Scaffold(
-                body: UserActionsListener(
-                  child: SliverPage<SavedStoriesCubit>.display(
-                    context: context,
-                    controller: null,
-                    title: screenTitle,
-                    popupMenu: Menu.home,
-                    enablePullToRefresh: false,
-                    loading: ListView.builder(
-                      itemBuilder: (context, index) => LoadingItem(count: 2),
-                      itemCount: 20,
-                    ),
-                    body: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) =>
-                            _buildStoryRow(context, state.data[index], index),
-                        childCount: state.data?.length ?? 0,
+                subtitle: Text(
+                  FlutterI18n.translate(context,
+                      'screen.saved_stories.hint_message.swipe_to_save'),
+                ),
+                action: Text(
+                  FlutterI18n.translate(
+                          context, 'screen.saved_stories.hint_message.action')
+                      .toUpperCase(),
+                  style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
+                      .subtitle1
+                      .copyWith(
+                        color: Theme.of(context).accentColor,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ),
+                ),
+                actionCallback: () => Navigator.pop(context),
+                child: Icon(Icons.swipe),
+              ),
+              loading: ListView.builder(
+                itemBuilder: (context, index) => LoadingItem(count: 2),
+                itemCount: 20,
+              ),
+              body: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) =>
+                      _buildStoryRow(context, state.data[index], index),
+                  childCount: state.data?.length ?? 0,
                 ),
               ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -79,8 +83,9 @@ class SavedStoriesScreen extends StatelessWidget {
         IconSlideAction(
           color: Colors.red,
           icon: Icons.delete,
-          onTap: () =>
-              context.read<UserActionBloc>().add(UserUnSaveStoryRequested(item)),
+          onTap: () => context
+              .read<UserActionBloc>()
+              .add(UserUnSaveStoryRequested(item)),
         ),
       ],
       secondaryActions: [
