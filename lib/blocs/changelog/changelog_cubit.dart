@@ -1,7 +1,7 @@
-import 'package:hacker_news/const.dart';
 import 'package:http/http.dart' as http;
 
 import '../../blocs/network/network_cubit.dart';
+import '../../const.dart';
 
 class ChangelogCubit extends NetworkCubit<String> {
   final http.Client _client;

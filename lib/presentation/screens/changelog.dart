@@ -4,9 +4,9 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hacker_news/blocs/blocs.dart';
 
 import '../widgets/widgets.dart';
+import '../../blocs/blocs.dart';
 
 /// This screen loads the [CHANGELOG.md] file from GitHub,
 /// and displays its content, using the Markdown plugin.

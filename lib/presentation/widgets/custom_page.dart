@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:hacker_news/blocs/blocs.dart';
 
 import '../../presentation/widgets/reloadable_page.dart';
+import '../../blocs/blocs.dart';
 
 /// This widget is used for all tabs inside the app.
 /// Its main features are connection error handling,

@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
-import 'package:hacker_news/blocs/authentication/models/password.dart';
-import 'package:hacker_news/blocs/authentication/models/username.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 import 'package:meta/meta.dart';
+
+import '../../../blocs/authentication/models/password.dart';
+import '../../../blocs/authentication/models/username.dart';
 
 part 'login_event.dart';
 

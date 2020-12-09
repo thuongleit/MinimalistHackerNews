@@ -1,4 +1,4 @@
-name: hacker_news
+name: hknews
 description: A new Flutter application.
 
 version: 1.2.1+6
@@ -43,11 +43,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.8.1
+  flutter_native_splash: ^0.1.9
 
 flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon/launcher_icon.png"
+  adaptive_icon_background: "#ffffff"
+
+flutter_native_splash:
+  image: "assets/icon/splash_icon.png"
+  color: "#FB4E06"
 
 flutter:
   assets:
