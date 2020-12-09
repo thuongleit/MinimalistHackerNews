@@ -47,6 +47,10 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
         actions: Menu.home_actions
             .map((action) => _buildMenuAction(context, action))
             .toList(),
+        loading: ListView.builder(
+          itemBuilder: (context, index) => LoadingItem(count: 2),
+          itemCount: 20,
+        ),
         body: SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) => _buildStoryRows(context, state.data, index),

@@ -17,8 +17,9 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
   final Map<String, dynamic> popupMenu;
   final bool enablePullToRefresh;
   final Widget customAppBar;
-  final Widget viewIfEmptyData;
-  final Function dataEmptyCondition;
+  final Widget empty;
+  final Widget loading;
+  final Widget error;
 
   const SliverPage({
     @required this.context,
@@ -29,8 +30,9 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
     this.actions,
     this.popupMenu,
     this.enablePullToRefresh,
-    this.viewIfEmptyData,
-    this.dataEmptyCondition,
+    this.empty,
+    this.loading,
+    this.error,
   });
 
   factory SliverPage.display({
@@ -44,6 +46,8 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
     bool enablePullToRefresh = true,
     Widget viewIfEmptyData,
     Function dataEmptyCondition,
+    Widget loading,
+    Widget error,
   }) {
     return SliverPage(
       context: context,
@@ -54,8 +58,9 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
       popupMenu: popupMenu,
       customAppBar: customAppBar,
       enablePullToRefresh: enablePullToRefresh,
-      viewIfEmptyData: viewIfEmptyData,
-      dataEmptyCondition: dataEmptyCondition,
+      empty: viewIfEmptyData,
+      loading: loading,
+      error: error,
     );
   }
 
@@ -102,21 +107,21 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
                 ],
               ),
         if (state.isInitial)
-          Container()
+          SliverFillRemaining(child: Container())
         else if (state.isLoading)
-          SliverFillRemaining(child: _loadingIndicator)
+          SliverFillRemaining(child: loading ?? _loadingIndicator)
         else if (state.isFailure)
           SliverFillRemaining(
-            child: ConnectionError(
-              onRefresh: () => context.read<C>().refresh(),
-            ),
+            child: error ??
+                ConnectionError(
+                  onRefresh: () => context.read<C>().refresh(),
+                ),
           )
         else
-          (dataEmptyCondition?.call() == true) || _isDataEmpty(state)
+          _isDataEmpty(state)
               ? SliverFillRemaining(
-                  child: (viewIfEmptyData != null)
-                      ? viewIfEmptyData
-                      : Center(child: Text('No Data')),
+                  child:
+                      (empty != null) ? empty : Center(child: Text('No Data')),
                 )
               : body,
       ],

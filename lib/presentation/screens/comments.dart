@@ -122,6 +122,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
               ),
               child: const Icon(Icons.comment_bank_outlined),
             ),
+            loading: ListView.builder(
+              itemBuilder: (context, index) => LoadingItem(count: 2),
+              itemCount: 20,
+            ),
             body: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) =>
