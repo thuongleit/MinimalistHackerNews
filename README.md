@@ -1,3 +1,5 @@
+![Flutter CI](https://github.com/thuongleit/MinimalistHackerNews/workflows/Flutter%20CI/badge.svg?branch=master)
+
 # hacker_news
 
 A new Flutter application.
