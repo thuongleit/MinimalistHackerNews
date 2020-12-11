@@ -17,6 +17,7 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
   final Map<String, dynamic> popupMenu;
   final bool enablePullToRefresh;
   final Widget customAppBar;
+  final Function dataEmptyCondition;
   final Widget empty;
   final Widget loading;
   final Widget error;
@@ -31,6 +32,7 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
     this.popupMenu,
     this.enablePullToRefresh,
     this.empty,
+    this.dataEmptyCondition,
     this.loading,
     this.error,
   });
@@ -59,6 +61,7 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
       customAppBar: customAppBar,
       enablePullToRefresh: enablePullToRefresh,
       empty: viewIfEmptyData,
+      dataEmptyCondition: dataEmptyCondition,
       loading: loading,
       error: error,
     );
@@ -118,7 +121,7 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
                 ),
           )
         else
-          _isDataEmpty(state)
+            (dataEmptyCondition?.call() == true) || _isDataEmpty(state)
               ? SliverFillRemaining(
                   child:
                       (empty != null) ? empty : Center(child: Text('No Data')),
