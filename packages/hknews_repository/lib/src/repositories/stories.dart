@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
 

@@ -133,14 +133,6 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
   }
 
   bool _isComment() => (widget.parentItem.type == ItemType.comment);
-
-  Widget _buildMenuAction(BuildContext context, Map<String, Object> action) {
-    return IconButton(
-      tooltip: action['title'],
-      onPressed: () => Navigator.pushNamed(context, action['route']),
-      icon: Icon(action['icon']),
-    );
-  }
 }
 
 class _UserInputField extends StatefulWidget {

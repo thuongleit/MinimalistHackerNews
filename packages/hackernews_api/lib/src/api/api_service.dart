@@ -155,19 +155,6 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
     }
   }
 
-  Future<String> _post(Request request) async {
-    final response = await _client.post(request.url, body: request.body);
-    print('[POST] ${request.url}:${request.body}');
-    if (response.statusCode == HttpStatus.ok) {
-      return response.body;
-    } else {
-      throw HackerNewsApiException(
-        errorCode: response.statusCode,
-        message: response.body,
-      );
-    }
-  }
-
   Response _handlePostResponse(http.Response response) {
     print('${response.statusCode} - ${response.body}');
 

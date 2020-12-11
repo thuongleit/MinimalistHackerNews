@@ -19,14 +19,14 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   AppTheme _themeIndex;
   Browser _browserIndex;
-  ViewMode _viewModeIndex;
+  // ViewMode _viewModeIndex;
 
   @override
   void initState() {
     // Get the app theme & browser chooser from the 'AppModel' model.
     _themeIndex = context.read<ThemeCubit>().state;
     _browserIndex = context.read<BrowserCubit>().state;
-    _viewModeIndex = context.read<ViewModeCubit>().state;
+    // _viewModeIndex = context.read<ViewModeCubit>().state;
 
     super.initState();
   }
@@ -207,9 +207,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.of(context).pop();
   }
 
-  void _changeViewMode(BuildContext context, ViewMode mode) {
-    context.read<ViewModeCubit>().changeViewMode(mode);
-    setState(() => _viewModeIndex = mode);
-    Navigator.of(context).pop();
-  }
+  // void _changeViewMode(BuildContext context, ViewMode mode) {
+  //   context.read<ViewModeCubit>().changeViewMode(mode);
+  //   setState(() => _viewModeIndex = mode);
+  //   Navigator.of(context).pop();
+  // }
 }

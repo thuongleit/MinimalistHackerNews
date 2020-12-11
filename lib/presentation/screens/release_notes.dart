@@ -21,7 +21,9 @@ class ReleaseNotesScreen extends StatelessWidget {
           data: (state.data as String) ?? '',
           onTapLink: (_, url, __) => FlutterWebBrowser.openWebPage(
             url: url,
-            androidToolbarColor: Theme.of(context).primaryColor,
+            customTabsOptions: CustomTabsOptions(
+              toolbarColor: Theme.of(context).primaryColor,
+            ),
           ),
           styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
             blockSpacing: 10,
