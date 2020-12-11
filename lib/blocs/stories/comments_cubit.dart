@@ -30,7 +30,7 @@ class CommentsCubit extends NetworkCubit<List<Item>> {
       emit(
         NetworkState.success(
           await itemStream
-              .where((e) => !(e.deleted && e.dead) && e.text != null)
+              .where((e) => !e.deleted && e.text != null)
               .toList(),
         ),
       );

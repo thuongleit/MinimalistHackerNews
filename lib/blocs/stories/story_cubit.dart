@@ -28,7 +28,11 @@ class StoryCubit extends NetworkCubit<Item> {
       final story =
           await _repository.getItem(storyId, previewContent: contentPreview);
 
-      emit(NetworkState.success(story));
+      if (story.deleted) {
+        emit(NetworkState.failure());
+      } else {
+        emit(NetworkState.success(story));
+      }
     } on Exception catch (e) {
       emit(NetworkState.failure(error: e));
     }
