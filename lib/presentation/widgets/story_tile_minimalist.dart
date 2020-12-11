@@ -10,7 +10,7 @@ import 'up_vote.dart';
 
 class MinimalistStoryTile extends StatelessWidget {
   final Item item;
-  final bool voteable; 
+  final bool voteable;
 
   const MinimalistStoryTile(this.item, {Key key, this.voteable = true})
       : assert(item != null),
@@ -34,8 +34,10 @@ class MinimalistStoryTile extends StatelessWidget {
                 ItemDescriptionText('${item.score}'),
               ],
             ),
-            onTap: voteable ? () => BlocProvider.of<UserActionBloc>(context)
-                .add(UserVoteRequested(item.id)) : null,
+            onTap: voteable
+                ? () => BlocProvider.of<UserActionBloc>(context)
+                    .add(UserVoteRequested(item.id))
+                : null,
           ),
           const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
           Flexible(

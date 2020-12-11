@@ -54,8 +54,7 @@ class ReloadablePage<C extends NetworkCubit> extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context, NetworkState<dynamic> state) {
-    Scaffold.of(context)
-      ..hideCurrentSnackBar();
+    Scaffold.of(context)..hideCurrentSnackBar();
     if (state.isInitial) {
       return Container();
     } else if (state.isLoading) {

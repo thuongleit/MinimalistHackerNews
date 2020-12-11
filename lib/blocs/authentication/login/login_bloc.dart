@@ -77,9 +77,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
       } on SocketException {
         yield state.copyWith(
-          status: FormzStatus.submissionFailure,
-          message: 'Action failed! No Internet connection!'
-        );
+            status: FormzStatus.submissionFailure,
+            message: 'Action failed! No Internet connection!');
       } on Exception catch (e) {
         yield state.copyWith(
           status: FormzStatus.submissionFailure,

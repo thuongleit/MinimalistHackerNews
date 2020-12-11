@@ -18,5 +18,4 @@ class Const {
 
   static final generalErrorMessage =
       'Oops, something went wrong. Please try again later.';
-
 }

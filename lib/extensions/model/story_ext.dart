@@ -17,7 +17,8 @@ extension ItemX on Item {
     return '${timeago.format(date)}';
   }
 
-  String get textAsHtml => (text != null) ? htmlparser.parse(text).body.text : '';
+  String get textAsHtml =>
+      (text != null) ? htmlparser.parse(text).body.text : '';
 
   String get description1 {
     return "by $by ${(url != null && url.isNotEmpty) ? '(' + UrlUtils.getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription1 : ''}";

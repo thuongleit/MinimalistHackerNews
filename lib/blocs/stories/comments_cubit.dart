@@ -10,7 +10,7 @@ class CommentsCubit extends NetworkCubit<List<Item>> {
   int _itemId;
 
   CommentsCubit(this._repository)
-    : assert(_repository != null),
+      : assert(_repository != null),
         super();
 
   Future<void> getComments(int itemId) async {
@@ -29,9 +29,7 @@ class CommentsCubit extends NetworkCubit<List<Item>> {
       final itemStream = _repository.getComments(latestItem);
       emit(
         NetworkState.success(
-          await itemStream
-              .where((e) => !e.deleted && e.text != null)
-              .toList(),
+          await itemStream.where((e) => !e.deleted && e.text != null).toList(),
         ),
       );
     } on Exception catch (e) {

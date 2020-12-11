@@ -11,12 +11,12 @@ import '../../blocs/blocs.dart';
 /// This screen loads the [RELEASE_NOTES.md] file from GitHub,
 /// and displays its content, using the Markdown plugin.
 class ReleaseNotesScreen extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChangelogCubit, NetworkState>(
       builder: (context, state) => ReloadablePage<ChangelogCubit>(
-        title: FlutterI18n.translate(context, 'screen.about.version.release_notes'),
+        title: FlutterI18n.translate(
+            context, 'screen.about.version.release_notes'),
         body: Markdown(
           data: (state.data as String) ?? '',
           onTapLink: (_, url, __) => FlutterWebBrowser.openWebPage(

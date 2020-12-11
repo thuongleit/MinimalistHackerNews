@@ -34,8 +34,10 @@ class ContentPreviewStoryTile extends StatelessWidget {
                 ItemDescriptionText('${item.score}'),
               ],
             ),
-            onTap: voteable ? () => BlocProvider.of<UserActionBloc>(context)
-                .add(UserVoteRequested(item.id)) : null,
+            onTap: voteable
+                ? () => BlocProvider.of<UserActionBloc>(context)
+                    .add(UserVoteRequested(item.id))
+                : null,
           ),
           const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
           Flexible(

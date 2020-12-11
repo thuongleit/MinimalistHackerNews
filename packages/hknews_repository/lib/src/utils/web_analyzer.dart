@@ -45,7 +45,7 @@ class WebVideoInfo extends WebImageInfo {
 class WebAnalyzer {
   static final Map<String, InfoBase> _map = {};
   static final RegExp _bodyReg =
-  RegExp(r"<body[^>]*>([\s\S]*?)<\/body>", caseSensitive: false);
+      RegExp(r"<body[^>]*>([\s\S]*?)<\/body>", caseSensitive: false);
   static final RegExp _htmlReg = RegExp(
       r"(<head[^>]*>([\s\S]*?)<\/head>)|(<script[^>]*>([\s\S]*?)<\/script>)|(<style[^>]*>([\s\S]*?)<\/style>)|(<[^>]+>)|(<link[^>]*>([\s\S]*?)<\/link>)|(<[^>]+>)",
       caseSensitive: false);
@@ -54,7 +54,7 @@ class WebAnalyzer {
       caseSensitive: false,
       dotAll: true);
   static final RegExp _titleReg =
-  RegExp("(title|icon|description|image)", caseSensitive: false);
+      RegExp("(title|icon|description|image)", caseSensitive: false);
   static final RegExp _lineReg = RegExp(r"[\n\r]|&nbsp;|&gt;");
   static final RegExp _spaceReg = RegExp(r"\s+");
 
@@ -79,8 +79,8 @@ class WebAnalyzer {
   /// return [InfoBase]
   static Future<InfoBase> getInfo(String url,
       {Duration cache = const Duration(hours: 24),
-        bool multimedia = true,
-        bool useMultithread = false}) async {
+      bool multimedia = true,
+      bool useMultithread = false}) async {
     // final start = DateTime.now();
 
     InfoBase info = getInfoFromCache(url);
@@ -176,7 +176,7 @@ class WebAnalyzer {
 
   static final Map<String, String> _cookies = {
     "weibo.com":
-    "YF-Page-G0=02467fca7cf40a590c28b8459d93fb95|1596707497|1596707497; SUB=_2AkMod12Af8NxqwJRmf8WxGjna49_ygnEieKeK6xbJRMxHRl-yT9kqlcftRB6A_dzb7xq29tqJiOUtDsy806R_ZoEGgwS; SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9W59fYdi4BXCzHNAH7GabuIJ"
+        "YF-Page-G0=02467fca7cf40a590c28b8459d93fb95|1596707497|1596707497; SUB=_2AkMod12Af8NxqwJRmf8WxGjna49_ygnEieKeK6xbJRMxHRl-yT9kqlcftRB6A_dzb7xq29tqJiOUtDsy806R_ZoEGgwS; SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9W59fYdi4BXCzHNAH7GabuIJ"
   };
 
   static bool _certificateCheck(X509Certificate cert, String host, int port) =>
@@ -272,7 +272,7 @@ class WebAnalyzer {
 
       String title = _analyzeTitle(document);
       String description =
-      _analyzeDescription(document, html)?.replaceAll(r"\x0a", " ");
+          _analyzeDescription(document, html)?.replaceAll(r"\x0a", " ");
       if (!isNotEmpty(title)) {
         title = description;
         description = null;

@@ -121,7 +121,7 @@ class SliverPage<C extends NetworkCubit> extends StatelessWidget {
                 ),
           )
         else
-            (dataEmptyCondition?.call() == true) || _isDataEmpty(state)
+          (dataEmptyCondition?.call() == true) || _isDataEmpty(state)
               ? SliverFillRemaining(
                   child:
                       (empty != null) ? empty : Center(child: Text('No Data')),

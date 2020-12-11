@@ -195,7 +195,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // Updates app's theme
   void _changeTheme(BuildContext context, AppTheme theme) {
-   context.read<ThemeCubit>().updateTheme(theme);
+    context.read<ThemeCubit>().updateTheme(theme);
     setState(() => _themeIndex = theme);
     Navigator.of(context).pop();
   }
