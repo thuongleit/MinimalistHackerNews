@@ -45,6 +45,12 @@ jobs:
     # Run widget tests for our flutter project.
     - run: flutter test
 
+    # Create google-services.json file
+    - name: Create google-services.json file
+      run: echo $GOOGLE_SERVICES_JSON > android/app/google-services.json
+      env:
+        GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        
     # Create Android Signing key
     - name: Create Android signing key
       run: echo $SIGNING_KEY | base64 -d > android/app/key.jks
