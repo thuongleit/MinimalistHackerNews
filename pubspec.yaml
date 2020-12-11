@@ -1,7 +1,7 @@
 name: hknews
-description: A new Flutter application.
+description: Yet another minimalist Hacker News Reader
 
-version: 1.2.1+6
+version: 2.0.0+7
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
