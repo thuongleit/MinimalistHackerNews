@@ -54,6 +54,7 @@ jobs:
         KEY_PASSWORD: ${{ secrets.HKNEWS_KEY_PASSWORD }}
         ALIAS: ${{ secrets.HKNEWS_KEY_ALIAS }}
         KEY_PATH: key.jks
+      continue-on-error: true
     
     # Upload generated apk to the artifacts.
     - uses: actions/upload-artifact@v2
