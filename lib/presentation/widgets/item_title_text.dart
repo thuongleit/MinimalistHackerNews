@@ -7,9 +7,7 @@ class ItemTileText extends Text {
         super(
           item.title ?? '',
           key: key,
-          style: TextStyle(
-              fontSize: 13.0,
-              color: item.visited ? Colors.grey[600] : Colors.black),
+          style: TextStyle(fontSize: 13.0),
           textAlign: TextAlign.justify,
           overflow: TextOverflow.ellipsis,
           maxLines: maxLines,
