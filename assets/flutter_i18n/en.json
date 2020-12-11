@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "Simple Hacker News",
+    "title": "Minimalist Hacker News",
     "menu": {
       "settings": "Settings",
       "about": "About",
@@ -57,7 +57,7 @@
       "version": {
         "title": "Version {version}",
         "body": "Take a look at the new changes",
-        "changelog": "Changelog"
+        "release_notes": "Release Notes"
       },
       "author": {
         "title": "Created by {author}",
