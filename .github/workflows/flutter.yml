@@ -40,9 +40,20 @@ jobs:
     
     # Run widget tests for our flutter project.
     - run: flutter test
+
+    # Create Android Signing key
+    - name: Create Android signing key
+      run: echo $SIGNING_KEY | base64 -d > android/app/key.jks
+      env:
+        SIGNING_KEY: ${{ secrets.HKNEWS_SIGNING_KEY }}
     
-    # Build apks.
+    # Build and signed apks.
     - run: flutter build apk --split-per-abi
+      env:
+        KEY_STORE_PASSWORD: ${{ secrets.HKNEWS_KEY_STORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.HKNEWS_KEY_PASSWORD }}
+        ALIAS: ${{ secrets.HKNEWS_KEY_ALIAS }}
+        KEY_PATH: key.jks
     
     # Upload generated apk to the artifacts.
     - uses: actions/upload-artifact@v2
@@ -50,10 +61,15 @@ jobs:
         name: release-apk
         path: build/app/outputs/apk/release/
 
-    # Build appbundle
+    # Build and signed appbundle.
     - run: flutter build appbundle
+      env:
+        KEY_STORE_PASSWORD: ${{ secrets.HKNEWS_KEY_STORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.HKNEWS_KEY_PASSWORD }}
+        ALIAS: ${{ secrets.HKNEWS_KEY_ALIAS }}
+        KEY_PATH: key.jks
     
-    # Upload generated apk to the artifacts.
+    # Upload generated appbundle to the artifacts.
     - uses: actions/upload-artifact@v2
       with:
         name: release-appbundle
