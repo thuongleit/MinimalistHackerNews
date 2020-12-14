@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Applied bloc library (https://bloclibrary.dev) for state management.
 - Refactor app architecture and project structure.
 - New redesign app launcher icon.
+- Change target SDK to level 29.
 
 ### Fixed
 
