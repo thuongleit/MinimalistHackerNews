@@ -1,6 +1,7 @@
-[![build](https://github.com/thuongleit/MinimalistHackerNews/workflows/Flutter%20CI/badge.svg?branch=master)][Build Status]
+[![build](https://github.com/thuongleit/MinimalistHackerNews/workflows/build/badge.svg?branch=master)][Build Status]
+[![release](https://github.com/thuongleit/MinimalistHackerNews/workflows/release/badge.svg)][Release Status]
+[![release version](https://img.shields.io/github/v/release/thuongleit/MinimalistHackerNews?include_prereleases)][Release version]
 [![license](https://img.shields.io/github/license/thuongleit/MinimalistHackerNews)][License]
-[![release](https://img.shields.io/github/v/release/thuongleit/MinimalistHackerNews?include_prereleases)][Release version]
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/thuongleit/MinimalistHackerNews/master/screenshots/icon.png" width="200" alt="HKNews">
@@ -76,9 +77,10 @@ Issues and pull requests are always welcome.
 This project is distributed under the Apache License 2.0 as specified in [LICENSE].
 
 
-[Build Status]: https://github.com/thuongleit/MinimalistHackerNews/actions?query=workflow%3A%22Flutter+CI%22
-[License]: https://github.com/thuongleit/MinimalistHackerNews/blob/master/LICENSE
+[Build Status]: https://github.com/thuongleit/MinimalistHackerNews/actions?query=workflow%3Abuild
+[Release Status]: https://github.com/thuongleit/MinimalistHackerNews/actions?query=workflow%3Arelease
 [Release version]: https://github.com/thuongleit/MinimalistHackerNews/releases
+[License]: https://github.com/thuongleit/MinimalistHackerNews/blob/master/LICENSE
 [Changelog]: https://github.com/thuongleit/MinimalistHackerNews/blob/master/CHANGELOG.md
 [Play Store]: https://play.google.com/store/apps/details?id=vifi.services.hknews&referrer=utm_source%3Dgithub
 [Play Store Badge]: https://play.google.com/intl/en_us/badges/images/badge_new.png
