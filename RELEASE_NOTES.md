@@ -1,5 +1,7 @@
 # [Upcoming]
 
+- Release iOS app
+
 # [2.0.0] - November 14, 2020
 
 ## New features
