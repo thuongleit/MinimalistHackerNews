@@ -10,6 +10,8 @@ import '../result.dart';
 abstract class StoriesRepository {
   Future<List<int>> getItemIds(StoryType type);
 
+  Future<bool> hasItem(int itemId);
+
   Future<Item> getItem(int itemId, {bool previewContent = false});
 
   Future<Result> save(Item item);
@@ -44,6 +46,9 @@ class StoriesRepositoryImpl extends StoriesRepository {
 
     return _apiClient.getItemIds(type);
   }
+
+  @override
+  Future<bool> hasItem(int itemId) async => (_itemsCache[itemId].first != null);
 
   @override
   Future<Item> getItem(int itemId, {bool previewContent = false}) async {

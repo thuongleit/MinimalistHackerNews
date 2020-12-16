@@ -16,7 +16,9 @@ class StoryCubit extends NetworkCubit<Item> {
     this._storyId = storyId;
     this._contentPreview = contentPreview;
 
-    emit(NetworkState.loading());
+    if (!await _repository.hasItem(storyId)) {
+      emit(NetworkState.loading());
+    }
     await _getStory(storyId, contentPreview);
   }
 
