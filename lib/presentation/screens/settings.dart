@@ -19,14 +19,14 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   AppTheme _themeIndex;
   Browser _browserIndex;
-  // ViewMode _viewModeIndex;
+  ViewMode _viewModeIndex;
 
   @override
   void initState() {
     // Get the app theme & browser chooser from the 'AppModel' model.
     _themeIndex = context.read<ThemeCubit>().state;
     _browserIndex = context.read<BrowserCubit>().state;
-    // _viewModeIndex = context.read<ViewModeCubit>().state;
+    _viewModeIndex = context.read<ViewModeCubit>().state;
 
     super.initState();
   }
@@ -140,54 +140,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           Separator.divider(indent: 72),
-          // ListCell.icon(
-          //   icon: Icons.chrome_reader_mode,
-          //   title: FlutterI18n.translate(
-          //     context,
-          //     'screen.settings.browser.title',
-          //   ),
-          //   subtitle: FlutterI18n.translate(
-          //     context,
-          //     'screen.settings.browser.body',
-          //   ),
-          //   onTap: () => showBottomRoundDialog(
-          //     context: context,
-          //     title: FlutterI18n.translate(
-          //       context,
-          //       'screen.settings.browser.title',
-          //     ),
-          //     children: <Widget>[
-          //       RadioCell<ViewMode>(
-          //         title: FlutterI18n.translate(
-          //           context,
-          //           'title_only',
-          //         ),
-          //         groupValue: _viewModeIndex,
-          //         value: ViewMode.titleOnly,
-          //         onChanged: (value) => _changeViewMode(context, value),
-          //       ),
-          //       RadioCell<ViewMode>(
-          //         title: FlutterI18n.translate(
-          //           context,
-          //           'minimalist',
-          //         ),
-          //         groupValue: _viewModeIndex,
-          //         value: ViewMode.minimalist,
-          //         onChanged: (value) => _changeViewMode(context, value),
-          //       ),
-          //       RadioCell<ViewMode>(
-          //         title: FlutterI18n.translate(
-          //           context,
-          //           'with_detail',
-          //         ),
-          //         groupValue: _viewModeIndex,
-          //         value: ViewMode.withDetail,
-          //         onChanged: (value) => _changeViewMode(context, value),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // Separator.divider(indent: 72),
+          ListCell.icon(
+            icon: Icons.chrome_reader_mode,
+            title: FlutterI18n.translate(
+              context,
+              'screen.settings.browser.title',
+            ),
+            subtitle: FlutterI18n.translate(
+              context,
+              'screen.settings.browser.body',
+            ),
+            onTap: () => showBottomRoundDialog(
+              context: context,
+              title: FlutterI18n.translate(
+                context,
+                'screen.settings.browser.title',
+              ),
+              children: <Widget>[
+                RadioCell<ViewMode>(
+                  title: FlutterI18n.translate(
+                    context,
+                    'title_only',
+                  ),
+                  groupValue: _viewModeIndex,
+                  value: ViewMode.titleOnly,
+                  onChanged: (value) => _changeViewMode(context, value),
+                ),
+                RadioCell<ViewMode>(
+                  title: FlutterI18n.translate(
+                    context,
+                    'minimalist',
+                  ),
+                  groupValue: _viewModeIndex,
+                  value: ViewMode.minimalist,
+                  onChanged: (value) => _changeViewMode(context, value),
+                ),
+                RadioCell<ViewMode>(
+                  title: FlutterI18n.translate(
+                    context,
+                    'with_detail',
+                  ),
+                  groupValue: _viewModeIndex,
+                  value: ViewMode.withDetail,
+                  onChanged: (value) => _changeViewMode(context, value),
+                ),
+              ],
+            ),
+          ),
+          Separator.divider(indent: 72),
         ],
       ),
     );
@@ -207,9 +207,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.of(context).pop();
   }
 
-  // void _changeViewMode(BuildContext context, ViewMode mode) {
-  //   context.read<ViewModeCubit>().changeViewMode(mode);
-  //   setState(() => _viewModeIndex = mode);
-  //   Navigator.of(context).pop();
-  // }
+  void _changeViewMode(BuildContext context, ViewMode mode) {
+    context.read<ViewModeCubit>().changeViewMode(mode);
+    setState(() => _viewModeIndex = mode);
+    Navigator.of(context).pop();
+  }
 }
