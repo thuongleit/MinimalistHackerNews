@@ -4,6 +4,7 @@ export 'saved_stories/saved_stories_cubit.dart';
 export 'theme/theme_cubit.dart';
 export 'stories/stories_cubit.dart';
 export 'stories/story_cubit.dart';
+export 'stories/story_content_cubit.dart';
 export 'network/network_cubit.dart';
 export 'view_mode/view_mode_cubit.dart';
 export 'authentication/login/login_bloc.dart';

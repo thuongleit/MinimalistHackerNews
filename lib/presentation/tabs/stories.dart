@@ -70,13 +70,13 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   }
 
   Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
-    final viewMode = context.read<ViewModeCubit>().state;
+    final viewMode = context.watch<ViewModeCubit>().state;
     return BlocProvider(
       key: ObjectKey(storyIds[index]),
       create: (_) {
-        return StoryCubit(RepositoryProvider.of<StoriesRepository>(context))
-          ..getStory(storyIds[index],
-              contentPreview: viewMode == ViewMode.withDetail);
+        return StoryCubit(
+          RepositoryProvider.of<StoriesRepository>(context),
+        )..getStory(storyIds[index]);
       },
       child: BlocBuilder<StoryCubit, NetworkState>(
         builder: (context, state) {
@@ -85,7 +85,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
               count: (viewMode == ViewMode.titleOnly) ? 1 : 2,
             );
           } else if (state.isSuccess && state.hasData) {
-            return _buildStoryRow(context, state.data, index);
+            return _buildStoryRow(context, state.data, index, viewMode);
           } else {
             print('error = ${state?.error}');
             return Container();
@@ -95,8 +95,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Item item, int index) {
-    final viewMode = context.watch<ViewModeCubit>().state;
+  Widget _buildStoryRow(BuildContext context, Item item, int index, ViewMode viewMode) {
     return Slidable(
       key: ValueKey(item.id),
       closeOnScroll: true,

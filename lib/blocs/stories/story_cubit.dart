@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../network/network_cubit.dart';
@@ -8,35 +9,38 @@ class StoryCubit extends NetworkCubit<Item> {
   final StoriesRepository _repository;
 
   int _storyId;
-  bool _contentPreview;
 
   StoryCubit(this._repository) : assert(_repository != null);
 
-  Future<void> getStory(int storyId, {bool contentPreview = false}) async {
-    this._storyId = storyId;
-    this._contentPreview = contentPreview;
+  Future<void> getStory(int itemId) async {
+    this._storyId = itemId;
 
-    if (!await _repository.hasItem(storyId)) {
-      emit(NetworkState.loading());
-    }
-    await _getStory(storyId, contentPreview);
+    await _getStory(itemId);
   }
 
   @override
-  Future<void> refresh() => _getStory(_storyId, _contentPreview);
+  Future<void> refresh() => _getStory(_storyId);
 
-  Future _getStory(int storyId, bool contentPreview) async {
+  Future _getStory(int itemId) async {
     try {
-      final story =
-          await _repository.getItem(storyId, previewContent: contentPreview);
-
-      if (story.deleted) {
-        emit(NetworkState.failure());
-      } else {
-        emit(NetworkState.success(story));
+      final cachedItem = _repository.getCachedItem(itemId);
+      if (cachedItem != null) {
+        _emit(cachedItem);
+        return;
       }
+      emit(NetworkState.loading());
+      final item = await _repository.getItem(itemId);
+      _emit(item);
     } on Exception catch (e) {
       emit(NetworkState.failure(error: e));
+    }
+  }
+
+  void _emit(Item item) {
+    if (item != null && !item.deleted && !item.dead) {
+      emit(NetworkState.success(item));
+    } else {
+      emit(NetworkState.failure());
     }
   }
 }

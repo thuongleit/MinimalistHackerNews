@@ -57,9 +57,31 @@ class ContentPreviewStoryTile extends StatelessWidget {
                       ],
                     ),
                   ),
-                  ItemDescriptionText(
-                    item.textAsHtml ?? '',
-                    maxLines: 3,
+                  BlocProvider<StoryContentCubit>(
+                    create: (_) => StoryContentCubit(
+                      RepositoryProvider.of<StoriesRepository>(context),
+                    )..get(item.id),
+                    child: BlocBuilder<StoryContentCubit, NetworkState<String>>(
+                      builder: (context, state) => (state.isLoading)
+                          ? Center(
+                              child: SizedBox(
+                                  width: 8.0,
+                                  height: 8.0,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1.0,
+                                  )))
+                          : (state.isSuccess)
+                              ? Text(
+                                  state.data ?? '',
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 13.0,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : Container(),
+                    ),
                   ),
                 ],
               ),

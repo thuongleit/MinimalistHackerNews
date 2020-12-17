@@ -1,5 +1,6 @@
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
+import 'package:meta/meta.dart';
 
 import '../mapping/model_and_entity_mapping.dart';
 import '../../src/utils/pair.dart';
@@ -10,9 +11,9 @@ import '../result.dart';
 abstract class StoriesRepository {
   Future<List<int>> getItemIds(StoryType type);
 
-  Future<bool> hasItem(int itemId);
+  Item getCachedItem(int itemId);
 
-  Future<Item> getItem(int itemId, {bool previewContent = false});
+  Future<Item> getItem(int itemId, {bool requestContent = false});
 
   Future<Result> save(Item item);
 
@@ -48,34 +49,28 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<bool> hasItem(int itemId) async =>
-      (_itemsCache[itemId]?.first != null);
+  Item getCachedItem(int itemId) => _itemsCache[itemId]?.first;
 
   @override
-  Future<Item> getItem(int itemId, {bool previewContent = false}) async {
-    try {
-      if (_itemsCache.containsKey(itemId)) {
-        return _itemsCache[itemId].first;
-      }
-      final item = await _apiClient.getItem(itemId);
-
-      if (previewContent && (item.text == null || item.text.isEmpty)) {
-        final storyInfo =
-            await WebAnalyzer.getInfo(item.url, multimedia: false);
-        if (storyInfo != null && storyInfo is WebInfo) {
-          final newCopiedStory = item.copyWith(text: storyInfo.description);
-          _itemsCache[item.id] = Pair(newCopiedStory, true);
-
-          return newCopiedStory;
-        }
-      }
-
-      _itemsCache[item.id] = Pair(item, true);
-
-      return item;
-    } on Exception catch (e) {
-      throw e;
+  Future<Item> getItem(int itemId, {bool requestContent = false}) async {
+    Item item = getCachedItem(itemId);
+    if (item == null) {
+      item = await _apiClient.getItem(itemId);
     }
+
+    if (item == null) {
+      return null;
+    }
+
+    if (requestContent && (item.text?.isEmpty ?? true)) {
+      print('request content for $itemId');
+      final content = await _getContent(url: item.url);
+      item = item.copyWith(text: content);
+    }
+
+    _itemsCache[item.id] = Pair(item, true);
+
+    return item;
   }
 
   @override
@@ -130,5 +125,16 @@ class StoriesRepositoryImpl extends StoriesRepository {
 
       yield kid.copyWith(depth: parent.depth + 1);
     }
+  }
+
+  Future<String> _getContent({@required String url}) async {
+    if (url?.isEmpty == true) {
+      return '';
+    }
+    final info = await WebAnalyzer.getInfo(url, multimedia: false);
+    if (info != null && info is WebInfo) {
+      return info.description;
+    }
+    return '';
   }
 }
