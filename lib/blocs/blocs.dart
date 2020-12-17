@@ -6,7 +6,7 @@ export 'stories/stories_cubit.dart';
 export 'stories/story_cubit.dart';
 export 'stories/story_content_cubit.dart';
 export 'network/network_cubit.dart';
-export 'view_mode/view_mode_cubit.dart';
+export 'reading_mode/reading_mode_cubit.dart';
 export 'authentication/login/login_bloc.dart';
 export 'authentication/authentication_bloc.dart';
 export 'user_action/user_action_bloc.dart';

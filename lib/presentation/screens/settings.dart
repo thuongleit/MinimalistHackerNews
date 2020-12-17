@@ -19,14 +19,14 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   AppTheme _themeIndex;
   Browser _browserIndex;
-  ViewMode _viewModeIndex;
+  ReadingMode _readingModeIndex;
 
   @override
   void initState() {
     // Get the app theme & browser chooser from the 'AppModel' model.
     _themeIndex = context.read<ThemeCubit>().state;
     _browserIndex = context.read<BrowserCubit>().state;
-    _viewModeIndex = context.read<ViewModeCubit>().state;
+    _readingModeIndex = context.read<ReadingModeCubit>().state;
 
     super.initState();
   }
@@ -157,32 +157,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'screen.settings.browser.title',
               ),
               children: <Widget>[
-                RadioCell<ViewMode>(
+                RadioCell<ReadingMode>(
                   title: FlutterI18n.translate(
                     context,
                     'title_only',
                   ),
-                  groupValue: _viewModeIndex,
-                  value: ViewMode.titleOnly,
-                  onChanged: (value) => _changeViewMode(context, value),
+                  groupValue: _readingModeIndex,
+                  value: ReadingMode.titleOnly,
+                  onChanged: (value) => _changeReadingMode(context, value),
                 ),
-                RadioCell<ViewMode>(
+                RadioCell<ReadingMode>(
                   title: FlutterI18n.translate(
                     context,
                     'minimalist',
                   ),
-                  groupValue: _viewModeIndex,
-                  value: ViewMode.minimalist,
-                  onChanged: (value) => _changeViewMode(context, value),
+                  groupValue: _readingModeIndex,
+                  value: ReadingMode.minimalist,
+                  onChanged: (value) => _changeReadingMode(context, value),
                 ),
-                RadioCell<ViewMode>(
+                RadioCell<ReadingMode>(
                   title: FlutterI18n.translate(
                     context,
                     'with_detail',
                   ),
-                  groupValue: _viewModeIndex,
-                  value: ViewMode.withDetail,
-                  onChanged: (value) => _changeViewMode(context, value),
+                  groupValue: _readingModeIndex,
+                  value: ReadingMode.withContent,
+                  onChanged: (value) => _changeReadingMode(context, value),
                 ),
               ],
             ),
@@ -207,9 +207,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.of(context).pop();
   }
 
-  void _changeViewMode(BuildContext context, ViewMode mode) {
-    context.read<ViewModeCubit>().changeViewMode(mode);
-    setState(() => _viewModeIndex = mode);
+  void _changeReadingMode(BuildContext context, ReadingMode mode) {
+    context.read<ReadingModeCubit>().changeMode(mode);
+    setState(() => _readingModeIndex = mode);
     Navigator.of(context).pop();
   }
 }

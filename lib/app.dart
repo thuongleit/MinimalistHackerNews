@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
           BlocProvider<BrowserCubit>(create: (_) => BrowserCubit()),
-          BlocProvider<ViewModeCubit>(create: (_) => ViewModeCubit()),
+          BlocProvider<ReadingModeCubit>(create: (_) => ReadingModeCubit()),
           BlocProvider<AuthenticationBloc>(
             create: (_) => AuthenticationBloc(
               authenticationRepository: authenticationRepository,

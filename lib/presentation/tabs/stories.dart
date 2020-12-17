@@ -70,7 +70,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   }
 
   Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
-    final viewMode = context.watch<ViewModeCubit>().state;
+    final readingMode = context.watch<ReadingModeCubit>().state;
     return BlocProvider(
       key: ObjectKey(storyIds[index]),
       create: (_) {
@@ -82,10 +82,10 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
         builder: (context, state) {
           if (state.isLoading) {
             return LoadingItem(
-              count: (viewMode == ViewMode.titleOnly) ? 1 : 2,
+              count: (readingMode.isTitleOnly) ? 1 : 2,
             );
           } else if (state.isSuccess && state.hasData) {
-            return _buildStoryRow(context, state.data, index, viewMode);
+            return _buildStoryRow(context, state.data, index, readingMode);
           } else {
             print('error = ${state?.error}');
             return Container();
@@ -96,7 +96,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   }
 
   Widget _buildStoryRow(
-      BuildContext context, Item item, int index, ViewMode viewMode) {
+      BuildContext context, Item item, int index, ReadingMode readingMode) {
     return Slidable(
       key: ValueKey(item.id),
       closeOnScroll: true,
@@ -153,9 +153,9 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
         },
       ),
       child: InkWell(
-        child: (viewMode == ViewMode.titleOnly)
+        child: (readingMode.isTitleOnly)
             ? TitleOnlyStoryTile(item)
-            : (viewMode == ViewMode.minimalist)
+            : (readingMode.isMinimalist)
                 ? MinimalistStoryTile(item)
                 : ContentPreviewStoryTile(item),
         onTap: () => _onItemTap(item),
