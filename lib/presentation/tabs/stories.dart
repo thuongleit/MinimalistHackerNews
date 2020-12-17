@@ -95,7 +95,8 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Item item, int index, ViewMode viewMode) {
+  Widget _buildStoryRow(
+      BuildContext context, Item item, int index, ViewMode viewMode) {
     return Slidable(
       key: ValueKey(item.id),
       closeOnScroll: true,
