@@ -40,7 +40,7 @@ class ContentPreviewStoryTile extends StatelessWidget {
                     .add(UserVoteRequested(item.id))
                 : null,
           ),
-          const Padding(padding: const EdgeInsets.only(left: 4.0)),
+          const Padding(padding: const EdgeInsets.only(left: 6.0)),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(2.0),
@@ -58,28 +58,32 @@ class ContentPreviewStoryTile extends StatelessWidget {
                       ],
                     ),
                   ),
-                  BlocProvider<StoryContentCubit>(
-                    create: (_) => StoryContentCubit(
-                      RepositoryProvider.of<StoriesRepository>(context),
-                    )..get(item.id),
-                    child: BlocBuilder<StoryContentCubit, NetworkState<String>>(
-                      builder: (context, state) => (state.isLoading)
-                          ? LoadingItem(
-                              count: 3,
-                              height: 13.0,
-                              padding: EdgeInsets.zero,
-                            )
-                          : (state.isSuccess)
-                              ? Text(
-                                  state.data ?? '',
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 13.0,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : Container(),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2.0, bottom: 4.0),
+                    child: BlocProvider<StoryContentCubit>(
+                      create: (_) => StoryContentCubit(
+                        RepositoryProvider.of<StoriesRepository>(context),
+                      )..get(item.id),
+                      child: BlocBuilder<StoryContentCubit, NetworkState<String>>(
+                        builder: (context, state) => (state.isLoading)
+                            ? LoadingItem(
+                                count: 3,
+                                height: 13.0,
+                                padding: EdgeInsets.zero,
+                              )
+                            : (state.isSuccess)
+                                ? Text(
+                                    state.data ?? '',
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.justify,
+                                    style: const TextStyle(
+                                      fontSize: 13.0,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                : Container(),
+                      ),
                     ),
                   ),
                 ],

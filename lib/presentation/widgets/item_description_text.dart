@@ -6,7 +6,7 @@ class ItemDescriptionText extends Text {
         super(
           data,
           key: key,
-          style: const TextStyle(fontSize: 11.0, color: Colors.grey),
+          style: const TextStyle(fontSize: 12.0, color: Colors.grey),
           maxLines: maxLines,
         );
 }
