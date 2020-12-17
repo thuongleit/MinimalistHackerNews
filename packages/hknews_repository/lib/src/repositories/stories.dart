@@ -48,7 +48,7 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<bool> hasItem(int itemId) async => (_itemsCache[itemId].first != null);
+  Future<bool> hasItem(int itemId) async => (_itemsCache[itemId]?.first != null);
 
   @override
   Future<Item> getItem(int itemId, {bool previewContent = false}) async {

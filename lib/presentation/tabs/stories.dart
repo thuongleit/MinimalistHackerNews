@@ -84,11 +84,11 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
             return LoadingItem(
               count: (viewMode == ViewMode.titleOnly) ? 1 : 2,
             );
-          } else if (state.isFailure) {
-            print('error = ${state.error}');
-            return Container();
-          } else {
+          } else if (state.isSuccess && state.hasData) {
             return _buildStoryRow(context, state.data, index);
+          } else {
+            print('error = ${state?.error}');
+            return Container();
           }
         },
       ),
