@@ -29,6 +29,7 @@ class MinimalistStoryTile extends StatelessWidget {
           InkWell(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 UpVote(),
                 ItemDescriptionText('${item.score}'),
@@ -39,7 +40,7 @@ class MinimalistStoryTile extends StatelessWidget {
                     .add(UserVoteRequested(item.id))
                 : null,
           ),
-          const Padding(padding: const EdgeInsets.only(left: 4.0)),
+          const Padding(padding: const EdgeInsets.only(left: 8.0)),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(2.0),
@@ -47,13 +48,15 @@ class MinimalistStoryTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   ItemTileText(item),
-                  const Padding(padding: const EdgeInsets.only(bottom: 4.0)),
-                  Row(
-                    children: <Widget>[
-                      ItemDescriptionText(item.description1),
-                      Expanded(child: Container()),
-                      ItemDescriptionText(item.timeAgo),
-                    ],
+                  Container(
+                    margin: EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      children: <Widget>[
+                        ItemDescriptionText(item.description1),
+                        Expanded(child: Container()),
+                        ItemDescriptionText(item.timeAgo),
+                      ],
+                    ),
                   ),
                 ],
               ),
