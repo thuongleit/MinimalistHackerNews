@@ -64,7 +64,8 @@ class ContentPreviewStoryTile extends StatelessWidget {
                       create: (_) => StoryContentCubit(
                         RepositoryProvider.of<StoriesRepository>(context),
                       )..get(item.id),
-                      child: BlocBuilder<StoryContentCubit, NetworkState<String>>(
+                      child:
+                          BlocBuilder<StoryContentCubit, NetworkState<String>>(
                         builder: (context, state) => (state.isLoading)
                             ? LoadingItem(
                                 count: 3,
