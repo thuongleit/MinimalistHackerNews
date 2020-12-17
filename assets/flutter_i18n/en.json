@@ -105,6 +105,15 @@
           "internal": "Internal browser",
           "external": "External browser"
         }
+      },
+      "reading_mode": {
+        "title": "Reading Mode",
+        "body": "Choose a mode you want to read",
+        "mode": {
+          "title_only": "Title only",
+          "minimalist": "Minimalist",
+          "with_content": "With content"
+        }
       }
     },
     "saved_stories": {

@@ -144,23 +144,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.chrome_reader_mode,
             title: FlutterI18n.translate(
               context,
-              'screen.settings.browser.title',
+              'screen.settings.reading_mode.title',
             ),
             subtitle: FlutterI18n.translate(
               context,
-              'screen.settings.browser.body',
+              'screen.settings.reading_mode.body',
             ),
             onTap: () => showBottomRoundDialog(
               context: context,
               title: FlutterI18n.translate(
                 context,
-                'screen.settings.browser.title',
+                'screen.settings.reading_mode.title',
               ),
               children: <Widget>[
                 RadioCell<ReadingMode>(
                   title: FlutterI18n.translate(
                     context,
-                    'title_only',
+                    'screen.settings.reading_mode.mode.title_only',
                   ),
                   groupValue: _readingModeIndex,
                   value: ReadingMode.titleOnly,
@@ -169,7 +169,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 RadioCell<ReadingMode>(
                   title: FlutterI18n.translate(
                     context,
-                    'minimalist',
+                    'screen.settings.reading_mode.mode.minimalist',
                   ),
                   groupValue: _readingModeIndex,
                   value: ReadingMode.minimalist,
@@ -178,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 RadioCell<ReadingMode>(
                   title: FlutterI18n.translate(
                     context,
-                    'with_detail',
+                    'screen.settings.reading_mode.mode.with_content',
                   ),
                   groupValue: _readingModeIndex,
                   value: ReadingMode.withContent,
