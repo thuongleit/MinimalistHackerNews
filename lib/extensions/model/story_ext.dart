@@ -21,25 +21,18 @@ extension ItemX on Item {
       (text != null) ? htmlparser.parse(text).body.text : '';
 
   String get description1 {
-    return "by $by ${(url != null && url.isNotEmpty) ? '(' + UrlUtils.getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription1 : ''}";
+    return "by $by ${(url != null && url.isNotEmpty) ? '(' + UrlUtils.getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription : ''}";
   }
 
   String get description2 {
-    return '$by, $timeAgo, $_commentDescription2';
+    return '$by, $timeAgo, $_commentDescription';
   }
 
-  String get _commentDescription1 {
-    if (descendants > 0) {
-      return '$descendants✍︎';
-    }
-    return '';
-  }
-
-  String get _commentDescription2 {
-    if (descendants >= 0) {
+  String get _commentDescription {
+    if (descendants > 1) {
+      return '$descendants comments';
+    } else if (descendants == 1) {
       return '$descendants comment';
-    } else if (descendants > 1) {
-      return '$descendants comments︎';
     }
     return '';
   }
