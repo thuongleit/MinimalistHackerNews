@@ -21,7 +21,12 @@ extension ItemX on Item {
       (text != null) ? htmlparser.parse(text).body.text : '';
 
   String get description1 {
-    return "by $by ${(url != null && url.isNotEmpty) ? '(' + UrlUtils.getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription : ''}";
+    final domain =
+        (url?.isNotEmpty ?? false) ? UrlUtils.getBaseDomain(url) : '';
+    final authorAndDomain = ('$by$domain'.length > 30 || domain.isEmpty)
+        ? 'by $by'
+        : 'by $by ($domain)';
+    return "$authorAndDomain ${descendants > 0 ? ' | $_commentDescription' : ''}";
   }
 
   String get description2 {
