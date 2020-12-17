@@ -5,14 +5,20 @@ class LoadingItem extends StatelessWidget {
   const LoadingItem({
     Key key,
     this.count = 1,
+    this.width = double.infinity,
+    this.height = 24.0,
+    this.padding = const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
   }) : super(key: key);
 
   final int count;
+  final double width;
+  final double height;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
+      padding: this.padding,
       child: Column(
         children: [...List.generate(count, (_) => _shimmer())],
       ),
@@ -24,15 +30,12 @@ class LoadingItem extends StatelessWidget {
       baseColor: Colors.grey[500],
       highlightColor: Colors.grey[100],
       child: Container(
+        width: this.width,
+        height: this.height,
         margin: EdgeInsets.symmetric(vertical: 2.0, horizontal: 0.0),
-        width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white24,
           borderRadius: BorderRadius.circular(4),
-        ),
-        child: Text(
-          '',
-          style: TextStyle(fontSize: 16.0),
         ),
       ),
     );

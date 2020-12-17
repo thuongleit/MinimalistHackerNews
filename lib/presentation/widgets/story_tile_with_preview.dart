@@ -7,6 +7,7 @@ import '../../extensions/extensions.dart';
 import 'item_description_text.dart';
 import 'item_title_text.dart';
 import 'up_vote.dart';
+import 'widgets.dart';
 
 class ContentPreviewStoryTile extends StatelessWidget {
   final Item item;
@@ -63,13 +64,7 @@ class ContentPreviewStoryTile extends StatelessWidget {
                     )..get(item.id),
                     child: BlocBuilder<StoryContentCubit, NetworkState<String>>(
                       builder: (context, state) => (state.isLoading)
-                          ? Center(
-                              child: SizedBox(
-                                  width: 8.0,
-                                  height: 8.0,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1.0,
-                                  )))
+                          ? LoadingItem(count: 3, height: 13.0, padding: EdgeInsets.zero)
                           : (state.isSuccess)
                               ? Text(
                                   state.data ?? '',
