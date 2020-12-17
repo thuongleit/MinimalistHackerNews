@@ -12,6 +12,13 @@ class StoryContentCubit extends NetworkCubit<String> {
 
   Future<void> get(int itemId) async {
     try {
+      final cachedItem = _repository.getCachedItem(itemId);
+      if (cachedItem != null) {
+        if (cachedItem?.text?.isNotEmpty ?? false) {
+          emit(NetworkState.success(cachedItem?.textAsHtml ?? ''));
+          return;
+        }
+      }
       emit(NetworkState.loading());
       final item = await _repository.getItem(itemId, requestContent: true);
       emit(NetworkState.success(item?.textAsHtml ?? ''));
