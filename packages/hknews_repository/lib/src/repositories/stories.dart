@@ -131,7 +131,9 @@ class StoriesRepositoryImpl extends StoriesRepository {
       Item kid = await getItem(kidId);
       if (kid == null) continue;
 
-      yield kid.copyWith(depth: parent.depth + 1);
+      final copiedKid = kid.copyWith(depth: parent.depth + 1);
+      _itemsCache[copiedKid.id] = Pair(copiedKid, true);
+      yield copiedKid;
     }
   }
 
