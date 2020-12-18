@@ -233,7 +233,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   }
 
   void _goToComment(BuildContext context, Item item) {
-    Navigator.push(
+    NavigatorX.removeSnackBarAndPush(
       context,
       CommentsScreen.route(context, item),
     );

@@ -143,7 +143,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   }
 
   Future<void> _goToReply(BuildContext context) async {
-    final bool replySuccess = await Navigator.push(
+    final bool replySuccess = await NavigatorX.removeSnackBarAndPush(
       context,
       CommentReplyScreen.route(context, item),
     );
