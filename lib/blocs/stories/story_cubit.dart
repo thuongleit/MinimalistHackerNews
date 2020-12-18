@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
 import '../network/network_cubit.dart';
