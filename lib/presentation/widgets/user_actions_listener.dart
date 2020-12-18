@@ -24,61 +24,57 @@ class UserActionsListener extends StatelessWidget {
       listeners: [
         BlocListener<AuthenticationBloc, AuthenticationState>(
           listenWhen: (previous, current) =>
+              ModalRoute.of(context).isCurrent &&
               previous.status != Authentication.unknown,
           listener: (_, state) {
+            String message;
             if (state.status == Authentication.authenticated) {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text('User login'),
-                  ),
-                );
+              message = 'User login';
             } else {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text('User logout'),
-                  ),
-                );
+              message = 'User logout';
             }
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                ),
+              );
           },
         ),
         BlocListener<UserActionBloc, UserActionState>(
-          listenWhen: (previous, current) => current is UserActionResult,
+          listenWhen: (previous, current) =>
+              ModalRoute.of(context).isCurrent && current is UserActionResult,
           listener: (_, state) {
-            if (ModalRoute.of(context).isCurrent) {
-              if (state is UserActionResult) {
-                callback?.call(state);
+            if (state is UserActionResult) {
+              callback?.call(state);
 
-                String message;
-                SnackBarAction action;
-                if (state.success) {
-                  message = state.event.successMessage;
+              String message;
+              SnackBarAction action;
+              if (state.success) {
+                message = state.event.successMessage;
+              } else {
+                if (state.error is UserNotFoundException) {
+                  message = 'User not logged in';
+                  action = SnackBarAction(
+                    label: 'Log in'.toUpperCase(),
+                    onPressed: () => utils.Dialog.showLoginDialog(context),
+                  );
+                } else if (state.error is SocketException) {
+                  message = 'No internet connection';
                 } else {
-                  if (state.error is UserNotFoundException) {
-                    message = 'User not logged in';
-                    action = SnackBarAction(
-                      label: 'Log in'.toUpperCase(),
-                      onPressed: () => utils.Dialog.showLoginDialog(context),
-                    );
-                  } else if (state.error is SocketException) {
-                    message = 'No internet connection';
-                  } else {
-                    message = state.message ?? Const.generalErrorMessage;
-                  }
+                  message = state.message ?? Const.generalErrorMessage;
                 }
-                if (message != null) {
-                  Scaffold.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(
-                        content: Text(message),
-                        action: action,
-                      ),
-                    );
-                }
+              }
+              if (message != null) {
+                Scaffold.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(message),
+                      action: action,
+                    ),
+                  );
               }
             }
           },
