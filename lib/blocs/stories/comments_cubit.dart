@@ -21,11 +21,11 @@ class CommentsCubit extends NetworkCubit<List<Item>> {
   }
 
   @override
-  Future<void> refresh() => _getComments(_itemId);
+  Future<void> refresh() => _getComments(_itemId, fresh: true);
 
-  Future<void> _getComments(int itemId) async {
+  Future<void> _getComments(int itemId, {bool fresh = false}) async {
     try {
-      final latestItem = await _repository.getItem(_itemId);
+      final latestItem = await _repository.getItem(_itemId, refresh: fresh);
       final itemStream = _repository.getComments(latestItem);
       emit(
         NetworkState.success(

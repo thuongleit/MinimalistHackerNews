@@ -18,17 +18,19 @@ class StoryCubit extends NetworkCubit<Item> {
   }
 
   @override
-  Future<void> refresh() => _getStory(_storyId);
+  Future<void> refresh() => _getStory(_storyId, refresh: true);
 
-  Future _getStory(int itemId) async {
+  Future _getStory(int itemId, {bool refresh = false}) async {
     try {
-      final cachedItem = _repository.getCachedItem(itemId);
-      if (cachedItem != null) {
-        _emit(cachedItem);
-        return;
+      if (!refresh) {
+        final cachedItem = _repository.getCachedItem(itemId);
+        if (cachedItem != null) {
+          _emit(cachedItem);
+          return;
+        }
       }
       emit(NetworkState.loading());
-      final item = await _repository.getItem(itemId);
+      final item = await _repository.getItem(itemId, refresh: refresh);
       _emit(item);
     } on Exception catch (e) {
       emit(NetworkState.failure(error: e));

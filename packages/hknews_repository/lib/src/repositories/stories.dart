@@ -13,7 +13,11 @@ abstract class StoriesRepository {
 
   Item getCachedItem(int itemId);
 
-  Future<Item> getItem(int itemId, {bool requestContent = false});
+  Future<Item> getItem(
+    int itemId, {
+    bool requestContent = false,
+    bool refresh = false,
+  });
 
   Future<Result> save(Item item);
 
@@ -52,9 +56,13 @@ class StoriesRepositoryImpl extends StoriesRepository {
   Item getCachedItem(int itemId) => _itemsCache[itemId]?.first;
 
   @override
-  Future<Item> getItem(int itemId, {bool requestContent = false}) async {
+  Future<Item> getItem(
+    int itemId, {
+    bool requestContent = false,
+    bool refresh = false,
+  }) async {
     Item item = getCachedItem(itemId);
-    if (item == null) {
+    if (refresh || item == null) {
       item = await _apiClient.getItem(itemId);
     }
 
