@@ -175,8 +175,20 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
 
   String _parseServerMessage(String responseBody) {
     final serverMessage = _serverResponseMsgReg.stringMatch(responseBody);
-    return serverMessage?.replaceAll(RegExp('<body>|\n|<br>'), '')?.trim() ??
-        'Unknown server error.';
+    String redirectErrorMessage;
+    if (serverMessage?.isEmpty ?? true) {
+      redirectErrorMessage = 'Unknown server error.';
+    } else if (serverMessage.contains('Bad login')) {
+      redirectErrorMessage = 'Incorrect username or password.';
+    } else if (serverMessage.contains('Validation required')) {
+      redirectErrorMessage =
+          'Validation required! You have been temporarily blocked for too many failed attempts by Hacker News. '
+          'Please try again later or log in with a web browser.';
+    } else {
+      redirectErrorMessage = serverMessage;
+    }
+
+    return redirectErrorMessage;
   }
 }
 
