@@ -8,8 +8,8 @@ import '../../presentation/widgets/single_comment_tile.dart';
 import '../../presentation/widgets/widgets.dart';
 
 class CommentReplyScreen extends StatefulWidget {
-  static Route route(BuildContext context, Item item) {
-    return MaterialPageRoute<void>(
+  static Route<bool> route(BuildContext context, Item item) {
+    return MaterialPageRoute<bool>(
       fullscreenDialog: true,
       builder: (_) => CommentReplyScreen(
         parentItem: item,
@@ -48,7 +48,7 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
         body: UserActionsListener(
           callback: (result) {
             if (result.success) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(true);
             }
           },
           child: SingleChildScrollView(

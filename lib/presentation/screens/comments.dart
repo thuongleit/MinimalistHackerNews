@@ -116,10 +116,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              actionCallback: () => Navigator.push(
-                context,
-                CommentReplyScreen.route(context, item),
-              ),
+              actionCallback: () => _goToReply(context),
               child: const Icon(Icons.comment_bank_outlined),
             ),
             loading: ListView.builder(
@@ -138,14 +135,22 @@ class _CommentsScreenState extends State<CommentsScreen> {
         floatingActionButton: (state.data?.kids?.isNotEmpty == true && _showFab)
             ? FloatingActionButton(
                 child: Icon(Icons.reply),
-                onPressed: () => Navigator.push(
-                  context,
-                  CommentReplyScreen.route(context, item),
-                ),
+                onPressed: () => _goToReply(context),
               )
             : null,
       ),
     );
+  }
+
+  Future<void> _goToReply(BuildContext context) async {
+    final bool replySuccess = await Navigator.push(
+      context,
+      CommentReplyScreen.route(context, item),
+    );
+
+    if (replySuccess == true) {
+      context.read<StoryCubit>().refresh();
+    }
   }
 
   Widget _buildCommentRows(
