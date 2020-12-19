@@ -120,8 +120,8 @@ class Item with Copyable<Item> {
       title: this.title,
       parts: this.parts,
       descendants: this.descendants,
-      updatedAt: updatedAt ?? 0,
-      visited: visited ?? false,
+      updatedAt: updatedAt ?? this.updatedAt,
+      visited: visited ?? this.visited,
     );
   }
 
