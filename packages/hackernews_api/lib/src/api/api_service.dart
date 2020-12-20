@@ -98,8 +98,8 @@ class HackerNewsApiClientImpl extends HackerNewsApiClient {
     assert(userId != null);
     // Receives the data and parse it
     String url = '${Const.hackerNewsApiEndpoint}/user/$userId.json';
-    final response = await _client.get(Request(url));
-    return User.fromJson(jsonDecode(response.body));
+    final response = await _get(Request(url));
+    return User.fromJson(jsonDecode(response));
   }
 
   @override
