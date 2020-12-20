@@ -13,7 +13,7 @@ extension ItemX on Item {
   String get hackerNewsUrl => '$itemBrowsingUrl/item?id=$id';
 
   String get timeAgo {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(time * 1000);
+    DateTime date = DateTime.fromMillisecondsSinceEpoch((time ?? 0) * 1000);
     return '${timeago.format(date)}';
   }
 
