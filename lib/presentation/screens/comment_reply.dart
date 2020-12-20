@@ -30,10 +30,12 @@ class CommentReplyScreen extends StatefulWidget {
 
 class _CommentReplyScreenState extends State<CommentReplyScreen> {
   bool isContentCollapsed = true;
+  bool replyInProgress = false;
 
   @override
   void initState() {
     isContentCollapsed = true;
+    replyInProgress = false;
     super.initState();
   }
 
@@ -47,8 +49,18 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
         title: _isComment() ? 'Reply' : 'Add comment',
         body: UserActionsListener(
           callback: (result) {
-            if (result.success) {
-              Navigator.of(context).pop(true);
+            if (result is UserActionInProgress) {
+              setState(() => replyInProgress = true);
+            } else if (result is UserActionResult) {
+              if (result.success) {
+                //wait some seconds for server to process the request and show it in API
+                Future.delayed(
+                  const Duration(seconds: 1),
+                  () => Navigator.of(context).pop(true),
+                );
+              } else {
+                setState(() => replyInProgress = false);
+              }
             }
           },
           child: SingleChildScrollView(
@@ -120,12 +132,26 @@ class _CommentReplyScreenState extends State<CommentReplyScreen> {
         ),
         actions: [
           Builder(
-            builder: (context) => IconButton(
-              icon: Icon(Icons.send),
-              onPressed: () => context
-                  .read<UserInputBloc>()
-                  .replyToComment(widget.parentItem.id),
-            ),
+            builder: (context) => replyInProgress
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24.0,
+                        height: 24.0,
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                          strokeWidth: 2.0,
+                        ),
+                      ),
+                    ),
+                  )
+                : IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () => context
+                        .read<UserInputBloc>()
+                        .replyToComment(widget.parentItem.id),
+                  ),
           )
         ],
       ),

@@ -16,7 +16,7 @@ class UserActionsListener extends StatelessWidget {
   }) : super(key: key);
 
   final Widget child;
-  final Function(UserActionResult) callback;
+  final Function(UserActionState) callback;
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +43,11 @@ class UserActionsListener extends StatelessWidget {
           },
         ),
         BlocListener<UserActionBloc, UserActionState>(
-          listenWhen: (previous, current) =>
-              ModalRoute.of(context).isCurrent && current is UserActionResult,
+          listenWhen: (previous, current) => ModalRoute.of(context).isCurrent,
           listener: (_, state) {
-            if (state is UserActionResult) {
-              callback?.call(state);
+            callback?.call(state);
 
+            if (state is UserActionResult) {
               String message;
               SnackBarAction action;
               if (state.success) {
