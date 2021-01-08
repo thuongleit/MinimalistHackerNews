@@ -74,7 +74,7 @@ class SavedStoriesScreen extends StatelessWidget {
   }
 
   Widget _buildStoryRow(BuildContext context, Item item, int index) {
-    final viewMode = context.watch<ViewModeCubit>().state;
+    final readingMode = context.watch<ReadingModeCubit>().state;
     return Slidable(
       key: ValueKey(item.id),
       closeOnScroll: true,
@@ -113,9 +113,9 @@ class SavedStoriesScreen extends StatelessWidget {
         },
       ),
       child: InkWell(
-        child: (viewMode == ViewMode.titleOnly)
+        child: (readingMode.isTitleOnly)
             ? TitleOnlyStoryTile(item)
-            : (viewMode == ViewMode.minimalist)
+            : (readingMode.isMinimalist)
                 ? MinimalistStoryTile(item)
                 : ContentPreviewStoryTile(item),
         onTap: () => _onItemTap(context, item),

@@ -13,7 +13,7 @@ extension ItemX on Item {
   String get hackerNewsUrl => '$itemBrowsingUrl/item?id=$id';
 
   String get timeAgo {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(time * 1000);
+    DateTime date = DateTime.fromMillisecondsSinceEpoch((time ?? 0) * 1000);
     return '${timeago.format(date)}';
   }
 
@@ -21,25 +21,23 @@ extension ItemX on Item {
       (text != null) ? htmlparser.parse(text).body.text : '';
 
   String get description1 {
-    return "by $by ${(url != null && url.isNotEmpty) ? '(' + UrlUtils.getBaseDomain(url) + ')' : ''} ${descendants > 0 ? ' | ' + _commentDescription1 : ''}";
+    final domain =
+        (url?.isNotEmpty ?? false) ? UrlUtils.getBaseDomain(url) : '';
+    final authorAndDomain = ('$by$domain'.length > 30 || domain.isEmpty)
+        ? 'by $by'
+        : 'by $by ($domain)';
+    return "$authorAndDomain ${descendants > 0 ? ' | $_commentDescription' : ''}";
   }
 
   String get description2 {
-    return '$by, $timeAgo, $_commentDescription2';
+    return '$by, $timeAgo, $_commentDescription';
   }
 
-  String get _commentDescription1 {
-    if (descendants > 0) {
-      return '$descendants✍︎';
-    }
-    return '';
-  }
-
-  String get _commentDescription2 {
-    if (descendants >= 0) {
+  String get _commentDescription {
+    if (descendants > 1) {
+      return '$descendants comments';
+    } else if (descendants == 1) {
       return '$descendants comment';
-    } else if (descendants > 1) {
-      return '$descendants comments︎';
     }
     return '';
   }

@@ -46,6 +46,9 @@ class Item with Copyable<Item> {
   });
 
   factory Item.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
     if (!json.containsKey('id') || json['id'] == null) {
       return null;
     }
@@ -69,6 +72,34 @@ class Item with Copyable<Item> {
           ? []
           : List<int>.from(json['parts'].map((e) => e)),
       descendants: json['descendants'] ??= 0,
+    );
+  }
+
+  factory Item.createDraft({
+    int id,
+    ItemType type,
+    String by,
+    int time,
+    int parent,
+    String title,
+    String text,
+  }) {
+    return Item(
+      id: id,
+      deleted: false,
+      type: type,
+      by: by,
+      time: time,
+      text: text,
+      dead: false,
+      parent: parent,
+      poll: null,
+      kids: const [],
+      url: null,
+      score: 0,
+      title: title,
+      parts: const [],
+      descendants: 0,
     );
   }
 
@@ -100,6 +131,8 @@ class Item with Copyable<Item> {
   Item copyWith({
     int depth,
     String text,
+    List<int> kids,
+    int descendants,
     int updatedAt,
     bool visited,
   }) {
@@ -114,14 +147,14 @@ class Item with Copyable<Item> {
       dead: this.dead,
       parent: this.parent,
       poll: this.poll,
-      kids: this.kids,
+      kids: kids ?? this.kids,
       url: this.url,
       score: this.score,
       title: this.title,
       parts: this.parts,
-      descendants: this.descendants,
-      updatedAt: updatedAt ?? 0,
-      visited: visited ?? false,
+      descendants: descendants ?? this.descendants,
+      updatedAt: updatedAt ?? this.updatedAt,
+      visited: visited ?? this.visited,
     );
   }
 

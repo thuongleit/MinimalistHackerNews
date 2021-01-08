@@ -1,5 +1,6 @@
 import 'package:hackernews_api/hackernews_api.dart';
 import 'package:hknews_database/hknews_database.dart';
+import 'package:meta/meta.dart';
 
 import '../mapping/model_and_entity_mapping.dart';
 import '../../src/utils/pair.dart';
@@ -10,9 +11,17 @@ import '../result.dart';
 abstract class StoriesRepository {
   Future<List<int>> getItemIds(StoryType type);
 
-  Future<Item> getItem(int itemId, {bool previewContent = false});
+  Item getCachedItem(int itemId);
+
+  Future<Item> getItem(
+    int itemId, {
+    bool requestContent = false,
+    bool refresh = false,
+  });
 
   Future<Result> save(Item item);
+
+  Future<void> saveAsDraft(Item item);
 
   Future<Result> unsave(Item item);
 
@@ -36,6 +45,9 @@ class StoriesRepositoryImpl extends StoriesRepository {
   Map<int, Pair<Item, bool>> _itemsCache =
       Map(); //Map<story_id, Pair(Story, is_up_to_date)>
 
+  //FIXME: Remove this logic when introduce local database
+  Set<int> _localItemIds = Set();
+
   @override
   Future<List<int>> getItemIds(StoryType type) async {
     if (type == null) {
@@ -46,30 +58,67 @@ class StoriesRepositoryImpl extends StoriesRepository {
   }
 
   @override
-  Future<Item> getItem(int itemId, {bool previewContent = false}) async {
-    try {
-      if (_itemsCache.containsKey(itemId)) {
-        return _itemsCache[itemId].first;
-      }
-      final item = await _apiClient.getItem(itemId);
+  Item getCachedItem(int itemId) => _itemsCache[itemId]?.first;
 
-      if (previewContent && (item.text == null || item.text.isEmpty)) {
-        final storyInfo =
-            await WebAnalyzer.getInfo(item.url, multimedia: false);
-        if (storyInfo != null && storyInfo is WebInfo) {
-          final newCopiedStory = item.copyWith(text: storyInfo.description);
-          _itemsCache[item.id] = Pair(newCopiedStory, true);
+  @override
+  Future<Item> getItem(
+    int itemId, {
+    bool requestContent = false,
+    bool refresh = false,
+  }) async {
+    Item item = getCachedItem(itemId);
 
-          return newCopiedStory;
-        }
-      }
-
-      _itemsCache[item.id] = Pair(item, true);
-
-      return item;
-    } on Exception catch (e) {
-      throw e;
+    //if item is local draft, don't request a copy from server
+    if (!_isDraft(item) && (refresh || item == null)) {
+      item = await _apiClient.getItem(itemId);
     }
+
+    if (item == null) {
+      return null;
+    }
+
+    if (requestContent && (item.text?.isEmpty ?? true)) {
+      final content = await _getContent(url: item.url);
+      item = item.copyWith(text: content);
+    }
+
+    //put local draft item into the item list to display it to user immediately
+    //because Hacker News server take time (some seconds) to process request (e.g. a posted comment) and show the request in the API
+    //i.e. request API doesn't show the item immediately after posting
+    if (_localItemIds.isNotEmpty) {
+      final localKidIds = _getKidsOfParent(
+        parent: item,
+        kids: _localItemIds.map((id) => _itemsCache[id].first).toList(),
+      ).map((kid) => kid.id).toList();
+
+      if (localKidIds.isNotEmpty) {
+        final kids = Set<int>.from(item.kids)..addAll(localKidIds);
+        item = item.copyWith(
+          kids: kids.toList(),
+          descendants: kids.length,
+        );
+      }
+    }
+
+    _itemsCache[item.id] = Pair(item, true);
+
+    return item;
+  }
+
+  bool _isDraft(Item item) => _localItemIds.contains(item?.id);
+
+  List<Item> _getKidsOfParent({Item parent, List<Item> kids}) {
+    assert(parent != null);
+    assert(kids != null);
+
+    return kids
+        .map((item) {
+          if (item.parent == parent.id) {
+            return item;
+          }
+        })
+        .where((item) => item != null)
+        .toList();
   }
 
   @override
@@ -78,6 +127,13 @@ class StoriesRepositoryImpl extends StoriesRepository {
         item.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
     final success = await _localSource.insertOrReplace(copiedStory.toEntity());
     return (success) ? Result.success() : Result.failure();
+  }
+
+  @override
+  Future<void> saveAsDraft(Item item) {
+    _localItemIds.add(item.id);
+    _itemsCache[item.id] = Pair(item, true);
+    return null;
   }
 
   @override
@@ -122,7 +178,36 @@ class StoriesRepositoryImpl extends StoriesRepository {
       Item kid = await getItem(kidId);
       if (kid == null) continue;
 
-      yield kid.copyWith(depth: parent.depth + 1);
+      final copiedKid = kid.copyWith(depth: parent.depth + 1);
+      _itemsCache[copiedKid.id] = Pair(copiedKid, true);
+      //remove draft item if there is a version from server
+      if (!_isDraft(copiedKid)) {
+        _localItemIds.removeWhere((draftKidId) {
+          final draftItem = _itemsCache[draftKidId]?.first;
+
+          if (draftItem != null) {
+            if (draftItem.by == copiedKid.by &&
+                draftItem.text == copiedKid.text) {
+              _itemsCache[draftKidId] = null;
+              print('removed $kidId');
+              return true;
+            }
+          }
+          return false;
+        });
+      }
+      yield copiedKid;
     }
+  }
+
+  Future<String> _getContent({@required String url}) async {
+    if (url?.isEmpty == true) {
+      return '';
+    }
+    final info = await WebAnalyzer.getInfo(url, multimedia: false);
+    if (info != null && info is WebInfo) {
+      return info.description;
+    }
+    return '';
   }
 }

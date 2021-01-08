@@ -36,4 +36,6 @@ extension NetworkStateDescription on NetworkState {
   bool get isSuccess => status == NetworkStatus.success;
 
   bool get isFailure => status == NetworkStatus.failure;
+
+  bool get hasData => data != null;
 }

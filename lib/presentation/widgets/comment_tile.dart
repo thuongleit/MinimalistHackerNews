@@ -154,10 +154,14 @@ class _CommentTileState extends State<CommentTile> with CustomPopupMenu {
     context.read<UserActionBloc>().add(UserVoteRequested(item.id));
   }
 
-  void _onReplyRequest(BuildContext context, Item item) {
-    Navigator.push(
+  Future<void> _onReplyRequest(BuildContext context, Item item) async {
+    final bool replySuccess = await Navigator.push(
       context,
       CommentReplyScreen.route(context, item),
     );
+
+    if (replySuccess == true) {
+      context.read<StoryCubit>().refresh();
+    }
   }
 }

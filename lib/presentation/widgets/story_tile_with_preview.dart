@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hknews_repository/hknews_repository.dart';
 
+import '../../blocs/blocs.dart';
 import '../../extensions/extensions.dart';
 import 'item_description_text.dart';
 import 'item_title_text.dart';
 import 'up_vote.dart';
-import '../../blocs/blocs.dart';
+import 'widgets.dart';
 
 class ContentPreviewStoryTile extends StatelessWidget {
   final Item item;
@@ -20,7 +21,7 @@ class ContentPreviewStoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -39,25 +40,52 @@ class ContentPreviewStoryTile extends StatelessWidget {
                     .add(UserVoteRequested(item.id))
                 : null,
           ),
-          const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
-          Flexible(
-            child: Container(
+          const Padding(padding: const EdgeInsets.only(left: 6.0)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   ItemTileText(item),
-                  const Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 4)),
-                  Row(
-                    children: <Widget>[
-                      ItemDescriptionText(item.description1),
-                      Expanded(child: Container()),
-                      ItemDescriptionText(item.timeAgo),
-                    ],
+                  Container(
+                    margin: const EdgeInsets.only(top: 4.0, bottom: 6.0),
+                    child: Row(
+                      children: <Widget>[
+                        ItemDescriptionText(item.description1),
+                        Expanded(child: Container()),
+                        ItemDescriptionText(item.timeAgo),
+                      ],
+                    ),
                   ),
-                  const Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 4)),
-                  ItemDescriptionText(
-                    item.text ?? '',
-                    maxLines: 3,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2.0, bottom: 4.0),
+                    child: BlocProvider<StoryContentCubit>(
+                      create: (_) => StoryContentCubit(
+                        RepositoryProvider.of<StoriesRepository>(context),
+                      )..get(item.id),
+                      child:
+                          BlocBuilder<StoryContentCubit, NetworkState<String>>(
+                        builder: (context, state) => (state.isLoading)
+                            ? LoadingItem(
+                                count: 3,
+                                height: 13.0,
+                                padding: EdgeInsets.zero,
+                              )
+                            : (state.isSuccess)
+                                ? Text(
+                                    state.data ?? '',
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.justify,
+                                    style: const TextStyle(
+                                      fontSize: 13.0,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                : Container(),
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -70,33 +70,33 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   }
 
   Widget _buildStoryRows(BuildContext context, List<int> storyIds, int index) {
-    final viewMode = context.read<ViewModeCubit>().state;
+    final readingMode = context.watch<ReadingModeCubit>().state;
     return BlocProvider(
       key: ObjectKey(storyIds[index]),
       create: (_) {
-        return StoryCubit(RepositoryProvider.of<StoriesRepository>(context))
-          ..getStory(storyIds[index],
-              contentPreview: viewMode == ViewMode.withDetail);
+        return StoryCubit(
+          RepositoryProvider.of<StoriesRepository>(context),
+        )..getStory(storyIds[index]);
       },
       child: BlocBuilder<StoryCubit, NetworkState>(
         builder: (context, state) {
           if (state.isLoading) {
             return LoadingItem(
-              count: (viewMode == ViewMode.titleOnly) ? 1 : 2,
+              count: (readingMode.isTitleOnly) ? 1 : 2,
             );
-          } else if (state.isFailure) {
-            print('error = ${state.error}');
-            return Container();
+          } else if (state.isSuccess && state.hasData) {
+            return _buildStoryRow(context, state.data, index, readingMode);
           } else {
-            return _buildStoryRow(context, state.data, index);
+            print('error = ${state?.error}');
+            return Container();
           }
         },
       ),
     );
   }
 
-  Widget _buildStoryRow(BuildContext context, Item item, int index) {
-    final viewMode = context.watch<ViewModeCubit>().state;
+  Widget _buildStoryRow(
+      BuildContext context, Item item, int index, ReadingMode readingMode) {
     return Slidable(
       key: ValueKey(item.id),
       closeOnScroll: true,
@@ -153,9 +153,9 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
         },
       ),
       child: InkWell(
-        child: (viewMode == ViewMode.titleOnly)
+        child: (readingMode.isTitleOnly)
             ? TitleOnlyStoryTile(item)
-            : (viewMode == ViewMode.minimalist)
+            : (readingMode.isMinimalist)
                 ? MinimalistStoryTile(item)
                 : ContentPreviewStoryTile(item),
         onTap: () => _onItemTap(item),
@@ -233,7 +233,7 @@ class _StoriesTabState extends State<StoriesTab> with CustomPopupMenu {
   }
 
   void _goToComment(BuildContext context, Item item) {
-    Navigator.push(
+    NavigatorX.removeSnackBarAndPush(
       context,
       CommentsScreen.route(context, item),
     );

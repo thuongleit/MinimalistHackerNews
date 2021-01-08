@@ -20,7 +20,7 @@ class MinimalistStoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -29,6 +29,7 @@ class MinimalistStoryTile extends StatelessWidget {
           InkWell(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 UpVote(),
                 ItemDescriptionText('${item.score}'),
@@ -39,23 +40,24 @@ class MinimalistStoryTile extends StatelessWidget {
                     .add(UserVoteRequested(item.id))
                 : null,
           ),
-          const Padding(padding: const EdgeInsets.fromLTRB(4, 0, 0, 4)),
-          Flexible(
-            child: Container(
+          const Padding(padding: const EdgeInsets.only(left: 8.0)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   ItemTileText(item),
-                  const Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                  Container(
+                    margin: EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      children: <Widget>[
+                        ItemDescriptionText(item.description1),
+                        Expanded(child: Container()),
+                        ItemDescriptionText(item.timeAgo),
+                      ],
+                    ),
                   ),
-                  Row(
-                    children: <Widget>[
-                      ItemDescriptionText(item.description1),
-                      Expanded(child: Container()),
-                      ItemDescriptionText(item.timeAgo),
-                    ],
-                  )
                 ],
               ),
             ),

@@ -104,23 +104,22 @@ class _CommentsScreenState extends State<CommentsScreen> {
             controller: _scrollController,
             customAppBar: customAppbar,
             dataEmptyCondition: () => state.data?.kids?.isEmpty,
-            viewIfEmptyData: BigTip(
-              title: const Text('No comments yet'),
-              subtitle: const Text('Be the first to say something'),
-              action: Text(
-                'Add a comment'.toUpperCase(),
-                style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
-                    .subtitle1
-                    .copyWith(
-                      color: Theme.of(context).accentColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+            viewIfEmptyData: Builder(
+              builder: (context) => BigTip(
+                title: const Text('No comments yet'),
+                subtitle: const Text('Be the first to say something'),
+                action: Text(
+                  'Add a comment'.toUpperCase(),
+                  style: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme)
+                      .subtitle1
+                      .copyWith(
+                        color: Theme.of(context).accentColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                actionCallback: () => _goToReply(context),
+                child: const Icon(Icons.comment_bank_outlined),
               ),
-              actionCallback: () => Navigator.push(
-                context,
-                CommentReplyScreen.route(context, item),
-              ),
-              child: const Icon(Icons.comment_bank_outlined),
             ),
             loading: ListView.builder(
               itemBuilder: (context, index) => LoadingItem(count: 2),
@@ -136,16 +135,26 @@ class _CommentsScreenState extends State<CommentsScreen> {
           ),
         ),
         floatingActionButton: (state.data?.kids?.isNotEmpty == true && _showFab)
-            ? FloatingActionButton(
-                child: Icon(Icons.reply),
-                onPressed: () => Navigator.push(
-                  context,
-                  CommentReplyScreen.route(context, item),
+            ? Builder(
+                builder: (context) => FloatingActionButton(
+                  child: Icon(Icons.reply),
+                  onPressed: () => _goToReply(context),
                 ),
               )
             : null,
       ),
     );
+  }
+
+  Future<void> _goToReply(BuildContext context) async {
+    final bool replySuccess = await NavigatorX.removeSnackBarAndPush(
+      context,
+      CommentReplyScreen.route(context, item),
+    );
+
+    if (replySuccess == true) {
+      context.read<StoryCubit>().refresh();
+    }
   }
 
   Widget _buildCommentRows(
