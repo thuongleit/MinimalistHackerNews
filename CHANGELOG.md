@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Release iOS app
 
+## [2.1.0] - 2021-01-08
+
+### Added
+
+- Support different reading mode when browsing stories: Title only, Minimalist, With content
+
+### Fixed
+
+- Lagging when scrolling (to the top/bottom) or holding in stories tab.
+- Pull-to-refresh function in comments screen didn't work.
+- Posting a comment didn't appear immediately.
+
 ## [2.0.0] - 2020-11-14
 
 ### Added
@@ -71,7 +83,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project.
 - First release version.
 
-[unreleased]: https://github.com/thuongleit/MinimalistHackerNews/compare/v2.0.0...HEAD
+[unreleased]: https://github.com/thuongleit/MinimalistHackerNews/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/thuongleit/MinimalistHackerNews/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/thuongleit/MinimalistHackerNews/compare/v1.2.1...v2.0.0
 [1.2.1]: https://github.com/thuongleit/MinimalistHackerNews/compare/v1.1.0...v1.2.1
 [1.1.0]: https://github.com/thuongleit/MinimalistHackerNews/compare/v1.0.0...v1.1.0

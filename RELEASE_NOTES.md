@@ -2,6 +2,23 @@
 
 - Release iOS app
 
+# [2.1.0] - January 08, 2021
+
+## New feature
+
+- We added different reading modes for you to browse stories. You can skim
+  through stories with 'Title only' mode to catch up with the world. Or you can
+browse stories with title, author, story point and time with 'Minimalist' mode
+like you do with the Hacker News origin. Or more convenience, you can see the
+story with its preview content in 'With content' mode. It is your choice. :) 
+
+## Bug fixes
+
+- We fixed the lagging issue when scrolling (to the top/bottom) or holding in
+  the stories tab.
+- Pull-to-refresh in comments screen now works as you expected.
+- Now you can view your comment immediately after posting it.
+
 # [2.0.0] - November 14, 2020
 
 ## New features
@@ -55,7 +72,8 @@ as well as view story content in an internal browser tab.
 - You can vote for a story or view its comment in the internal browser tab.
 
 
-[upcoming]: https://github.com/thuongleit/MinimalistHackerNews/compare/v2.0.0...HEAD
+[upcoming]: https://github.com/thuongleit/MinimalistHackerNews/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/thuongleit/MinimalistHackerNews/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/thuongleit/MinimalistHackerNews/compare/v1.2.1...v2.0.0
 [1.2.1]: https://github.com/thuongleit/MinimalistHackerNews/compare/v1.1.0...v1.2.1
 [1.1.0]: https://github.com/thuongleit/MinimalistHackerNews/compare/v1.0.0...v1.1.0
